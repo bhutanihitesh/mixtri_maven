@@ -1,0 +1,156 @@
+Table name: Users
+1. String Unique id (unique guid)
+2. String username/emailId (unique)
+3. String password (not null)
+4. String salt
+5. String name
+6. int contact
+
+
+Attendees table
+
+AttendeeId,Dj'sId,DjEmailId,EventId
+
+When event ends for a Dj, delete all attendees in that table for that corresponding Dj and its event
+
+
+
+
+/**************************************** Tables *******************************************************************/
+
+CREATE SCHEMA `mixtri` ;
+
+
+  
+  
+ *************Table name: users***************
+  
+  CREATE TABLE `mixtri`.`users` (
+  `id` VARCHAR(45) NOT NULL COMMENT '',
+  `emailId` VARCHAR(45) NOT NULL COMMENT '',
+  `password` VARCHAR(45) NULL COMMENT '',
+  `salt` VARCHAR(45) NULL COMMENT '',
+  `firstName` VARCHAR(100) NULL COMMENT '',
+  `lastName` VARCHAR(100) NULL COMMENT '',
+  `displayName` VARCHAR(45) NOT NULL COMMENT '',
+  `createDate` DATE NOT NULL COMMENT '',
+  `profileURLId` VARCHAR(45) NOT NULL COMMENT '',
+  `phoneNumber` VARCHAR(45)  NULL COMMENT '',
+  `city` VARCHAR(45)  NULL COMMENT '',
+  `state` VARCHAR(45) NULL COMMENT '',
+  `country` VARCHAR(45) NULL COMMENT '',
+  `showContactInfo` VARCHAR(3) NULL COMMENT '',
+  `profilePicPath` VARCHAR(2000) NULL COMMENT '',
+  `biography` VARCHAR(1000) NULL COMMENT '',
+  PRIMARY KEY (`id`)  COMMENT '');
+  
+ALTER TABLE `mixtri`.`users` 
+ADD INDEX `idx_users_emailId` (`emailId` ASC)  COMMENT '',
+ADD INDEX `idx_users_profileURLId` (`profileURLId` ASC)  COMMENT '';
+
+
+  
+  
+****************Table Name: Events***************
+
+CREATE TABLE `mixtri`.`events` (
+  `id` VARCHAR(45) NOT NULL COMMENT '',
+  `displayName` VARCHAR(45) NOT NULL COMMENT '',
+  `streamInfo` VARCHAR(45) NOT NULL COMMENT '',
+  `eventCreatedUTCTimestamp` TIMESTAMP NULL COMMENT '',
+  `timeZone` VARCHAR(45) NOT NULL COMMENT '',
+  `eventDescription` VARCHAR(255) NULL COMMENT '',
+  `genre` VARCHAR(45) NOT NULL COMMENT '',
+  `hashtags` VARCHAR(45) NULL COMMENT '',
+  `streamingOption` VARCHAR(45) NOT NULL COMMENT '',
+  `eventPicPath` VARCHAR(2000) NOT NULL COMMENT '',
+  `bgVideoPath` VARCHAR(2000) NOT NULL COMMENT '',
+  `isLive` VARCHAR(45) NULL COMMENT '',
+  `profileURLId` VARCHAR(45) NOT NULL COMMENT '',
+  `emailId` VARCHAR(45) NOT NULL COMMENT '',
+  `kudosCount` BIGINT NOT NULL COMMENT '',
+  `feedback` VARCHAR(1000) NULL COMMENT '',
+  PRIMARY KEY (`id`)  COMMENT '';
+  
+ALTER TABLE `mixtri`.`events` 
+ADD INDEX `idx_events_profileURLId` (`profileURLId` ASC)  COMMENT '';
+
+ALTER TABLE `mixtri`.`events` 
+ADD CONSTRAINT `fk_users_profileURLId`
+  FOREIGN KEY (`profileURLId`)
+  REFERENCES `mixtri`.`users` (`profileURLId`)
+  ON DELETE CASCADE
+  ON UPDATE NO ACTION;
+  
+ALTER TABLE `mixtri`.`events` 
+ADD INDEX `idx_events_emailId` (`emailId` ASC)  COMMENT '';
+  
+  
+ *********Table Name: archivedMixes*******************
+  
+  CREATE TABLE `mixtri`.`archivedmixes` (
+  `id` VARCHAR(45) NOT NULL COMMENT '',
+  `artistImageSrc` VARCHAR(2000) NULL COMMENT '',
+  `popularity` DOUBLE NULL COMMENT '',
+  `audioTitle` VARCHAR(500) NOT NULL COMMENT '',
+  `artistDisplayName` VARCHAR(100) NOT NULL COMMENT '',
+  `audioSrc` VARCHAR(2000) NOT NULL COMMENT '',
+  `emailId` VARCHAR(45) NOT NULL COMMENT '',
+  `fileSize` FLOAT NOT NULL COMMENT '',
+  `dateUploaded` DATE NOT NULL COMMENT '',
+  `type` VARCHAR(45)  NULL COMMENT '',
+  `genre` VARCHAR(200)  NULL COMMENT '',
+  PRIMARY KEY (`id`)  COMMENT '',
+  INDEX `idx_archivedmixes_emailId` (`emailId` ASC)  COMMENT '',
+  CONSTRAINT `fk_users_emailId`
+    FOREIGN KEY (`emailId`)
+    REFERENCES `mixtri`.`users` (`emailId`)
+    ON DELETE CASCADE
+    ON UPDATE NO ACTION);
+    
+    
+  **************Table Name: Attendee**************************
+  
+  CREATE TABLE `mixtri`.`attendees` (
+  `id` VARCHAR(45) NOT NULL COMMENT '',
+  `eventId` VARCHAR(45) NOT NULL COMMENT '',
+  `attendeeEmailId` VARCHAR(100) NULL COMMENT '',
+  PRIMARY KEY (`id`)  COMMENT '',
+  INDEX `fk_attendee_email_Id_users_idx` (`attendeeEmailId` ASC)  COMMENT '',
+  INDEX `fk_event_id_events_idx` (`eventId` ASC)  COMMENT '',
+  CONSTRAINT `fk_attendee_email_Id_users`
+    FOREIGN KEY (`attendeeEmailId`)
+    REFERENCES `mixtri`.`users` (`emailId`)
+    ON DELETE CASCADE
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_event_id_events`
+    FOREIGN KEY (`eventId`)
+    REFERENCES `mixtri`.`events` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION);  
+  
+  **************Table Name: Fans***********************************
+  CREATE TABLE `mixtri`.`fans` (
+  `id` VARCHAR(45) NOT NULL COMMENT '',
+  `fanEmailId` VARCHAR(45) NOT NULL COMMENT '',
+  `djEmailId` VARCHAR(45) NOT NULL COMMENT '',
+  INDEX `idx_fanEmailId` (`fanEmailId` ASC)  COMMENT '',
+  INDEX `idx_djEmailId` (`djEmailId` ASC)  COMMENT '',
+  CONSTRAINT `fk_fanEmailId`
+    FOREIGN KEY (`fanEmailId`)
+    REFERENCES `mixtri`.`users` (`emailId`)
+    ON DELETE CASCADE
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_djEmailId`
+    FOREIGN KEY (`djEmailId`)
+    REFERENCES `mixtri`.`users` (`emailId`)
+    ON DELETE CASCADE
+    ON UPDATE NO ACTION);
+  
+  ALTER TABLE `mixtri`.`fans` 
+ADD CONSTRAINT `fk_djEmailId`
+  FOREIGN KEY (`djEmailId`)
+  REFERENCES `mixtri`.`events` (`emailId`)
+  ON DELETE NO ACTION
+  ON UPDATE NO ACTION;
+  

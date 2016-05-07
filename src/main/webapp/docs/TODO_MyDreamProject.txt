@@ -1,0 +1,124 @@
+************* PROJECT CONFIGURATIONS************
+1. Keep Properties Files on server at correct location. Right now its in eclipse folder.
+2. Setup SystemOut.log file path on the server
+
+//TODO:
+
+1. Get the fonts and Look and feel correct.
+2. Replace ABC from everywhere
+3. Page Navigation to different sections. Like to about us section.
+4. Alignment of text and font and size.
+5. Make header and footer common.
+6. About us page. Get professional photos and background transparent images.
+7. About us page: From the Djs: Comment is long. page distorts.
+8. Alignment on blog-detail.html page
+9. Remove extra pages from the directory
+10. Navigation to different pages is only from Index.html. So that why we need to include common header and footer.
+11. remove .html extenstion
+12. My team add on about us page.
+13. Make the pages responsive. (Archived mixes is not a resonsive page.) It should open fine in browser and Mobile.
+14. Archive.html: Artist pic is not proper
+15. Archive.html: Make Archive Mixes a button
+16. Archive.html: Increase track-header bar width.
+17. Change all header titles from My Dream project to Mixtri
+18. Change all ABC to Mixtri
+19. Index.html Hover over the DJ Image to present a Join button to enter live stream and correc the alignment
+20. Professional Pic on about us and DjSignUp page and highlight words like Mixtri and all.
+21. DjSignUp.html Fill up the sign up button and make it a full button	
+22. Replace dummy with pic not found in all the pages.
+23. Login Form: Click on login -> Sign up -> Click close doesn't work
+24. Login Form: Click on Sign Up->Log in -> Click close doesn't work
+25. Also, switching again and again between login and signup also doesn't work.
+*26. Prefix: www.mitri.com on the signup form
+27. Archive.html Right side bar is empty.
+28. Signup.html: Login Modal not positioned properly when clicked from the button in the page and not from the header. Also, put transition.
+29. If a user tries to hit the profile URL Directly and he is not logged in then show him the login page.
+30. Google analytics code.
+31. Contact us page. Header footer not getting included.
+32. Login form not working from events page.
+33. make an error page.
+34. At the time of login create folders for users who want to live stream or at the point of login.
+35. When you cancel button, login modal background remains blacked out.
+36. Login Form Validations
+37. Small Cross on the login form is not proper. Also, the modal doesn't drop properly.
+38. If there is not image default to Mixtri Logo Image all over the application
+39. Livestream.jsp Event time is not properly visible in IE
+40. LiveStream.jsp form controls are not properly aligned in IE.
+41. Track Popularity on Archives.jsp
+42. Restrict live stream setup page if you are not logged in.
+43. livestrem.jsp: Direct input logo picture is not good.
+45. LiveStream.jsp: Check if 5 mins validation works in India Time for the date field as the date should auto format to system date format.
+46. When space is less upload bar moves forward and then backwards. Not a good UI.
+47. Loading of mixtri.properties file and to decide the location on the server where to keep the uploaded files. It has to be kept in directory
+    served by my webserver.
+47. If it is a blocked page like liveStream.jsp or Event's page and you logout from there then you should be shown login.jsp
+48. event.jsp Hide page from directly accessing.
+49. Livestream.jsp add sixth video in the page when laoding from AWS. Because locally chrome doesn't allow more than video tags and causes
+opening socket error.
+50. Live.jsp. After sliding door everything is -1 z-index. Links are not clickable.
+51. Live.jsp should be a hidden url.
+52. User can jump onto real live event page ie live.jsp from event.jsp if he knows the url. So for that we need to make it as an action
+53. Cut down bgVideos to remove any casting of the creator. 
+54. Live.jsp Bug. after the timer clock counts to zero it again restarts.
+55. If you are not logged in and you try to become a fan you should be shown a popup to login. Also you cannot participate in the chat
+56. So a user sign up successfully with mixtri send him a welcome email.
+57. Dj chat css colors. When Dj initiates the chate it should be of blue color while for user it should be grey.
+58. Also, the chat should go only to people who are logged in that room
+59. Pagination has to be done in non-greedy way. Fetch when user clicks on the next rather than caching. Rectify what pratik has done.
+60. When deleting a user delete all his events, uploaded mixes, and event pics
+61. When the user leaves the event page the number doesn't get reduced.
+62. Event.jsp the date is not correct if the time has passed.
+63. Make Sure profile.jsp is not visible to the user if he is not logged in.
+64. On profile.jsp when user has not uploaded the profile pic show him a default mixtri logo pic and this will happen for all the users
+65. Make Sure accountsettings.jsp is not visible to the user if he is not logged in.
+66. Look for dead href links.
+67. Check head of all the jsps for correctness
+68. uploaderManager.jsp is not visible. Make sure all the Pages in the logged in menu option are not visible to the user
+69. Make Facebook Share URLs Correct
+
+Joining in mixtri.
+************ Pending Stuff*************
+1. Hyperlink for the profile of the user from archive.html ie create a profile page for the user.
+2. View Your Icecast Settings Modal content left.
+3. event.jsp Live Stream Manager links should work.
+4. When moving to AWS BG Video Links are in HTML
+********************* Java Things ******************
+
+## SignUp form:
+1. Server Side Validations to show data on top of the form in case of multipe validation methods.
+3. params visible in URL.
+4. When on error page and you signup or login it is not re-directing to index.jsp while if you run it using debug of javascript it works.
+   This is weired.
+5. Login and Sign up page facebook and google links not working.
+
+
+
+
+Red color: #e62948
+Grey Color: #333333
+Blue color: #2a6496;
+#ccc
+
+********** Imp for tommorrow***********
+4. Chat messages of people in that room should go to chat message of people in that room only. Not to all
+
+http://calculator.s3.amazonaws.com/index.html#r=IAD&s=S3&key=calc-03CAF6B6-1C38-4B1F-A85C-8F7A5F5A1888
+<img class="span4 profile-image" src="http://mx-images.mixify.com.s3.amazonaws.com/lrg_p19qk80kt8cio1u0f15p1ods1bk271437346013.jpg">
+
+
+
+****************At the time of Launch*****************
+
+1. Insert some archived mixes into archived table before launch. The value of the field named 'type' is 'archived'.
+
+
+
+
+
+
+
+
+
+
+
+

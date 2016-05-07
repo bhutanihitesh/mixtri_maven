@@ -1,0 +1,22 @@
+th{
+	color: #e62948;
+    font-size: large;
+}
+
+
+.table-striped>tbody>tr:nth-of-type(odd){
+	
+	background-color: rgba(0, 0, 0, 0.19);
+}
+
+td{
+	width: 1%;
+}
+
+
+.deleteSet{
+
+	cursor: pointer;
+	color: #e62948;
+}
+

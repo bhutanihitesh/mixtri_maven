@@ -1,0 +1,16 @@
+.inputBoxes{
+display: -webkit-box;	
+}
+
+.myProfileLabels{
+	width: 150px;
+	color: graytext;
+}
+
+.uploadProfilePic{
+	width: 120px; 
+	height: 120px;
+	background-color: #333333;
+	margin-right: 10px;
+	float: left;
+}
