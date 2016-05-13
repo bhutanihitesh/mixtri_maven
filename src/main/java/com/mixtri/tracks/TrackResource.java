@@ -48,19 +48,19 @@ public class TrackResource {
 		switch (filter) {
 		
 		 case "All":
-		 query = "SELECT artistImageSrc,popularity,audioTitle,artistDisplayName,audioSrc FROM MIXTRI.archivedmixes WHERE type='archived' "
+		 query = "SELECT artistImageSrc,popularity,audioTitle,artistDisplayName,audioSrc FROM mixtri.archivedmixes WHERE type='archived' "
 						+ "LIMIT "+offset+","+limitPerPage;	 
 		 tracks= mixtridao.getAllTracksDAO(query);
 		 break;
 		 
 		 case "popular":
-			 query = "SELECT artistImageSrc,popularity,audioTitle,artistDisplayName,audioSrc FROM MIXTRI.ARCHIVEDMIXES WHERE type='archived' "
+			 query = "SELECT artistImageSrc,popularity,audioTitle,artistDisplayName,audioSrc FROM mixtri.archivedmixes WHERE type='archived' "
 							+ "ORDER BY popularity DESC LIMIT "+offset+","+limitPerPage;	 
 			 tracks= mixtridao.getAllTracksDAO(query);
 			 break;
 		 
 		 default:
-			 query = "SELECT artistImageSrc,popularity,audioTitle,artistDisplayName,audioSrc FROM MIXTRI.ARCHIVEDMIXES WHERE type='archived' "
+			 query = "SELECT artistImageSrc,popularity,audioTitle,artistDisplayName,audioSrc FROM mixtri.archivedmixes WHERE type='archived' "
 							+ "AND genre='"+filter+"' LIMIT "+offset+","+limitPerPage;	 
 			 tracks= mixtridao.getAllTracksDAO(query);
 			 break;

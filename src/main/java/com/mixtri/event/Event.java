@@ -77,6 +77,7 @@ public class Event {
 	@Path("/test")
 	public Response testRest(){
 		
+		System.out.println("Here is the first Rest call...");
 		return Response.ok("Success Again and Again", MediaType.APPLICATION_JSON).build();
 	}
 	
@@ -278,7 +279,7 @@ public class Event {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getLiveUpcomingEvents(@QueryParam("webUserTimeZone") String webUserTimeZone,@QueryParam("page") int page,@QueryParam("limitPerPage") int limitPerPage,
 			@QueryParam("filter")String filter){
-		
+	
 		String response = null;
 		try{
 			MixtriDAO mixtriDAO = new MixtriDAO();
@@ -302,6 +303,7 @@ public class Event {
 			
 		}catch(Exception exp){
 			log.error("Error Occured in fetching Live upcoming events info: "+exp);
+			System.out.println("Error Occured in fetching Live upcoming events info: "+exp);
 			return Response.serverError().build();
 		}
 		

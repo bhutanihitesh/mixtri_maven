@@ -13,11 +13,18 @@ public class ConnectionFactory {
     String password = "Mixtri85";
     String driverClass = "com.mysql.jdbc.Driver";*/
     
-    String url = "jdbc:mysql://localhost";
+    /*String url = "jdbc:mysql://localhost";
     String user = "root";
     String password = "mixtri";
-    String driverClass = "com.mysql.jdbc.Driver"; 
+    String driverClass = "com.mysql.jdbc.Driver"; */
     
+    
+    String user = System.getenv("OPENSHIFT_MYSQL_DB_USERNAME");
+    String password = System.getenv("OPENSHIFT_MYSQL_DB_PASSWORD");
+    String DB_NAME = System.getenv("OPENSHIFT_APP_NAME");
+    String url = "jdbc:mysql://"+System.getenv("OPENSHIFT_MYSQL_DB_HOST")+"/"+DB_NAME;
+    String driverClass = "com.mysql.jdbc.Driver";
+        
     //private constructor
     private ConnectionFactory() {
         try {
@@ -33,8 +40,10 @@ public class ConnectionFactory {
      
     public Connection getConnection() throws SQLException, 
     ClassNotFoundException {
-        Connection connection = 
+    	
+    	Connection connection = 
             DriverManager.getConnection(url, user, password);
+        
         return connection;
     }   
 }

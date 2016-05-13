@@ -69,7 +69,7 @@ public class SignUpDB {
 			  String uuid = MixtriUtils.getUUID();
 			  userSignUpBean.setProfileURLId(profileURLId);
               
-			  String query ="INSERT INTO MIXTRI.USERS(id,emailId,password,salt,displayName,createDate,profileURLId,phoneNumber,city,state,country,showContactInfo)"
+			  String query ="INSERT INTO mixtri.users(id,emailId,password,salt,displayName,createDate,profileURLId,phoneNumber,city,state,country,showContactInfo)"
 			  		+ "VALUES(?,?,?,?,?,?,?,?,?,?,?,?)";
 			  
 			  connection = getConnection();
@@ -130,7 +130,7 @@ public class SignUpDB {
 		try{
 			
 			connection = getConnection();
-			statement = connection.prepareStatement("SELECT EMAILID FROM MIXTRI.USERS WHERE EMAILID=?");    
+			statement = connection.prepareStatement("SELECT EMAILID FROM mixtri.users WHERE EMAILID=?");    
 			statement.setString(1, emailId);    
 			ResultSet resultSet = statement.executeQuery();
 			
@@ -159,7 +159,7 @@ public class SignUpDB {
 		
 		try{
 			connection = getConnection();
-			statement = connection.prepareStatement("SELECT PROFILEURLID FROM MIXTRI.USERS WHERE PROFILEURLID=?");    
+			statement = connection.prepareStatement("SELECT PROFILEURLID FROM mixtri.users WHERE PROFILEURLID=?");    
 			statement.setString(1, profileURLName);    
 			ResultSet resultSet = statement.executeQuery();
 			
@@ -189,7 +189,7 @@ public class SignUpDB {
 		Map<String,String> userData = new HashMap<String, String>();
 		try{
 		connection = getConnection();
-		statement = connection.prepareStatement("SELECT profileURLId,displayName FROM MIXTRI.USERS WHERE EMAILID=?");    
+		statement = connection.prepareStatement("SELECT profileURLId,displayName FROM mixtri.users WHERE EMAILID=?");    
 		statement.setString(1, emailId);    
 		ResultSet rs = statement.executeQuery();
 		

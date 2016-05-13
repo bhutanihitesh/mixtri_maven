@@ -102,17 +102,17 @@ $(document).ready(function() {
 		$(this).addClass('pastMix selected');
 
 		var selectedMixName = $(this).context.innerText;
-     
+
 		$('#selectedMixName').html("Selected Mix: "+selectedMixName);
 
 	});
 
-	
+
 	//This function starts all the selected video by 1 sec ahead and not from 0 secs
 	document.getElementById('vidFrame-6').addEventListener('loadedmetadata', function() {
-		  this.currentTime = 6;
+		this.currentTime = 6;
 	}, false);
-	
+
 	//Background Theme Videos
 	$('.videoThemes').on('click',function(e){
 
@@ -122,7 +122,7 @@ $(document).ready(function() {
 			alreadySelectedMix.removeClass('selectedVid selected');
 			alreadySelectedMix.addClass('videoThemes');
 			//Stops the already selected video
-			
+
 			var divId = alreadySelectedMix.get(0).id;
 			var strArr = [];
 			strArr = divId.split("-"); //get id id of the selected div.
@@ -140,8 +140,8 @@ $(document).ready(function() {
 		$('.bgThemeVideo').addClass('hidden');
 		$('#bgTheme-'+strArr[1]).removeClass('hidden');
 		$('#selectedTheme').html("Selected Theme: "+$(this).context.innerText);
-		
-		
+
+
 	});
 
 
@@ -187,7 +187,7 @@ $(document).ready(function() {
 
 	//Live Stream Setup Form Validations:
 	//Image Validation
-	
+
 	$('#btnLiveStream').on('click',function(e){
 
 		e.preventDefault();
@@ -196,13 +196,13 @@ $(document).ready(function() {
 		var formSubmit = 'true';
 
 		if($('#streamInfo').val()==""){
-			
+
 			$('#messages').html('ERROR: Please enter live stream name');
 			$('#messages').show();
 			$('#messages').delay(5000).fadeOut();
 			return false;
 		}
-		
+
 		if($('#profile-pic').attr('src')==null){
 			$('#messages').html('ERROR: Please upload a catchy image for your event for your fans to see. This will attract you fans to your event!');
 			$('#messages').show();
@@ -210,18 +210,18 @@ $(document).ready(function() {
 			return false;
 
 		}
-		
+
 		if($('#eventDatePicker').val()==""){
-			
+
 			$('#messages').html('ERROR: Please enter a date for your event');
 			$('#messages').show();
 			$('#messages').delay(5000).fadeOut();
 			return false;
 		}
-		
-		
+
+
 		if($('#eventTimePicker').val()==""){
-			
+
 			$('#messages').html('ERROR: Please enter time for your event');
 			$('#messages').show();
 			$('#messages').delay(5000).fadeOut();
@@ -307,14 +307,14 @@ $(document).ready(function() {
 			},
 
 			complete: function(){
-				
+
 				//We are manually submitting the form because we want to see if the value returned from server is correct and 5 mins validation satisfies or not.
 				if(formSubmit == 'true'){
 					submitEventForm();
 					$('#btnLiveStream').attr('disabled','disabled');
 
 				}
-				
+
 			},
 			error: function(result){
 				window.location.href = "error.jsp";
@@ -329,11 +329,11 @@ $(document).ready(function() {
 		function submitEventForm(){
 
 			var selectedVid = $('.selectedVid').get(0).id;
-			
+
 			var strArr = [];
 			strArr = selectedVid.split("-"); //get id id of the selected div.
 			var vidFrame = "#vidFrame-"+strArr[1];
-			
+
 			var emailId = $.cookie('emailId');
 			var displayName = $.cookie('displayName');
 			var streamInfo = $('#streamInfo').val();
@@ -347,7 +347,7 @@ $(document).ready(function() {
 			var bgVideoTheme = $(vidFrame).get(0).currentSrc;
 			var eventPic = $('#image-upload').get(0).files[0];
 			var profileURLId = $.cookie('profileURLId');
-			
+
 
 
 			var data = new FormData();
@@ -364,9 +364,9 @@ $(document).ready(function() {
 			data.append('eventPic', eventPic);
 			data.append('bgVideoTheme',bgVideoTheme);
 			data.append('profileURLId',profileURLId);
-            
+
 			var url = "/mixtri/rest/event";
-			
+
 			$.ajax({
 				url: url,
 				type: 'POST',
@@ -375,11 +375,11 @@ $(document).ready(function() {
 				data: data,
 
 				success: function (result) {
-                    
+
 					$.cookie('eventId', result.id,{ path: '/'});
 					var profileURLId = $.cookie('profileURLId');
 					window.location.href = 'event.jsp?profileURLId='+profileURLId+'&eventId='+result.id;
-					
+
 				},
 				error: function(result){
 
@@ -462,7 +462,7 @@ $(document).ready(function() {
 		data.append('mixUpload', file);
 		data.append('emailId', $.cookie("emailId"));
 		data.append('mixTitle',mixTitle);
-        if(file.size>140000000){
+		if(file.size>140000000){
 
 			$('#maxFileSizeError').html('Please upload file less than 140 MB.');
 			$('#maxFileSizeError').show();
@@ -470,24 +470,24 @@ $(document).ready(function() {
 			return false;
 
 		}
-        
-        if(file.type=='audio/mp3' || file.type=='audio/mpeg'){
-        	
-        }else{
-        	
-        	$('#invalid-mp3-file').html('Please upload only mp3 files.');
+
+		if(file.type=='audio/mp3' || file.type=='audio/mpeg'){
+
+		}else{
+
+			$('#invalid-mp3-file').html('Please upload only mp3 files.');
 			$('#invalid-mp3-file').show();
 			$('#invalid-mp3-file').delay(4000).fadeOut();
-			
+
 			return false;
-        	
-        }
-        
+
+		}
+
 		/*if(file.type!='audio/mp3' || file.type!='audio/mpeg'){
 			$('#invalid-mp3-file').html('Please upload only mp3 files.');
 			$('#invalid-mp3-file').show();
 			$('#invalid-mp3-file').delay(4000).fadeOut();
-			
+
 			return false;
 		}*/
 
@@ -638,12 +638,16 @@ $(document).ready(function() {
 			},
 
 			success: function (data, textStatus, jqXHR) {
-				
+
 				var listUploadedTracks = data.listUploadedTracks;
 				var uploadedPath = data.path;
-				
-				for(var iCount=0;iCount<listUploadedTracks.length;iCount++){
-					pastUploadedTracks(listUploadedTracks[iCount].id,listUploadedTracks[iCount].audioTitle,data.path,'audioControls','Selected Mix: None');
+
+				if(listUploadedTracks){
+
+					for(var iCount=0;iCount<listUploadedTracks.length;iCount++){
+						pastUploadedTracks(listUploadedTracks[iCount].id,listUploadedTracks[iCount].audioTitle,data.path,'audioControls','Selected Mix: None');
+					}
+
 				}
 
 			},

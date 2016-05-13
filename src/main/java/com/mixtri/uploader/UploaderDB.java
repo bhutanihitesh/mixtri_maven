@@ -69,7 +69,7 @@ public class UploaderDB {
 
 	public String getDisplayName(String emailId) throws ClassNotFoundException, SQLException{
 
-		String query = "SELECT DISPLAYNAME FROM MIXTRI.USERS WHERE EMAILID=?";
+		String query = "SELECT DISPLAYNAME FROM mixtri.users WHERE EMAILID=?";
 		String displayName = null;
 		ResultSet rs =null;
 
@@ -102,7 +102,7 @@ public class UploaderDB {
 	public List<Map<String,String>> getTracksInfo(String emailId) throws Exception{
 
 
-		String query = "SELECT ID,AUDIOTITLE FROM MIXTRI.ARCHIVEDMIXES WHERE type='upload' AND EMAILID=? order by dateUploaded asc";
+		String query = "SELECT ID,AUDIOTITLE FROM mixtri.archivedmixes WHERE type='upload' AND EMAILID=? order by dateUploaded asc";
 		List<Map<String,String>> listUploadedTracks = new ArrayList<Map<String,String>>();
 		ResultSet rs =null;
 		try{
@@ -141,7 +141,7 @@ public class UploaderDB {
 
 	public float getUserDiskSpaceDB(String emailId) throws ClassNotFoundException, SQLException{
 
-		String query = "SELECT SUM(FILESIZE) AS USED_DISK_SPACE FROM MIXTRI.ARCHIVEDMIXES WHERE EMAILID=?";
+		String query = "SELECT SUM(FILESIZE) AS USED_DISK_SPACE FROM mixtri.archivedmixes WHERE EMAILID=?";
 		ResultSet rs =null;
 		float usedDiskSpace = 0;
 		try{
@@ -177,7 +177,7 @@ public class UploaderDB {
 
 		String trackPath = getTrackPath(uploadedSetId);
 		
-		String query = "DELETE FROM MIXTRI.ARCHIVEDMIXES WHERE ID=?";
+		String query = "DELETE FROM mixtri.archivedmixes WHERE ID=?";
 		
 		try{
 
@@ -203,7 +203,7 @@ public class UploaderDB {
 	public String getTrackPath(String uploadedSetId) throws ClassNotFoundException, SQLException{
 		String trackPath=null;
 		
-		String query = "SELECT audioSrc FROM MIXTRI.ARCHIVEDMIXES WHERE ID=?";
+		String query = "SELECT audioSrc FROM mixtri.archivedmixes WHERE ID=?";
 		ResultSet rs=null;
 		try{
 

@@ -6,6 +6,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.sql.Timestamp;
 import java.text.DateFormat;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
@@ -21,15 +23,9 @@ import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
+import javax.swing.text.NumberFormatter;
 
 import org.apache.log4j.Logger;
-
-import com.mixtri.uploader.Uploader;
 
 public class MixtriUtils{
 
@@ -160,9 +156,11 @@ public class MixtriUtils{
 		
 		Map<String,String> webUserDateTimezone = new HashMap<String,String>();
 		
-		LocalDateTime curTime = LocalDateTime.now();
-		String gmtZoneId = "GMT" + ZoneId.of(zoneId).getRules().getOffset(curTime);
+		//LocalDateTime curTime = LocalDateTime.now();
+		//String gmtZoneId = "GMT" + ZoneId.of(zoneId).getRules().getOffset(curTime);
 		
+		TimeZone tz1 = TimeZone.getTimeZone(zoneId);
+		String gmtZoneId = displayTimeZone(tz1);
 		TimeZone tz = TimeZone.getTimeZone(gmtZoneId);
 		Calendar c = Calendar.getInstance(tz);
 		String webUserCurrentDate = c.get(Calendar.YEAR)+"-"+String.format("%02d",(c.get(Calendar.MONTH)+1))+"-"+String.format("%02d",c.get(Calendar.DAY_OF_MONTH));
@@ -248,27 +246,38 @@ public class MixtriUtils{
 	    	}
 	    }
 	
+	private static String displayTimeZone(TimeZone tz) {
+
+		long hours = TimeUnit.MILLISECONDS.toHours(tz.getRawOffset());
+		long minutes = TimeUnit.MILLISECONDS.toMinutes(tz.getRawOffset()) 
+                                  - TimeUnit.HOURS.toMinutes(hours);
+		
+		// avoid -4:-30 issue
+		minutes = Math.abs(minutes);
+
+		String result = "";
+		NumberFormat formatter = new DecimalFormat("00");
+		
+		if (hours > 0) {
+		
+			String strHrs = formatter.format(hours);
+			String strMins= formatter.format(minutes);
+			result = "GMT+"+strHrs+":"+strMins;
+		} else {
+			
+			
+			String strHrs = formatter.format(hours);
+			String strMins= formatter.format(minutes);
+			result = "GMT"+strHrs+":"+strMins;
+		}
+
+		return result;
+
+	}
 
 	public static void main(String[] args) {
 		
-		String UPLOAD_FILE_SERVER;
-		Properties prop;
-
-		
-			try{
-				prop = new Properties();
-				String path = new File("properties/mixtri.properties").getAbsolutePath();
-				File file = new File(path);
-
-				InputStream input = null;
-				input = new FileInputStream(file);
-				// load a properties file
-				prop.load(input);
-				UPLOAD_FILE_SERVER = prop.getProperty("BASE_PATH");
-			}catch(Exception exp){
-				log.error("Error Loading properties files "+exp.getStackTrace());
-			}				
-
-		
+		TimeZone tz = TimeZone.getTimeZone("Pacific/Samoa");
+		displayTimeZone(tz);
 	}
 }

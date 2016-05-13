@@ -30,7 +30,7 @@ public class LoginDB {
 
 	public UserLoginBean getLoginInfoDB(UserLoginBean userLoginBean) throws ClassNotFoundException, SQLException, NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException{
 
-		String query = "SELECT EMAILID,PASSWORD,SALT,DISPLAYNAME,PROFILEURLID FROM MIXTRI.USERS WHERE EMAILID=?";
+		String query = "SELECT EMAILID,PASSWORD,SALT,DISPLAYNAME,PROFILEURLID FROM mixtri.users WHERE EMAILID=?";
 		ResultSet rs =null;
 		try{
 

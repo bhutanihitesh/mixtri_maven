@@ -31,7 +31,7 @@ public class ProfileDB {
 		Map<String,Object> profileInfo = new HashMap<String, Object>();
 		try{
 
-			String query = "SELECT * FROM MIXTRI.USERS WHERE emailId=?";
+			String query = "SELECT * FROM mixtri.users WHERE emailId=?";
 			connection = getConnection();
 			statement = connection.prepareStatement(query);    
 			statement.setString(1, emailId);
@@ -149,7 +149,7 @@ public class ProfileDB {
 	public void deleteAccountDB(String emailId) throws ClassNotFoundException, SQLException{
 
 		try{
-			String query = "DELETE FROM MIXTRI.USERS WHERE emailId=?";
+			String query = "DELETE FROM mixtri.users WHERE emailId=?";
 			connection = getConnection();
 			statement = connection.prepareStatement(query);    
 			statement.setString(1, emailId);

@@ -85,7 +85,7 @@ public class EventDB {
 		Map<String,Object> liveStreamInfo = new HashMap<String, Object>();
 		try{
 
-			String query = "SELECT * FROM MIXTRI.EVENTS WHERE ID=?";
+			String query = "SELECT * FROM mixtri.events WHERE ID=?";
 			connection = getConnection();
 			statement = connection.prepareStatement(query);    
 			statement.setString(1, eventId);
@@ -166,7 +166,7 @@ public class EventDB {
 		//If the record is found with same name. Then check 2 conditions:
 		//1. If it is empty that means it has been setup but still not live 2. If isLive value is 'Y' that means event with same name is already live by this Dj
 
-		String query = "SELECT * FROM MIXTRI.EVENTS WHERE (ISLIVE IS NULL OR ISLIVE='Y') AND STREAMINFO=? AND PROFILEURLID=?";
+		String query = "SELECT * FROM mixtri.events WHERE (ISLIVE IS NULL OR ISLIVE='Y') AND STREAMINFO=? AND PROFILEURLID=?";
 		ResultSet rs =null;
 		boolean eventExists = false;
 		try{
@@ -211,7 +211,7 @@ public class EventDB {
 	public Map<String,String> getDjContactInfo(String profileURLId) throws ClassNotFoundException, SQLException{
 
 		Map<String,String> contactInfo = new HashMap<String, String>();
-		String query = "SELECT city,state,country,emailId,phoneNumber FROM MIXTRI.users WHERE profileURLId=?";
+		String query = "SELECT city,state,country,emailId,phoneNumber FROM mixtri.users WHERE profileURLId=?";
 		ResultSet rs =null;
 		try{
 			connection = getConnection();
@@ -257,16 +257,17 @@ public class EventDB {
 		List<Map<String,Object>> listAllLiveUpcomingEvents = new ArrayList<Map<String,Object>>();
 		Boolean isGenreFilter = false;
 		String query;
+		
 		switch (filter) {
 		
 		//Query only those events which are live and which are going to be live within next 24 hrs for that user in his timezone.
 		 case "All":
-		 query = "SELECT SQL_CALC_FOUND_ROWS *,TIMESTAMPDIFF(MINUTE,?,eventCreatedUTCTimestamp) AS TIMELEFT from MIXTRI.events where "
+		 query = "SELECT SQL_CALC_FOUND_ROWS *,TIMESTAMPDIFF(MINUTE,?,eventCreatedUTCTimestamp) AS TIMELEFT from mixtri.events where "
 			+ "( (TIMESTAMPDIFF(MINUTE,?,eventCreatedUTCTimestamp) < '1440' AND ISLIVE IS NULL) OR ISLIVE='Y') ORDER BY ISLIVE DESC,TIMELEFT ASC LIMIT "+offset+","+limitPerPage;	 
 		 break;
 		 
 		 case "live":
-			 query = "SELECT SQL_CALC_FOUND_ROWS *,TIMESTAMPDIFF(MINUTE,?,eventCreatedUTCTimestamp) AS TIMELEFT from MIXTRI.EVENTS where "
+			 query = "SELECT SQL_CALC_FOUND_ROWS *,TIMESTAMPDIFF(MINUTE,?,eventCreatedUTCTimestamp) AS TIMELEFT from mixtri.events where "
 						+ "TIMESTAMPDIFF(MINUTE,?,eventCreatedUTCTimestamp) < '1440' AND ISLIVE='Y' LIMIT "+offset+","+limitPerPage;	 
 			 break;
 			 
@@ -278,7 +279,7 @@ public class EventDB {
 			 break;
 		 
 		 default:
-		 query = "SELECT SQL_CALC_FOUND_ROWS *,TIMESTAMPDIFF(MINUTE,?,eventCreatedUTCTimestamp) AS TIMELEFT from MIXTRI.EVENTS where "
+		 query = "SELECT SQL_CALC_FOUND_ROWS *,TIMESTAMPDIFF(MINUTE,?,eventCreatedUTCTimestamp) AS TIMELEFT from mixtri.events where "
 			+ "( ((TIMESTAMPDIFF(MINUTE,?,eventCreatedUTCTimestamp) < '1440' AND ISLIVE IS NULL) OR ISLIVE='Y') AND genre=?) ORDER BY ISLIVE DESC,TIMELEFT ASC LIMIT "+offset+","+limitPerPage;
 		 isGenreFilter = true;
 		}
@@ -289,7 +290,7 @@ public class EventDB {
 
 			//Convert webuser timezone as GMT+XX:XX from the zone id eg. "Asia/Calcutta"
 			Map<String,String> webUserDateAndGMTId = MixtriUtils.getDateAndGMTId(webUserTimeZoneId);
-
+			
 			//Covert the webuser timezone to standard UTC Timezone and then query Database for event which are live or going to be live in his time zone in next 24hrs 
 			String fromTimezone=webUserDateAndGMTId.get("gmtZoneId");
 			String toTimezone="UTC";
@@ -297,8 +298,8 @@ public class EventDB {
 			String webUserCurrentTime = webUserDateAndGMTId.get("webUserCurrentTime");
 			//Convert it from webuserTimeZone Time to UTC Time because we are doing a query and it needs to be converted to UTC Timezone
 			Timestamp timestamp = MixtriUtils.convertToTimezone(localDateOfWebuser+" "+webUserCurrentTime, fromTimezone, toTimezone); 
-
 			Connection connection = getConnection();
+			
 			PreparedStatement statement = connection.prepareStatement(query);   
 			statement.setTimestamp(1,timestamp);
 			statement.setTimestamp(2,timestamp);
@@ -469,7 +470,7 @@ public class EventDB {
 	public int getAttendeeCount(String eventId) throws ClassNotFoundException, SQLException{
 		int attendeeCount = 0;
 
-		String query = "SELECT COUNT(*) AS ATTENDEE_COUNT FROM MIXTRI.attendees WHERE eventId=?";
+		String query = "SELECT COUNT(*) AS ATTENDEE_COUNT FROM mixtri.attendees WHERE eventId=?";
 		ResultSet rs =null;
 		try{
 			connection = getConnection();
@@ -504,7 +505,7 @@ public class EventDB {
 	public Map<String,String> getAttendeeInfo(String emailId) throws ClassNotFoundException, SQLException{
 		Map<String,String> attendeeInfo = new HashMap<String, String>();
 
-		String query = "SELECT displayName FROM MIXTRI.users WHERE emailId=?";
+		String query = "SELECT displayName FROM mixtri.users WHERE emailId=?";
 		ResultSet rs =null;
 		try{
 			connection = getConnection();
@@ -538,7 +539,7 @@ public class EventDB {
 
 		int attendeeCount;
 		Map<String,Object> attendeeCountMap = new HashMap<String, Object>();
-		String query = "DELETE FROM MIXTRI.ATTENDEES WHERE ID=?";
+		String query = "DELETE FROM mixtri.attendees WHERE ID=?";
 		try{
 
 			connection = getConnection();
@@ -568,7 +569,7 @@ public class EventDB {
 
 		int kudosCount;
 		Map<String,Object> kudosCountMap = new HashMap<String, Object>();
-		String query = "UPDATE MIXTRI.EVENTS SET KUDOSCOUNT=KUDOSCOUNT+1 WHERE ID=?";
+		String query = "UPDATE mixtri.events SET KUDOSCOUNT=KUDOSCOUNT+1 WHERE ID=?";
 		try{
 
 			connection = getConnection();
@@ -598,7 +599,7 @@ public class EventDB {
 	public int getKudosCount(String eventId) throws ClassNotFoundException, SQLException{
 		int kudosCount = 0;
 
-		String query = "SELECT KUDOSCOUNT FROM MIXTRI.EVENTS WHERE ID=?";
+		String query = "SELECT KUDOSCOUNT FROM mixtri.events WHERE ID=?";
 		ResultSet rs =null;
 		try{
 			connection = getConnection();
@@ -638,7 +639,7 @@ public class EventDB {
 			String djEmailId = getDjEmailId(djProfileURLId);
 			connection = getConnection(); 
 			if(type.equalsIgnoreCase("addFan")){
-				query = "INSERT INTO MIXTRI.FANS(id,fanEmailId,djEmailId) values(?,?,?)";
+				query = "INSERT INTO mixtri.fans(id,fanEmailId,djEmailId) values(?,?,?)";
 
 				statement = connection.prepareStatement(query);
 				statement.setString(1,MixtriUtils.getUUID());
@@ -646,7 +647,7 @@ public class EventDB {
 				statement.setString(3,djEmailId);
 
 			}else if(type.equalsIgnoreCase("removeFan")){
-				query = "DELETE FROM MIXTRI.FANS WHERE fanEmailId=? AND djEmailId=?";
+				query = "DELETE FROM mixtri.fans WHERE fanEmailId=? AND djEmailId=?";
 				statement = connection.prepareStatement(query);
 				statement.setString(1,fanEmailId);
 				statement.setString(2,djEmailId);
@@ -674,7 +675,7 @@ public class EventDB {
 	public int getFanCount(String djEmailId) throws ClassNotFoundException, SQLException{
 		int fanCount = 0;
 
-		String query = "SELECT COUNT(*) AS totalFans FROM MIXTRI.fans WHERE djEmailId=?";
+		String query = "SELECT COUNT(*) AS totalFans FROM mixtri.fans WHERE djEmailId=?";
 		ResultSet rs =null;
 		try{
 			connection = getConnection();
@@ -705,7 +706,7 @@ public class EventDB {
 
 	public String getDjEmailId(String djProfileURLId) throws ClassNotFoundException, SQLException{
 		String djEmailId=null;
-		String query = "SELECT emailId FROM MIXTRI.users WHERE profileURLId=?";
+		String query = "SELECT emailId FROM mixtri.users WHERE profileURLId=?";
 
 		ResultSet rs =null;
 		try{
@@ -739,7 +740,7 @@ public class EventDB {
 
 		boolean isFan = false;
 
-		String query = "SELECT id FROM MIXTRI.FANS WHERE fanEmailId=? AND djEmailId=?";
+		String query = "SELECT id FROM mixtri.fans WHERE fanEmailId=? AND djEmailId=?";
 		ResultSet rs =null;
 		try{
 			connection = getConnection();
