@@ -55,7 +55,7 @@ public class Uploader{
 	static{
 		try{
 			prop = new Properties();
-			String path = new File("properties/mixtri.properties").getAbsolutePath();
+			String path = new File("src/main/webapp/properties/mixtri.properties").getAbsolutePath();
 			File file = new File(path);
 
 			InputStream input = null;
