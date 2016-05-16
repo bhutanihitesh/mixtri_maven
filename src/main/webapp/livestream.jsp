@@ -540,7 +540,8 @@ Style Sheets
 							</div>
 
 							<div id="bgTheme-4" class="bgThemeVideo hidden">
-								<video id="vidFrame-4" controls muted class="vidFrames" preload="metadata">
+								<video id="vidFrame-4" controls muted class="vidFrames"
+									preload="metadata">
 									<source
 										src="https://googledrive.com/host/0B5rjLGYHECZeUloxT2tSa0FjTm8"
 										type='video/mp4' />
@@ -549,7 +550,8 @@ Style Sheets
 							</div>
 
 							<div id="bgTheme-5" class="bgThemeVideo hidden">
-								<video id="vidFrame-5" controls muted class="vidFrames" preload="metadata">
+								<video id="vidFrame-5" controls muted class="vidFrames"
+									preload="metadata">
 									<source
 										src="https://googledrive.com/host/0B5rjLGYHECZebTgxWnh5RHRSWjA"
 										type='video/mp4' />
@@ -557,7 +559,8 @@ Style Sheets
 							</div>
 
 							<div id="bgTheme-6" class="bgThemeVideo hidden">
-								<video id="vidFrame-6" controls muted class="vidFrames" preload="metadata">
+								<video id="vidFrame-6" controls class="vidFrames" muted
+									preload="metadata">
 									<source
 										src="https://googledrive.com/host/0B5rjLGYHECZealViOGJTVzhSakU"
 										type='video/mp4' />

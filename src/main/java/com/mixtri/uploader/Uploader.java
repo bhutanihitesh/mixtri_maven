@@ -36,6 +36,7 @@ import org.apache.log4j.Logger;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataParam;
 
+import com.google.api.services.drive.Drive;
 import com.google.gson.Gson;
 import com.mixtri.DAO.MixtriDAO;
 import com.mixtri.utils.MixtriUtils;
@@ -51,6 +52,7 @@ public class Uploader{
 	static Logger log = Logger.getLogger(Uploader.class.getName());
 	static String UPLOAD_FILE_SERVER;
 	static Properties prop;
+	String PARENT_FOLDER_ID="0B_jU3ZFb1zpHQmFIMDNzc2dBRHM";
 
 	static{
 		try{
@@ -93,7 +95,7 @@ public class Uploader{
 		}
 
 	}
-	
+
 	public String uploadEventPic(
 			@FormDataParam("eventPic") InputStream fileInputStream,
 			@FormDataParam("eventPic") FormDataContentDisposition fileFormDataContentDisposition,
@@ -101,31 +103,31 @@ public class Uploader{
 		String fileName = "";
 		String uploadPath="";
 		try{
-		
-		uploadPath = UPLOAD_FILE_SERVER+prop.getProperty("EVENT_PICS")+emailId+"/";
-		boolean directoryCreated = createUserDirectory(uploadPath);
-		if(directoryCreated){
-			
-			fileName = fileFormDataContentDisposition.getFileName();
-			final String uuid = MixtriUtils.getUUID();
-			log.debug("Saving event pic: "+fileName+" as "+uuid);
-			
-			if(isProfilePic){
-			 fileName = "ProfilePic-"+uuid+".jpg";
-			}else{
-				fileName = uuid+".jpg";
+
+			uploadPath = UPLOAD_FILE_SERVER+prop.getProperty("EVENT_PICS")+emailId+"/";
+			boolean directoryCreated = createUserDirectory(uploadPath);
+			if(directoryCreated){
+
+				fileName = fileFormDataContentDisposition.getFileName();
+				final String uuid = MixtriUtils.getUUID();
+				log.debug("Saving event pic: "+fileName+" as "+uuid);
+
+				if(isProfilePic){
+					fileName = "ProfilePic-"+uuid+".jpg";
+				}else{
+					fileName = uuid+".jpg";
+				}
+				byte[] bytes = IOUtils.toByteArray(fileInputStream);
+				writeToFileServer(bytes, fileName,uploadPath);
+
 			}
-			byte[] bytes = IOUtils.toByteArray(fileInputStream);
-			writeToFileServer(bytes, fileName,uploadPath);
-			
-		}
 		}catch(Exception exp){
 			log.error("Exception Occured: "+exp);
 			return uploadPath+fileName;
 		}
 		return uploadPath+fileName;
 	}
-	
+
 	/**
 	 * This method upload the recorded mixes of the user to the server
 	 */
@@ -146,7 +148,60 @@ public class Uploader{
 		Map<String,String> messages = new HashMap<String,String>();
 		try {
 
-			String uploadPath = UPLOAD_FILE_SERVER+"audio"+"/"+emailId+"/tracks/";
+			/**************** Google Drive Changes Start****************/		
+			Drive googleDriveService = GoogleDriveUploader.getDriveService();
+
+			final String uuid = MixtriUtils.getUUID();
+
+			log.debug("Saving mp3 file: "+fileName+" as "+uuid);
+			fileName = uuid+".mp3";
+
+			byte[] bytes = IOUtils.toByteArray(fileInputStream); //We have converted this to bytes so that we can calculate the size of the file before saving
+
+			Response usedDiskSpace = getDiskSpace(emailId);
+			String objUsedSpace = usedDiskSpace.getEntity().toString();
+
+			double usedSpace = Double.valueOf(objUsedSpace);
+
+			String folderId=null;
+			/**
+			 * If folder space is 1024 that means nothing has been uploaded so create a new folder in google drive.
+			 */
+			if(usedSpace==1024){
+				
+				//PARENT_FOLDER_ID: This is id of uploads folder. In mixtri.live@gmail.com under MyDrive/Mixtri/uploads
+				folderId = GoogleDriveUploader.createGoogleDriveFolder(googleDriveService,PARENT_FOLDER_ID, emailId);
+				
+			}else{
+				
+				/********** GET FOLDER ID ************/
+			}
+
+			//Checks if the space is available in disk for the uploaded file else return insufficient space error	
+			if((usedSpace - bytes.length/1000000)>0){
+
+				GoogleDriveUploader.uploadToGoogleDrive(googleDriveService, fileName, mixTitle, folderId, "audio/mp3", bytes);
+				/*double spaceLeftBytes = writeToFileServer(bytes, fileName,uploadPath);
+				double spaceLeftMB = spaceLeftBytes/1000000;
+
+				UploaderBean uploaderBean = setUploaderBean(emailId,spaceLeftMB,uuid,title,uploadPath);
+				MixtriDAO mixtriDAO = new MixtriDAO();
+				mixtriDAO.saveUploadedMixDAO(uploaderBean);
+				messages.put("success", fileFormDataContentDisposition.getFileName()+" Uploaded Successfully!");
+				messages.put("id", uuid);
+				messages.put("path", uploadPath);
+				responseOk = gson.toJson(messages);*/
+				return Response.ok(responseOk, MediaType.APPLICATION_JSON).build();
+			}else{
+				messages.put("error","ERROR: Not enough free space to upload. Please delete some old files to free some space!");
+				responseOk = gson.toJson(messages);
+			}
+
+
+
+
+			/************Goolge Drive Changes Ends*********/
+			/*String uploadPath = UPLOAD_FILE_SERVER+"audio"+"/"+emailId+"/tracks/";
 			boolean directoryCreated = createUserDirectory(uploadPath);
 			if(directoryCreated){
 				fileName = mixTitle;
@@ -154,19 +209,19 @@ public class Uploader{
 				log.debug("Saving mp3 file: "+fileName+" as "+uuid);
 				String title = fileName; 
 				fileName = uuid+".mp3";
-				
+
 				byte[] bytes = IOUtils.toByteArray(fileInputStream); //We have converted this to bytes so that we can calculate the size of the file before saving
-				
+
 				Response usedDiskSpace = getDiskSpace(emailId);
 				String objUsedSpace = usedDiskSpace.getEntity().toString();
 				objUsedSpace = objUsedSpace.replace("\"", ""); //replaces double quotes from starting and ending of the String
 				double usedSpace = Double.valueOf(objUsedSpace);
 				//Checks if the space is available in disk for the uploaded file else return insufficient space error	
 				if((usedSpace - bytes.length/1000000)>0){
-					
+
 					double spaceLeftBytes = writeToFileServer(bytes, fileName,uploadPath);
 					double spaceLeftMB = spaceLeftBytes/1000000;
-					
+
 					UploaderBean uploaderBean = setUploaderBean(emailId,spaceLeftMB,uuid,title,uploadPath);
 					MixtriDAO mixtriDAO = new MixtriDAO();
 					mixtriDAO.saveUploadedMixDAO(uploaderBean);
@@ -179,7 +234,7 @@ public class Uploader{
 					messages.put("error","ERROR: Not enough free space to upload. Please delete some old files to free some space!");
 					responseOk = gson.toJson(messages);
 				}
-			}
+			}*/
 
 			return Response.ok(responseOk, MediaType.APPLICATION_JSON).build();
 		}
@@ -241,7 +296,7 @@ public class Uploader{
 
 		return fileSize;
 	}
-	
+
 	/**
 	 * This method return the free diskspace left for a user and gets called on liveStream.jsp document load
 	 * @param emailId
@@ -255,22 +310,18 @@ public class Uploader{
 
 		String spaceLeft="";
 		Gson gson = new Gson();
-		String uploadPath = UPLOAD_FILE_SERVER+"audio"+"/"+emailId+"/tracks/";
 		MixtriDAO mixtriDAO = new MixtriDAO();
 		try{
-			File file = new File(uploadPath);
-			if(file.exists()){
-				float userDiskSpace = mixtriDAO.getUsedDiskSpaceDAO(emailId);
-				int oneGB = 1024;
-				double diskSpaceLeft = oneGB - userDiskSpace;
-				spaceLeft = gson.toJson(String.format("%.2f", diskSpaceLeft)); //rounds off to first two decimals
-				return Response.ok(spaceLeft, MediaType.APPLICATION_JSON).build();
-			}
+			
+			float userDiskSpace = mixtriDAO.getUsedDiskSpaceDAO(emailId);
+			int oneGB = 1024;
+			double diskSpaceLeft = oneGB - userDiskSpace;
+			spaceLeft = gson.toJson(Float.parseFloat(String.format("%.2f", diskSpaceLeft)) ); //rounds off to first two decimals
 
-			spaceLeft = gson.toJson("1024");
 			return Response.ok(spaceLeft, MediaType.APPLICATION_JSON).build();
+
 		}catch(Exception exp){
-			log.error("Exception Occured while fetching disk space for the user:"+uploadPath);
+			//log.error("Exception Occured while fetching disk space for the user:"+uploadPath);
 			log.error("Exception Occured while fetching disk space for the user:"+exp);
 			Response.Status httpStatus = Response.Status.INTERNAL_SERVER_ERROR;
 			return Response.status(httpStatus).build() ;
@@ -293,18 +344,18 @@ public class Uploader{
 
 		return true;
 	}
-	
+
 	/**
 	 * This function gets the past uploaded mixes for a user and gets called on liveStream.jsp document load
 	 * @param emailId
 	 * @return
 	 */
-	
+
 	@GET
 	@Path("/pastmixes")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getPastMixes(@QueryParam("emailId") String emailId){
-		
+
 		String pastMixesOrgNames="";
 		Gson gson = new Gson();
 		String uploadPath = UPLOAD_FILE_SERVER+"audio"+"/"+emailId+"/tracks/";
@@ -312,52 +363,52 @@ public class Uploader{
 		Map<String,Object> mapUploadedTracks = new HashMap<String, Object>();
 		try{
 			File folder = new File(uploadPath);
-			
+
 			if(folder.exists()){
-				
+
 				MixtriDAO mixtriDAO = new MixtriDAO();
 				log.debug("Getting past track info for the user: "+emailId);
 				listUploadedTracks = mixtriDAO.getUserPastTracksInfoDAO(emailId);
 				mapUploadedTracks.put("listUploadedTracks", listUploadedTracks);
 				mapUploadedTracks.put("path", uploadPath);
 				pastMixesOrgNames = gson.toJson(mapUploadedTracks);
-				
+
 			}else{
 				mapUploadedTracks.put("", "");
 				pastMixesOrgNames = gson.toJson(mapUploadedTracks);
 			}
 		}catch(Exception exp){
-			
+
 			log.error("Exception Occured while retriving past mixes fro the user: "+exp);
 			return Response.serverError().build();
 		}
-		
+
 		return Response.ok(pastMixesOrgNames, MediaType.APPLICATION_JSON).build();
-		
+
 	}
-	
+
 	@POST
 	@Path("/deleteUploadedTrack")
 	public Response deleteUploadedTrack(@FormParam("uploadedSetId") String uploadedSetId){
-	try{
-		MixtriDAO mixtriDAO = new MixtriDAO();
-		/**
-		 * We are first Deleting the record from the DB because if we would have attempted the delete of the media file first and it was successful but there is an 
-		 * exception while deletion of record from the DB and this will show up on the UI as dead link. The other way round successful deletion from the DB but not physical
-		 * delete of the file would only cause the file to sit there in the hard drive consuming space but would not cause a dead link. 
-		 * 
-		 */
-		String trackPath = mixtriDAO.deleteUploadedTrackdDAO(uploadedSetId);
-		String fileToBeDeleted = trackPath+uploadedSetId+".mp3";
-		File file = new File(fileToBeDeleted);
-		MixtriUtils.delete(file);
-		
-		
-	}catch(Exception exp){
-		log.error("Error Occured while deleting a set: "+exp);
-		return Response.serverError().build();
-	}
+		try{
+			MixtriDAO mixtriDAO = new MixtriDAO();
+			/**
+			 * We are first Deleting the record from the DB because if we would have attempted the delete of the media file first and it was successful but there is an 
+			 * exception while deletion of record from the DB and this will show up on the UI as dead link. The other way round successful deletion from the DB but not physical
+			 * delete of the file would only cause the file to sit there in the hard drive consuming space but would not cause a dead link. 
+			 * 
+			 */
+			String trackPath = mixtriDAO.deleteUploadedTrackdDAO(uploadedSetId);
+			String fileToBeDeleted = trackPath+uploadedSetId+".mp3";
+			File file = new File(fileToBeDeleted);
+			MixtriUtils.delete(file);
+
+
+		}catch(Exception exp){
+			log.error("Error Occured while deleting a set: "+exp);
+			return Response.serverError().build();
+		}
 		return Response.ok().build();
 	}
-	
+
 }

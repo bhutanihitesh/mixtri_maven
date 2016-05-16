@@ -78,7 +78,7 @@ z-index: 9999;
 						</li>
 						<li><a href="livestream.jsp"><span class="fa fa-calendar"></span>
 								Live Stream!</a></li>
-						<li><a href="uploadmanager.jsp"><span class="fa fa-upload"></span> Upload</a></li>
+						<li><a href="#"><span class="fa fa-upload"></span> Upload</a></li>
 						<li>
 							<div class="dropdown">
 								<a data-target="#" data-toggle="dropdown" role="button"> <span
@@ -240,9 +240,9 @@ z-index: 9999;
 										src="assets/img/icons/facebookloginbutton.png" />
 									</div>
 									
-									<!-- <div class="fb-login-button" data-max-rows="1" data-size="large" data-show-faces="false" data-auto-logout-link="false"></div>
-									<br> -->
-									
+									<!-- <a href="#"> <img style="width: 35%"
+										src="assets/img/icons/facebookloginbutton.png" />
+									</a> -->
 									
 								</div>
 								

@@ -95,16 +95,45 @@
 			<version>2.6</version>
 		</dependency>
 
+		<dependency>
+			<groupId>com.google.apis</groupId>
+			<artifactId>google-api-services-drive</artifactId>
+			<version>v2-rev219-1.22.0</version>
+		</dependency>
+
+		<!-- http://mvnrepository.com/artifact/com.google.oauth-client/google-oauth-client-java6 -->
+		<dependency>
+			<groupId>com.google.oauth-client</groupId>
+			<artifactId>google-oauth-client-java6</artifactId>
+			<version>1.22.0</version>
+		</dependency>
+
+		<!-- http://mvnrepository.com/artifact/com.google.oauth-client/google-oauth-client-jetty -->
+		<dependency>
+			<groupId>com.google.oauth-client</groupId>
+			<artifactId>google-oauth-client-jetty</artifactId>
+			<version>1.22.0</version>
+		</dependency>
+		
+		<dependency>
+        <groupId>com.google.oauth-client</groupId>
+        <artifactId>google-oauth-client-jetty</artifactId>
+        <version>1.22.0</version>
+        <exclusions>
+            <exclusion>
+                <artifactId>servlet-api</artifactId>
+                <groupId>org.mortbay.jetty</groupId>
+            </exclusion>
+        </exclusions>
+    </dependency>
+
 
 	</dependencies>
 	<build>
 		<finalName>mixtri</finalName>
 
-		<!-- <resources>
-			<resource>
-				<directory>src/main/webapp</directory>
-			</resource>
-		</resources> -->
+		<!-- <resources> <resource> <directory>src/main/webapp</directory> </resource> 
+			</resources> -->
 
 		<!-- <sourceDirectory>src/main/</sourceDirectory> -->
 		<plugins>
@@ -113,8 +142,8 @@
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>3.0</version>
 				<configuration>
-					<source>1.7</source>
-					<target>1.7</target>
+					<source>1.8</source>
+					<target>1.8</target>
 				</configuration>
 			</plugin>
 			<plugin>
