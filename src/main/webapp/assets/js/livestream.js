@@ -1,6 +1,57 @@
 //Gloabal Variables
 
 $(document).ready(function() {
+	
+ /************* Google Drive Uplaod Code ****************/	
+	
+    /**
+     * Insert new file.
+     */
+    function uploadToGoogleDrive() {
+      const boundary = '-------314159265358979323846264';
+      const delimiter = "\r\n--" + boundary + "\r\n";
+      const close_delim = "\r\n--" + boundary + "--";
+      var appState = {
+        number: 12,
+        text: 'hello'
+      };
+      
+      var file = $('#mixUpload').get(0).files[0];
+		
+      var fileName = $('#mix-title').val();
+      var contentType = 'audio/mpeg';
+      var metadata = {
+        'title': fileName,
+        'mimeType': contentType,
+        'parents':[{"id":"0B_jU3ZFb1zpHa0hpQ3JYRlBEVGc"}]// It is one of my folder's id.
+      };
+      //var base64Data = btoa(JSON.stringify(appState));
+      var base64Data = btoa(file);
+      
+      var multipartRequestBody =
+          delimiter +
+          'Content-Type: application/json\r\n\r\n' +
+          JSON.stringify(metadata) +
+          delimiter +
+          'Content-Type: ' + contentType + '\r\n' +
+          'Content-Transfer-Encoding: base64\r\n' +
+          '\r\n' +
+          base64Data +
+          close_delim;
+      var request = gapi.client.request({
+          'path': '/upload/drive/v2/files',
+          'method': 'POST',
+          'params': {'uploadType': 'multipart'},
+          'headers': {
+            'Content-Type': 'multipart/mixed; boundary="' + boundary + '"'
+          },
+          'body': multipartRequestBody});
+      request.execute(function(arg) {
+        console.log(arg);
+      });
+    }
+    
+  /*********************************************************************/  
 
 	//Go Live and Test Stream buttons
 
@@ -63,7 +114,8 @@ $(document).ready(function() {
 		//var file = $('#mixUpload').get(0).files[0];
 		$('#selectedFileName').html('Selected File: '+file.name);
 
-	});	
+	});
+	
 
 	//Select Streaming option panels as buttons
 
@@ -446,9 +498,11 @@ $(document).ready(function() {
 
 		}
 
-		uploadNewMix();			
+		//uploadNewMix();
+		uploadToGoogleDrive();
 	});
 
+	
 	/**
 	   		Choose file button
 			This code uploads the file using ajax at client side and Jersey upload at the server side.

@@ -105,54 +105,10 @@
         * @param {Object} evt Arguments from the file selector.
         */
        function uploadFile(evt) {
-     	alert('Hello');
-         gapi.client.load('drive', 'v2', function() {
+     	gapi.client.load('drive', 'v2', function() {
            insertFile();
          });
        }
-        
-        function myCustomInsert(){
-        	
-        	var fileName = 'MyDemo.txt';
-            var contentType = 'application/json';
-        	var delimiter=',';
-        	var close_delim=';';
-        	const boundary = '-------314159265358979323846264';
-        	
-        	var metadata = {
-        			  'title': fileName,
-        			  'mimeType': contentType,
-        			  'parents':[{"id":"0B_jU3ZFb1zpHa0hpQ3JYRlBEVGc"}]// It is one of my folder's id.
-        			};
-
-        			var base64Data = btoa(JSON.stringify(metadata));
-        			var multipartRequestBody =
-        			    delimiter +
-        			    'Content-Type: application/json\r\n\r\n' +
-        			    JSON.stringify(metadata) +
-        			    delimiter +
-        			    'Content-Type: ' + contentType + '\r\n' +
-        			    'Content-Transfer-Encoding: base64\r\n' +
-        			    '\r\n' +
-        			    base64Data +
-        			    close_delim;
-
-        			var request = gapi.client.request({
-        			    'path': '/upload/drive/v2/files',
-        			    'method': 'POST',
-        			    'params': {'uploadType': 'multipart'},
-        			    'headers': {
-        			      'Content-Type': 'multipart/mixed; boundary="' + boundary + '"'
-        			    },
-        			    'body': multipartRequestBody});
-
-        			request.execute(function(arg) {
-        		           console.log(arg);
-        		         });
-        	
-        }
-        
-        
 
        /**
         * Insert new file.
@@ -203,17 +159,13 @@
                s = new gapi.drive.share.ShareClient();
                s.setItemIds(['0B_jU3ZFb1zpHa0hpQ3JYRlBEVGc']);
            }
-           /* window.onload = function() {
-               gapi.load('drive-share', init);
-           } */
-      
+           
     </script>
     <script src="https://apis.google.com/js/client.js?onload=checkAuth">
     </script>
   </head>
   <body>
-  
-  <button onclick="s.showSettingsDialog()">Share</button>
+ 
     <div id="authorize-div" style="display: none">
       <span>Authorize access to Drive API</span>
       Button for the user to click to initiate auth sequence
