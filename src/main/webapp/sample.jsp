@@ -1,79 +1,228 @@
-<!DOCTYPE html>
-<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
-<head>
-    <meta charset="utf-8" />
-    <title>Sample Testing page</title>
-    <!--=================================
-Style Sheets
-=================================-->
-<link href='http://fonts.googleapis.com/css?family=Oswald:400,700,300'
-	rel='stylesheet' type='text/css'>
-<link
-	href='http://fonts.googleapis.com/css?family=Roboto:400,400italic,700'
-	rel='stylesheet' type='text/css'>
-<link rel="stylesheet" type="text/css"
-	href="assets/css/bootstrap.min.css">
-<link rel="stylesheet" href="assets/css/font-awesome.min.css">
-<link rel="stylesheet" type="text/css" href="assets/css/flexslider.css">
-<link rel="stylesheet" type="text/css" href="assets/css/prettyPhoto.css">
-<link rel="stylesheet" type="text/css"
-	href="assets/css/jquery.vegas.css">
-<link rel="stylesheet" type="text/css"
-	href="assets/css/jquery.mCustomScrollbar.css">
-<link rel="stylesheet" href="assets/css/main.css">
-<link rel="stylesheet" href="http://ajax.aspnetcdn.com/ajax/jquery.ui/1.10.3/themes/flick/jquery-ui.css" />
+<html>
+  <head>
+    <script type="text/javascript">
+      // Your Client ID can be retrieved from your project in the Google
+      // Developer Console, https://console.developers.google.com
+      var CLIENT_ID = '676570655548-ou0hs4elvqvqh4m1gv8os4s186us4v5l.apps.googleusercontent.com';
 
+      //Changed scope from drive.metadata.readonly to drive.file
+      //var SCOPES = ['https://www.googleapis.com/auth/drive.metadata.readonly'];
+      
+       var SCOPES = ['https://www.googleapis.com/auth/drive.file'];
 
-<style type="text/css">
-.ui-menu .ui-menu-item a,.ui-menu .ui-menu-item a.ui-state-hover, .ui-menu .ui-menu-item a.ui-state-active {
-	font-weight: normal;
-	margin: -1px;
-	text-align:left;
-	font-size:14px;
-	}
-.ui-autocomplete-loading { background: white url("/images/ui-anim_basic_16x16.gif") right center no-repeat; }
-</style>
+      /**
+       * Check if current user has authorized this application.
+       */
+      function checkAuth() {
+          
+        gapi.auth.authorize(
+          {
+            'client_id': CLIENT_ID,
+            'scope': SCOPES.join(' '),
+            'immediate': true
+          }, handleAuthResult);
+       
+      }
 
-</head>
-<body>
- <%-- <div id="header">
-<%@include file="header.jsp" %>
-</div>  --%>  
- 
- <form id="loginform1" class="form-horizontal" role="form">
-<p><b>Please enter</b> your city here to see it work. <input class="form-control ff_elem" type="text" name="ff_nm_from[]" value="" id="f_elem_city"/>
-</form>
-    
-<script type="text/javascript">
- 
-jQuery(function () 
- {
-	 jQuery("#f_elem_city").autocomplete({
-		source: function (request, response) {
-		 jQuery.getJSON(
-			"http://gd.geobytes.com/AutoCompleteCity?callback=?&q="+request.term,
-			function (data) {
-			 response(data);
-			}
-		 );
-		},
-		minLength: 3,
-		select: function (event, ui) {
-		 var selectedObj = ui.item;
-		 jQuery("#f_elem_city").val(selectedObj.value);
-		getcitydetails(selectedObj.value);
-		 return false;
-		},
-		open: function () {
-		 jQuery(this).removeClass("ui-corner-all").addClass("ui-corner-top");
-		},
-		close: function () {
-		 jQuery(this).removeClass("ui-corner-top").addClass("ui-corner-all");
-		}
-	 });
-	 jQuery("#f_elem_city").autocomplete("option", "delay", 100);
-	});
-</script>
+      /**
+       * Handle response from authorization server.
+       *
+       * @param {Object} authResult Authorization result.
+       */
+      function handleAuthResult(authResult) {
+        var authorizeDiv = document.getElementById('authorize-div');
+        if (authResult && !authResult.error) {
+          // Hide auth UI, then load client library.
+          authorizeDiv.style.display = 'none';
+          loadDriveApi();
+        } else {
+          // Show auth UI, allowing the user to initiate authorization by
+          // clicking authorize button.
+          authorizeDiv.style.display = 'inline';
+        }
+      }
 
-</body>
+      /**
+       * Initiate auth flow in response to user clicking authorize button.
+       *
+       * @param {Event} event Button click event.
+       */
+      function handleAuthClick(event) {
+        gapi.auth.authorize(
+          {client_id: CLIENT_ID, scope: SCOPES, immediate: false},
+          handleAuthResult);
+        return false;
+      }
+
+      /**
+       * Load Drive API client library.
+       */
+      function loadDriveApi() {
+       gapi.client.load('drive', 'v3', insertFile);
+        //gapi.client.load('drive','v3',myCustomInsert);
+        //gapi.load('drive-share', init);
+      }
+
+      /**
+       * Print files.
+       */
+      function listFiles() {
+        var request = gapi.client.drive.files.list({
+            'pageSize': 10,
+            'fields': "nextPageToken, files(id, name)"
+          });
+
+          request.execute(function(resp) {
+            appendPre('Files:');
+            var files = resp.files;
+            if (files && files.length > 0) {
+              for (var i = 0; i < files.length; i++) {
+                var file = files[i];
+                appendPre(file.name + ' (' + file.id + ')');
+              }
+            } else {
+              appendPre('No files found.');
+            }
+          });
+      }
+
+      /**
+       * Append a pre element to the body containing the given message
+       * as its text node.
+       *
+       * @param {string} message Text to be placed in pre element.
+       */
+      function appendPre(message) {
+        var pre = document.getElementById('output');
+        var textContent = document.createTextNode(message + '\n');
+        pre.appendChild(textContent);
+      }
+       
+       
+       /**
+        * Start the file upload.
+        *
+        * @param {Object} evt Arguments from the file selector.
+        */
+       function uploadFile(evt) {
+     	alert('Hello');
+         gapi.client.load('drive', 'v2', function() {
+           insertFile();
+         });
+       }
+        
+        function myCustomInsert(){
+        	
+        	var fileName = 'MyDemo.txt';
+            var contentType = 'application/json';
+        	var delimiter=',';
+        	var close_delim=';';
+        	const boundary = '-------314159265358979323846264';
+        	
+        	var metadata = {
+        			  'title': fileName,
+        			  'mimeType': contentType,
+        			  'parents':[{"id":"0B_jU3ZFb1zpHa0hpQ3JYRlBEVGc"}]// It is one of my folder's id.
+        			};
+
+        			var base64Data = btoa(JSON.stringify(metadata));
+        			var multipartRequestBody =
+        			    delimiter +
+        			    'Content-Type: application/json\r\n\r\n' +
+        			    JSON.stringify(metadata) +
+        			    delimiter +
+        			    'Content-Type: ' + contentType + '\r\n' +
+        			    'Content-Transfer-Encoding: base64\r\n' +
+        			    '\r\n' +
+        			    base64Data +
+        			    close_delim;
+
+        			var request = gapi.client.request({
+        			    'path': '/upload/drive/v2/files',
+        			    'method': 'POST',
+        			    'params': {'uploadType': 'multipart'},
+        			    'headers': {
+        			      'Content-Type': 'multipart/mixed; boundary="' + boundary + '"'
+        			    },
+        			    'body': multipartRequestBody});
+
+        			request.execute(function(arg) {
+        		           console.log(arg);
+        		         });
+        	
+        }
+        
+        
+
+       /**
+        * Insert new file.
+        */
+       function insertFile() {
+         const boundary = '-------314159265358979323846264';
+         const delimiter = "\r\n--" + boundary + "\r\n";
+         const close_delim = "\r\n--" + boundary + "--";
+         var appState = {
+           number: 12,
+           text: 'hello'
+         };
+         var fileName = 'Meri_File_2.txt';
+         var contentType = 'application/json';
+         var metadata = {
+           'title': fileName,
+           'mimeType': contentType,
+           'parents':[{"id":"0B_jU3ZFb1zpHa0hpQ3JYRlBEVGc"}]// It is one of my folder's id.
+         };
+         var base64Data = btoa(JSON.stringify(appState));
+         var multipartRequestBody =
+             delimiter +
+             'Content-Type: application/json\r\n\r\n' +
+             JSON.stringify(metadata) +
+             delimiter +
+             'Content-Type: ' + contentType + '\r\n' +
+             'Content-Transfer-Encoding: base64\r\n' +
+             '\r\n' +
+             base64Data +
+             close_delim;
+         var request = gapi.client.request({
+             'path': '/upload/drive/v2/files',
+             'method': 'POST',
+             'params': {'uploadType': 'multipart'},
+             'headers': {
+               'Content-Type': 'multipart/mixed; boundary="' + boundary + '"'
+             },
+             'body': multipartRequestBody});
+         request.execute(function(arg) {
+           console.log(arg);
+         });
+       }
+       
+       
+      
+      
+           init = function() {
+               s = new gapi.drive.share.ShareClient();
+               s.setItemIds(['0B_jU3ZFb1zpHa0hpQ3JYRlBEVGc']);
+           }
+           /* window.onload = function() {
+               gapi.load('drive-share', init);
+           } */
+      
+    </script>
+    <script src="https://apis.google.com/js/client.js?onload=checkAuth">
+    </script>
+  </head>
+  <body>
+  
+  <button onclick="s.showSettingsDialog()">Share</button>
+    <div id="authorize-div" style="display: none">
+      <span>Authorize access to Drive API</span>
+      Button for the user to click to initiate auth sequence
+      <button id="authorize-button" onclick="handleAuthClick(event)">
+        Authorize
+      </button>
+    </div>
+    <pre id="output"></pre>
+    <h1>Print this...</h1>
+      <input type="file" id="filePicker"/>
+  </body>
 </html>
