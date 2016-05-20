@@ -1,57 +1,41 @@
 //Gloabal Variables
 
 $(document).ready(function() {
-	
- /************* Google Drive Uplaod Code ****************/	
-	
-    /**
-     * Insert new file.
-     */
-    function uploadToGoogleDrive() {
-      const boundary = '-------314159265358979323846264';
-      const delimiter = "\r\n--" + boundary + "\r\n";
-      const close_delim = "\r\n--" + boundary + "--";
-      var appState = {
-        number: 12,
-        text: 'hello'
-      };
-      
-      var file = $('#mixUpload').get(0).files[0];
-		
-      var fileName = $('#mix-title').val();
-      var contentType = 'audio/mpeg';
-      var metadata = {
-        'title': fileName,
-        'mimeType': contentType,
-        'parents':[{"id":"0B_jU3ZFb1zpHa0hpQ3JYRlBEVGc"}]// It is one of my folder's id.
-      };
-      //var base64Data = btoa(JSON.stringify(appState));
-      var base64Data = btoa(file);
-      
-      var multipartRequestBody =
-          delimiter +
-          'Content-Type: application/json\r\n\r\n' +
-          JSON.stringify(metadata) +
-          delimiter +
-          'Content-Type: ' + contentType + '\r\n' +
-          'Content-Transfer-Encoding: base64\r\n' +
-          '\r\n' +
-          base64Data +
-          close_delim;
-      var request = gapi.client.request({
-          'path': '/upload/drive/v2/files',
-          'method': 'POST',
-          'params': {'uploadType': 'multipart'},
-          'headers': {
-            'Content-Type': 'multipart/mixed; boundary="' + boundary + '"'
-          },
-          'body': multipartRequestBody});
-      request.execute(function(arg) {
-        console.log(arg);
-      });
-    }
-    
-  /*********************************************************************/  
+
+	/************* Google Drive Uplaod Code ****************/	
+
+	/**
+	 * Insert new file.
+	 */
+	/* function uploadToGoogleDrive() {
+
+		var metadata = {
+		        'title': fileName,
+		        'mimeType':' application/json',
+		        'parents':[{"id":"0B_jU3ZFb1zpHa0hpQ3JYRlBEVGc"}]// It is one of my folder's id.
+		  };
+
+		 var fileMetaData = JSON.stringify(metadata);
+
+    	 var request = gapi.client.request({
+             'path': '/upload/drive/v3/files?uploadType=resumable',
+             'method': 'POST',
+             'params': {'uploadType': 'multipart'},
+             'headers': {
+               'X-Upload-Content-Type': 'audio/mpeg',
+               'X-Upload-Content-Length': file.size,
+               'Content-Type': 'application/json; charset=UTF-8',
+               'Content-Length': fileMetaData.length
+             },
+             'body': fileMetaData});
+
+    	 console.log('Here is the request: '+request);
+
+		insertFile(file,callbackAfterUpload);
+    }*/
+
+
+	/*********************************************************************/  
 
 	//Go Live and Test Stream buttons
 
@@ -115,7 +99,7 @@ $(document).ready(function() {
 		$('#selectedFileName').html('Selected File: '+file.name);
 
 	});
-	
+
 
 	//Select Streaming option panels as buttons
 
@@ -501,8 +485,153 @@ $(document).ready(function() {
 		//uploadNewMix();
 		uploadToGoogleDrive();
 	});
-
 	
+	function createFolder() {
+
+		   var access_token = googleAuth.getAccessToken();
+
+		   var request = gapi.client.request({
+		       'path': '/drive/v2/files/',
+		       'method': 'POST',
+		       'headers': {
+		           'Content-Type': 'application/json',
+		           'Authorization': 'Bearer ' + access_token,             
+		       },
+		       'body':{
+		           "title" : "Folder",
+		           "mimeType" : "application/vnd.google-apps.folder",
+		       }
+		   });
+
+		   request.execute(function(resp) { 
+		       console.log(resp); 
+		       document.getElementById("info").innerHTML = "Created folder: " + resp.title;
+		   });
+	}
+	
+	function generateUUID() {
+	    var d = new Date().getTime();
+	    var uuid = 'xxxxxxxxxxxx4xxxyxxxxxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+	        var r = (d + Math.random()*16)%16 | 0;
+	        d = Math.floor(d/16);
+	        return (c=='x' ? r : (r&0x3|0x8)).toString(16);
+	    });
+	    return uuid;
+	};
+
+	function uploadToGoogleDrive() {
+
+		var isFileValid = validateUploadedFile();
+
+		if(isFileValid){
+
+			var fileData = $('#mixUpload').get(0).files[0];
+			var fileName = $('#mix-title').val()+'.mp3';
+			
+			$.blockUI({ message: '<h5><img src="assets/img/icons/busy.gif" /> Do a little dance your music is being uploaded...</h5>' });
+
+			const boundary = '-------314159265358979323846';
+			const delimiter = "\r\n--" + boundary + "\r\n";
+			const close_delim = "\r\n--" + boundary + "--";
+
+			var reader = new FileReader();
+			reader.readAsBinaryString(fileData);
+			reader.onload = function(e) {
+				var contentType = fileData.type || 'application/octet-stream';
+				var metadata = {
+						'title': fileData.name,
+						'mimeType': contentType,
+						'parents': [{
+						    "kind": "drive#fileLink",
+						    "id": "0B_jU3ZFb1zpHa0hpQ3JYRlBEVGc"
+						  }]
+				};
+
+				var base64Data = btoa(reader.result);
+				var multipartRequestBody =
+					delimiter +
+					'Content-Type: application/json\r\n\r\n' +
+					JSON.stringify(metadata) +
+					delimiter +
+					'Content-Type: ' + contentType + '\r\n' +
+					'Content-Transfer-Encoding: base64\r\n' +
+					'\r\n' +
+					base64Data +
+					close_delim;
+
+				var request = gapi.client.request({
+					'path': '/upload/drive/v2/files',
+					'method': 'POST',
+					'params': {'uploadType': 'multipart'},
+					'headers': {
+						'Content-Type': 'multipart/mixed; boundary="' + boundary + '"'
+					},
+					'body': multipartRequestBody});
+				
+				if (!callbackAfterUpload) {
+					callbackAfterUpload = function() {
+					};
+				}
+				
+				//Should be returned by the request
+				var uploadedFilePath='https://googledrive.com/host/0B_jU3ZFb1zpHRkNQYzRjQ0ljdVU';
+				request.execute(callbackAfterUpload(uploadedFilePath));
+			}
+		} 
+	}
+
+	function validateUploadedFile(){
+
+		var file = $('#mixUpload').get(0).files[0];
+		var mixTitle = $('#mix-title').val();
+
+		if(file.size>140000000){
+
+			$('#maxFileSizeError').html('Please upload file less than 140 MB.');
+			$('#maxFileSizeError').show();
+			$('#maxFileSizeError').delay(4000).fadeOut();
+			return false;
+
+		}
+
+		if(file.type=='audio/mp3' || file.type=='audio/mpeg'){
+
+		}else{
+
+			$('#invalid-mp3-file').html('Please upload only mp3 files.');
+			$('#invalid-mp3-file').show();
+			$('#invalid-mp3-file').delay(4000).fadeOut();
+
+			return false;
+
+		}
+
+		return true;
+
+	}
+
+	function callbackAfterUpload(uploadedTrackPath){
+		
+		$.unblockUI();
+		
+		//Generates a random track id
+		var UUID = generateUUID();
+		
+		//Update Database with the entry
+		
+		var alreadySelectedMix = $('.pastMix');
+		var mixTitle = $('#mix-title').val();
+
+		if(alreadySelectedMix.length>0){
+			alreadySelectedMix.removeClass('pastMix selected');
+			alreadySelectedMix.addClass('audioControls');
+		}
+
+		pastUploadedTracks(UUID,mixTitle,uploadedTrackPath,"pastMix selected","Selected Mix: "+mixTitle);
+	}
+
+
+
 	/**
 	   		Choose file button
 			This code uploads the file using ajax at client side and Jersey upload at the server side.
@@ -635,7 +764,8 @@ $(document).ready(function() {
 		html+='<div id="pastMix-'+uploadedTrackId+'" class="'+divClass+'">';
 		html+='<div>'+trackName+'</div>';
 		html+='<audio controls preload="metadata">';
-		html+='<source src="'+uploadedTrackPath+uploadedTrackId+".mp3"+'" type="audio/mpeg">';
+		//html+='<source src="'+uploadedTrackPath+uploadedTrackId+".mp3"+'" type="audio/mpeg">';
+		html+='<source src="'+uploadedTrackPath+'" type="audio/mpeg">';
 		html+='</audio>';
 		html+='</div>';
 		$('#uploaded-past-mixes').prepend(html);

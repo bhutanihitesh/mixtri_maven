@@ -562,7 +562,7 @@ function loadDriveApi() {
 								<video id="vidFrame-1" controls muted controls="controls"
 									class="vidFrames" preload="metadata">
 									<source
-										src="https://drive.google.com/uc?export=download&id=0B5rjLGYHECZeOTBBTnFBNUJKeWM"
+										src="https://googledrive.com/host/0B5rjLGYHECZeOTBBTnFBNUJKeWM"
 										type='video/mp4' />
 								</video>
 
@@ -648,6 +648,7 @@ function loadDriveApi() {
 			<%@include file="footer.jsp"%>
 		</footer>
 		<script src="https://apis.google.com/js/client.js?onload=checkAuth"></script>
+		<script type="text/javascript" src="assets/js/jquery.blockUI.js"></script>
 		<script type="text/javascript" src="assets/js/livestream.js"></script>
 	<script>	
 		/*Place Your Google Analytics code here*/

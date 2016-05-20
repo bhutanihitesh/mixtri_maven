@@ -403,6 +403,7 @@ z-index: 9999;
 
 	<script async src="assets/js/modernizr-2.6.2-respond-1.1.0.min.js"></script>
 	<script src="assets/js/jquery-1.11.1.min.js"></script>
+	<!-- <script src="https://code.jquery.com/jquery-2.2.3.min.js"></script> -->
 	<!-- <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script> -->
 	<script defer src="assets/js/ajaxify.min.js"></script>
 	<script defer src="assets/js/bootstrap.min.js"></script>
