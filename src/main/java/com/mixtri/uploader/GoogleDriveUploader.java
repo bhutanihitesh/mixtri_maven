@@ -1,4 +1,4 @@
-package com.mixtri.uploader;
+/*package com.mixtri.uploader;
 
 import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.client.extensions.java6.auth.oauth2.AuthorizationCodeInstalledApp;
@@ -10,9 +10,7 @@ import com.google.api.client.http.HttpTransport;
 import com.google.api.client.http.InputStreamContent;
 import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.client.json.JsonFactory;
-import com.google.api.client.util.IOUtils;
 import com.google.api.client.util.store.FileDataStoreFactory;
-import com.google.api.services.drive.Drive.Files;
 import com.google.api.services.drive.Drive.Files.Get;
 import com.google.api.services.drive.DriveScopes;
 import com.google.api.services.drive.model.*;
@@ -26,34 +24,40 @@ import java.io.InputStreamReader;
 import java.util.Arrays;
 import java.util.List;
 
-import com.google.api.client.http.FileContent;
 import com.google.api.services.drive.model.File;
 import com.google.api.services.drive.model.ParentReference;
 
+*//****
+ * 
+ * @author Hitesh
+ * We are not using this class but we have just kept this class for reference purposes how to upload to google drive through java
+ *
+ *//*
+
 public class GoogleDriveUploader {
-    /** Application name. */
+    *//** Application name. *//*
     private static final String APPLICATION_NAME =
         "Drive API Java Quickstart";
 
-    /** Directory to store user credentials for this application. */
+    *//** Directory to store user credentials for this application. *//*
     private static final java.io.File DATA_STORE_DIR = new java.io.File(
         System.getProperty("user.home"), ".credentials/drive-java-quickstart.json");
 
-    /** Global instance of the {@link FileDataStoreFactory}. */
+    *//** Global instance of the {@link FileDataStoreFactory}. *//*
     private static FileDataStoreFactory DATA_STORE_FACTORY;
 
-    /** Global instance of the JSON factory. */
+    *//** Global instance of the JSON factory. *//*
     private static final JsonFactory JSON_FACTORY =
         JacksonFactory.getDefaultInstance();
 
-    /** Global instance of the HTTP transport. */
+    *//** Global instance of the HTTP transport. *//*
     private static HttpTransport HTTP_TRANSPORT;
 
-    /** Global instance of the scopes required by this quickstart.
+    *//** Global instance of the scopes required by this quickstart.
      *
      * If modifying these scopes, delete your previously saved credentials
      * at ~/.credentials/drive-java-quickstart.json
-     */
+     *//*
     private static final List<String> SCOPES =
         Arrays.asList(DriveScopes.DRIVE_FILE);
 
@@ -67,11 +71,11 @@ public class GoogleDriveUploader {
         }
     }
 
-    /**
+    *//**
      * Creates an authorized Credential object.
      * @return an authorized Credential object.
      * @throws IOException
-     */
+     *//*
     public static Credential authorize() throws IOException {
         // Load client secrets.
     	
@@ -96,11 +100,11 @@ public class GoogleDriveUploader {
         return credential;
     }
 
-    /**
+    *//**
      * Build and return an authorized Drive client service.
      * @return an authorized Drive client service
      * @throws IOException
-     */
+     *//*
     public static Drive getDriveService() throws IOException {
         Credential credential = authorize();
         return new Drive.Builder(
@@ -110,7 +114,7 @@ public class GoogleDriveUploader {
     }
     
     
-    /**
+    *//**
      * Insert new file.
      *
      * @param service Drive API service instance.
@@ -120,7 +124,7 @@ public class GoogleDriveUploader {
      * @param mimeType MIME type of the file to insert.
      * @param filename Filename of the file to insert.
      * @return Inserted file metadata if successful, {@code null} otherwise.
-     */
+     *//*
    
     
     protected static File uploadToGoogleDrive(Drive service, String fileName, String description,
@@ -151,13 +155,13 @@ public class GoogleDriveUploader {
           }
         }
 
-    /**
+    *//**
      * 
      * @param service: Google Drive Service
      * @param parentId: id of the parent folder already created in mixtri.live@gmail.com google account. The name of parent folder is upload
      * @return
      * @throws IOException
-     */
+     *//*
     
     public static String createGoogleDriveFolder(Drive service,String parentId,String folderToBeCreated) throws IOException{
     	
@@ -180,7 +184,7 @@ public class GoogleDriveUploader {
     }
    
     
-    /*protected static File insertFile(Drive service, String title, String description,
+    protected static File insertFile(Drive service, String title, String description,
             String parentId, String mimeType, String filename) {
           // File's metadata.
           File body = new File();
@@ -211,7 +215,7 @@ public class GoogleDriveUploader {
             System.out.println("An error occured: " + e);
             return null;
           }
-        }*/
+        }
     
     public static void main(String[] args) throws IOException {
         // Build a new authorized API client service.
@@ -243,7 +247,7 @@ public class GoogleDriveUploader {
        
     }
     
-    /*public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException {
         // Build a new authorized API client service.
         Drive service = getDriveService();
         
@@ -265,6 +269,7 @@ public class GoogleDriveUploader {
             }
         }
        
-    }*/
+    }
 
 }
+*/

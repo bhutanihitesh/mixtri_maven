@@ -102,7 +102,7 @@ public class UploaderDB {
 	public List<Map<String,String>> getTracksInfo(String emailId) throws Exception{
 
 
-		String query = "SELECT ID,AUDIOTITLE FROM mixtri.archivedmixes WHERE type='upload' AND EMAILID=? order by dateUploaded asc";
+		String query = "SELECT ID,AUDIOTITLE,audioSrc FROM mixtri.archivedmixes WHERE type='upload' AND EMAILID=? order by dateUploaded asc";
 		List<Map<String,String>> listUploadedTracks = new ArrayList<Map<String,String>>();
 		ResultSet rs =null;
 		try{
@@ -118,8 +118,10 @@ public class UploaderDB {
 				Map<String,String> mapOrgNames = new HashMap<String,String>();
 				String id = rs.getString("id");
 				String audioTitle = rs.getString("audioTitle");
+				String audioSrc = rs.getString("audioSrc");
 				mapOrgNames.put("id",id);
 				mapOrgNames.put("audioTitle",audioTitle);
+				mapOrgNames.put("audioSrc",audioSrc);
 				listUploadedTracks.add(mapOrgNames);
 			}
 
@@ -154,6 +156,8 @@ public class UploaderDB {
 			if(rs.next()){
 
 				usedDiskSpace= rs.getFloat("USED_DISK_SPACE");
+				//Space in MB used by the DJ
+				usedDiskSpace = usedDiskSpace/1000000;
 			}
 
 		}finally

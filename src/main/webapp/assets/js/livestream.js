@@ -2,41 +2,6 @@
 
 $(document).ready(function() {
 
-	/************* Google Drive Uplaod Code ****************/	
-
-	/**
-	 * Insert new file.
-	 */
-	/* function uploadToGoogleDrive() {
-
-		var metadata = {
-		        'title': fileName,
-		        'mimeType':' application/json',
-		        'parents':[{"id":"0B_jU3ZFb1zpHa0hpQ3JYRlBEVGc"}]// It is one of my folder's id.
-		  };
-
-		 var fileMetaData = JSON.stringify(metadata);
-
-    	 var request = gapi.client.request({
-             'path': '/upload/drive/v3/files?uploadType=resumable',
-             'method': 'POST',
-             'params': {'uploadType': 'multipart'},
-             'headers': {
-               'X-Upload-Content-Type': 'audio/mpeg',
-               'X-Upload-Content-Length': file.size,
-               'Content-Type': 'application/json; charset=UTF-8',
-               'Content-Length': fileMetaData.length
-             },
-             'body': fileMetaData});
-
-    	 console.log('Here is the request: '+request);
-
-		insertFile(file,callbackAfterUpload);
-    }*/
-
-
-	/*********************************************************************/  
-
 	//Go Live and Test Stream buttons
 
 	$('#testStream').click(function(e){
@@ -485,38 +450,38 @@ $(document).ready(function() {
 		//uploadNewMix();
 		uploadToGoogleDrive();
 	});
-	
+
 	function createFolder() {
 
-		   var access_token = googleAuth.getAccessToken();
+		var access_token = googleAuth.getAccessToken();
 
-		   var request = gapi.client.request({
-		       'path': '/drive/v2/files/',
-		       'method': 'POST',
-		       'headers': {
-		           'Content-Type': 'application/json',
-		           'Authorization': 'Bearer ' + access_token,             
-		       },
-		       'body':{
-		           "title" : "Folder",
-		           "mimeType" : "application/vnd.google-apps.folder",
-		       }
-		   });
+		var request = gapi.client.request({
+			'path': '/drive/v2/files/',
+			'method': 'POST',
+			'headers': {
+				'Content-Type': 'application/json',
+				'Authorization': 'Bearer ' + access_token,             
+			},
+			'body':{
+				"title" : "Folder",
+				"mimeType" : "application/vnd.google-apps.folder",
+			}
+		});
 
-		   request.execute(function(resp) { 
-		       console.log(resp); 
-		       document.getElementById("info").innerHTML = "Created folder: " + resp.title;
-		   });
+		request.execute(function(resp) { 
+			console.log(resp); 
+			document.getElementById("info").innerHTML = "Created folder: " + resp.title;
+		});
 	}
-	
+
 	function generateUUID() {
-	    var d = new Date().getTime();
-	    var uuid = 'xxxxxxxxxxxx4xxxyxxxxxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-	        var r = (d + Math.random()*16)%16 | 0;
-	        d = Math.floor(d/16);
-	        return (c=='x' ? r : (r&0x3|0x8)).toString(16);
-	    });
-	    return uuid;
+		var d = new Date().getTime();
+		var uuid = 'xxxxxxxxxxxx4xxxyxxxxxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+			var r = (d + Math.random()*16)%16 | 0;
+			d = Math.floor(d/16);
+			return (c=='x' ? r : (r&0x3|0x8)).toString(16);
+		});
+		return uuid;
 	};
 
 	function uploadToGoogleDrive() {
@@ -527,7 +492,7 @@ $(document).ready(function() {
 
 			var fileData = $('#mixUpload').get(0).files[0];
 			var fileName = $('#mix-title').val()+'.mp3';
-			
+
 			$.blockUI({ message: '<h5><img src="assets/img/icons/busy.gif" /> Do a little dance your music is being uploaded...</h5>' });
 
 			const boundary = '-------314159265358979323846';
@@ -542,9 +507,9 @@ $(document).ready(function() {
 						'title': fileData.name,
 						'mimeType': contentType,
 						'parents': [{
-						    "kind": "drive#fileLink",
-						    "id": "0B_jU3ZFb1zpHa0hpQ3JYRlBEVGc"
-						  }]
+							"kind": "drive#fileLink",
+							"id": "0B_jU3ZFb1zpHa0hpQ3JYRlBEVGc"
+						}]
 				};
 
 				var base64Data = btoa(reader.result);
@@ -567,15 +532,19 @@ $(document).ready(function() {
 						'Content-Type': 'multipart/mixed; boundary="' + boundary + '"'
 					},
 					'body': multipartRequestBody});
-				
+
 				if (!callbackAfterUpload) {
 					callbackAfterUpload = function() {
 					};
 				}
-				
+
 				//Should be returned by the request
-				var uploadedFilePath='https://googledrive.com/host/0B_jU3ZFb1zpHRkNQYzRjQ0ljdVU';
-				request.execute(callbackAfterUpload(uploadedFilePath));
+				
+				request.execute(function(jsonResp,rawResp){
+					
+					callbackAfterUpload(jsonResp,rawResp);
+					
+				});
 			}
 		} 
 	}
@@ -610,133 +579,67 @@ $(document).ready(function() {
 
 	}
 
-	function callbackAfterUpload(uploadedTrackPath){
-		
+	function callbackAfterUpload(jsonResp,rawResp){
+
 		$.unblockUI();
 		
-		//Generates a random track id
-		var UUID = generateUUID();
+		var status = ($.parseJSON(rawResp)).gapiRequest.data.status;
 		
-		//Update Database with the entry
-		
-		var alreadySelectedMix = $('.pastMix');
-		var mixTitle = $('#mix-title').val();
+		//This means that the file has been uploaded on the google drive
+		if(status===200){
+			//Generates a random track id
+			var uuid = generateUUID();
 
-		if(alreadySelectedMix.length>0){
-			alreadySelectedMix.removeClass('pastMix selected');
-			alreadySelectedMix.addClass('audioControls');
-		}
-
-		pastUploadedTracks(UUID,mixTitle,uploadedTrackPath,"pastMix selected","Selected Mix: "+mixTitle);
-	}
-
-
-
-	/**
-	   		Choose file button
-			This code uploads the file using ajax at client side and Jersey upload at the server side.
-	 **/
-	function uploadNewMix(){
-
-		//Clear any validation errors if any
-		var file = $('#mixUpload').get(0).files[0];
-		var mixTitle = $('#mix-title').val();
-		var data = new FormData();
-		data.append('mixUpload', file);
-		data.append('emailId', $.cookie("emailId"));
-		data.append('mixTitle',mixTitle);
-		if(file.size>140000000){
-
-			$('#maxFileSizeError').html('Please upload file less than 140 MB.');
-			$('#maxFileSizeError').show();
-			$('#maxFileSizeError').delay(4000).fadeOut();
-			return false;
-
-		}
-
-		if(file.type=='audio/mp3' || file.type=='audio/mpeg'){
+			//On Successfully saving the song to google drive save the uploaded song's details on the data with an Ajax Call
+			
+			var mixTitle = $('#mix-title').val();
+			var uploadedFileId = jsonResp.id;
+			var uploadPath = 'https://googledrive.com/host/'+jsonResp.id
+			var fileName = jsonResp.originalFilename;
+			var fileSize = jsonResp.fileSize;
+			
+			saveSongDetails(uuid,mixTitle,uploadPath,fileName,fileSize);
 
 		}else{
 
-			$('#invalid-mp3-file').html('Please upload only mp3 files.');
-			$('#invalid-mp3-file').show();
-			$('#invalid-mp3-file').delay(4000).fadeOut();
-
-			return false;
-
-		}
-
-		/*if(file.type!='audio/mp3' || file.type!='audio/mpeg'){
-			$('#invalid-mp3-file').html('Please upload only mp3 files.');
-			$('#invalid-mp3-file').show();
-			$('#invalid-mp3-file').delay(4000).fadeOut();
-
-			return false;
-		}*/
+			window.location.href = "error.jsp";
+		}	
+	}
 
 
+	function saveSongDetails(uuid,mixTitle,uploadPath,fileName,fileSize){
+		
 		$.ajax({
-
+			url: '/mixtri/rest/saveSongDetails',
 			type: 'POST',
-			url: '/mixtri/rest/upload',
-			data: data,
-			contentType: false,
-			processData: false,
+			data: {
+				uuid: uuid,
+				emailId: $.cookie("emailId"),
+				mixTitle: mixTitle,
+				uploadPath: uploadPath,
+				fileName:fileName,
+				fileSize:fileSize
+
+			},
 			dataType: 'json',
 
-			xhr: function() {
-				var xhr = $.ajaxSettings.xhr();	
+			success: function (data) {
+				
+				//These are the global variables containing id/path for the recently uploaded track.
+				var uploadedTrackPath = data.path;
+				
+				var alreadySelectedMix = $('.pastMix');
+				var mixTitle = $('#mix-title').val();
 
-				if(xhr.upload){
-					xhr.upload.addEventListener('progress', function(evt) {
-						var percent = (evt.loaded / evt.total) * 100;
-						$('#progress-bar').width(String(percent)+'%');
-						$('#progress-percent').html(percent+'%');
-					}, false);
+				if(alreadySelectedMix.length>0){
+					alreadySelectedMix.removeClass('pastMix selected');
+					alreadySelectedMix.addClass('audioControls');
 				}
 
+				pastUploadedTracks(uuid,mixTitle,uploadedTrackPath,"pastMix selected","Selected Mix: "+mixTitle);
 
-				return xhr;
-
-			},
-
-			success: function (data,status) {
-				if(data.success!=null){
-					//$('#progress-bar').load(document.URL +  ' #progress-bar');
-					$('#progress-percent').css('color',"graytext");
-					$('#progress-percent').html(data.success);
-					$('#progress-bar-percent').delay(5000).fadeOut();
-					//These are the global variables containing id/path for the recently uploaded track.
-					var uploadedTrackId = data.id;
-					var uploadedTrackPath = data.path;
-
-					//Remove Already Selected past mix if any after user uploaded a new mix.
-					var alreadySelectedMix = $('.pastMix');
-
-					if(alreadySelectedMix.length>0){
-						alreadySelectedMix.removeClass('pastMix selected');
-						alreadySelectedMix.addClass('audioControls');
-					}
-
-					pastUploadedTracks(uploadedTrackId,$('#mix-title').val(),uploadedTrackPath,"pastMix selected","Selected Mix: "+mixTitle);
-
-					//On Success Increase the disk-space bar size
-
-					getDiskSpace();
-
-				}else if(data.error!=null){
-					$('#progress-bar').width('0%');
-					$('#progress-percent').css('color',"red");
-					$('#progress-percent').html(data.error);
-					$('#progress-percent').show();
-					$('#progress-percent').delay(5000).fadeOut();
-				}	
-				$('#maxFileSizeError').addClass('hidden');
-				$('#invalid-mp3-file').addClass('hidden');
-
-			},
-
-			complete: function(){
+				//On Success Increase the disk-space bar size
+				getDiskSpace();
 
 				//Clear the title text field and selectedFileName div after the successful upload of file to prevent user to upload same file again accidently.
 				//If we clear selectedFileName div he will have to choose the file again.
@@ -747,12 +650,17 @@ $(document).ready(function() {
 				$('#saveSetErrors').empty();
 				$('#maxFileSizeError').empty();
 				$('#invalid-mp3-file').html();
-			},
-			error: function(data, textStatus, jqXHR){
-				window.location.href = "error.jsp";
-			}  
-		});
+				
 
+			},
+
+			error: function(data){
+				window.location.href = "error.jsp";
+			},
+
+
+		});
+		
 	}
 
 	//On Document Load Remove any selected mixes
@@ -764,7 +672,6 @@ $(document).ready(function() {
 		html+='<div id="pastMix-'+uploadedTrackId+'" class="'+divClass+'">';
 		html+='<div>'+trackName+'</div>';
 		html+='<audio controls preload="metadata">';
-		//html+='<source src="'+uploadedTrackPath+uploadedTrackId+".mp3"+'" type="audio/mpeg">';
 		html+='<source src="'+uploadedTrackPath+'" type="audio/mpeg">';
 		html+='</audio>';
 		html+='</div>';
@@ -824,12 +731,12 @@ $(document).ready(function() {
 			success: function (data, textStatus, jqXHR) {
 
 				var listUploadedTracks = data.listUploadedTracks;
-				var uploadedPath = data.path;
+				var uploadedPath = data.audioSrc;
 
 				if(listUploadedTracks){
 
 					for(var iCount=0;iCount<listUploadedTracks.length;iCount++){
-						pastUploadedTracks(listUploadedTracks[iCount].id,listUploadedTracks[iCount].audioTitle,data.path,'audioControls','Selected Mix: None');
+						pastUploadedTracks(listUploadedTracks[iCount].id,listUploadedTracks[iCount].audioTitle,listUploadedTracks[iCount].audioSrc,'audioControls','Selected Mix: None');
 					}
 
 				}

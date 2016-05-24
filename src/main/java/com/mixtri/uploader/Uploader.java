@@ -13,15 +13,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.UUID;
-
-import javax.sound.sampled.AudioFileFormat;
-import javax.sound.sampled.AudioFormat;
-import javax.sound.sampled.AudioInputStream;
-import javax.sound.sampled.AudioSystem;
-import javax.sound.sampled.Mixer;
-import javax.sound.sampled.UnsupportedAudioFileException;
-import javax.ws.rs.Consumes;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -36,15 +27,11 @@ import org.apache.log4j.Logger;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataParam;
 
-import com.google.api.services.drive.Drive;
 import com.google.gson.Gson;
 import com.mixtri.DAO.MixtriDAO;
 import com.mixtri.utils.MixtriUtils;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
-
-import sun.security.util.PropertyExpander.ExpandException;
 
 @Path("/")
 public class Uploader{
@@ -127,129 +114,39 @@ public class Uploader{
 		}
 		return uploadPath+fileName;
 	}
-
-	/**
-	 * This method upload the recorded mixes of the user to the server
-	 */
-
+	
 	@POST
-	@Path("/upload")
-	@Consumes(MediaType.MULTIPART_FORM_DATA)
+	@Path("/saveSongDetails")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response uploadFile(
-			@FormDataParam("mixUpload") InputStream fileInputStream,
-			@FormDataParam("mixUpload") FormDataContentDisposition fileFormDataContentDisposition,
-			@FormDataParam("emailId") String emailId, @FormDataParam("mixTitle") String mixTitle) {
-
-		// local variables
-		String fileName = null;
-		Gson gson = new Gson();
-		String responseOk=null;
-		Map<String,String> messages = new HashMap<String,String>();
+	public Response saveSongDetails(@FormParam("uuid") String uuid,@FormParam("emailId") String emailId, @FormParam("mixTitle") String mixTitle,
+			@FormParam("uploadPath") String uploadPath,@FormParam("fileName") String fileName,@FormParam("fileSize") long fileSize){
+		
+		String response=null;
+		
 		try {
-
-			/**************** Google Drive Changes Start****************/		
-			Drive googleDriveService = GoogleDriveUploader.getDriveService();
-
-			final String uuid = MixtriUtils.getUUID();
-
-			log.debug("Saving mp3 file: "+fileName+" as "+uuid);
-			fileName = uuid+".mp3";
-
-			byte[] bytes = IOUtils.toByteArray(fileInputStream); //We have converted this to bytes so that we can calculate the size of the file before saving
-
-			Response usedDiskSpace = getDiskSpace(emailId);
-			String objUsedSpace = usedDiskSpace.getEntity().toString();
-
-			double usedSpace = Double.valueOf(objUsedSpace);
-
-			String folderId=null;
-			/**
-			 * If folder space is 1024 that means nothing has been uploaded so create a new folder in google drive.
-			 */
-			if(usedSpace==1024){
-				
-				//PARENT_FOLDER_ID: This is id of uploads folder. In mixtri.live@gmail.com under MyDrive/Mixtri/uploads
-				folderId = GoogleDriveUploader.createGoogleDriveFolder(googleDriveService,PARENT_FOLDER_ID, emailId);
-				
-			}else{
-				
-				/********** GET FOLDER ID ************/
-			}
-
-			//Checks if the space is available in disk for the uploaded file else return insufficient space error	
-			if((usedSpace - bytes.length/1000000)>0){
-
-				GoogleDriveUploader.uploadToGoogleDrive(googleDriveService, fileName, mixTitle, folderId, "audio/mp3", bytes);
-				/*double spaceLeftBytes = writeToFileServer(bytes, fileName,uploadPath);
-				double spaceLeftMB = spaceLeftBytes/1000000;
-
-				UploaderBean uploaderBean = setUploaderBean(emailId,spaceLeftMB,uuid,title,uploadPath);
-				MixtriDAO mixtriDAO = new MixtriDAO();
-				mixtriDAO.saveUploadedMixDAO(uploaderBean);
-				messages.put("success", fileFormDataContentDisposition.getFileName()+" Uploaded Successfully!");
-				messages.put("id", uuid);
-				messages.put("path", uploadPath);
-				responseOk = gson.toJson(messages);*/
-				return Response.ok(responseOk, MediaType.APPLICATION_JSON).build();
-			}else{
-				messages.put("error","ERROR: Not enough free space to upload. Please delete some old files to free some space!");
-				responseOk = gson.toJson(messages);
-			}
-
-
-
-
-			/************Goolge Drive Changes Ends*********/
-			/*String uploadPath = UPLOAD_FILE_SERVER+"audio"+"/"+emailId+"/tracks/";
-			boolean directoryCreated = createUserDirectory(uploadPath);
-			if(directoryCreated){
-				fileName = mixTitle;
-				final String uuid = MixtriUtils.getUUID();
-				log.debug("Saving mp3 file: "+fileName+" as "+uuid);
-				String title = fileName; 
-				fileName = uuid+".mp3";
-
-				byte[] bytes = IOUtils.toByteArray(fileInputStream); //We have converted this to bytes so that we can calculate the size of the file before saving
-
-				Response usedDiskSpace = getDiskSpace(emailId);
-				String objUsedSpace = usedDiskSpace.getEntity().toString();
-				objUsedSpace = objUsedSpace.replace("\"", ""); //replaces double quotes from starting and ending of the String
-				double usedSpace = Double.valueOf(objUsedSpace);
-				//Checks if the space is available in disk for the uploaded file else return insufficient space error	
-				if((usedSpace - bytes.length/1000000)>0){
-
-					double spaceLeftBytes = writeToFileServer(bytes, fileName,uploadPath);
-					double spaceLeftMB = spaceLeftBytes/1000000;
-
-					UploaderBean uploaderBean = setUploaderBean(emailId,spaceLeftMB,uuid,title,uploadPath);
-					MixtriDAO mixtriDAO = new MixtriDAO();
-					mixtriDAO.saveUploadedMixDAO(uploaderBean);
-					messages.put("success", fileFormDataContentDisposition.getFileName()+" Uploaded Successfully!");
-					messages.put("id", uuid);
-					messages.put("path", uploadPath);
-					responseOk = gson.toJson(messages);
-					return Response.ok(responseOk, MediaType.APPLICATION_JSON).build();
-				}else{
-					messages.put("error","ERROR: Not enough free space to upload. Please delete some old files to free some space!");
-					responseOk = gson.toJson(messages);
-				}
-			}*/
-
-			return Response.ok(responseOk, MediaType.APPLICATION_JSON).build();
-		}
-		catch(IOException ioe){
-			ioe.printStackTrace();
-			log.error("Exception Occured while uploading file: uploadFile method: "+ioe);
-			Response.Status httpStatus = Response.Status.INTERNAL_SERVER_ERROR;
-			return Response.status(httpStatus).build() ;
+		
+		Gson gson = new Gson();
+		
+		Map<String,String> messages = new HashMap<String,String>();
+		
+		UploaderBean uploaderBean = setUploaderBean(emailId,fileSize,uuid,mixTitle,uploadPath);
+		MixtriDAO mixtriDAO = new MixtriDAO();
+		mixtriDAO.saveUploadedMixDAO(uploaderBean);
+		messages.put("success",fileName+" Uploaded Successfully!");
+		messages.put("path", uploadPath);
+		response = gson.toJson(messages);
+		
 		}catch(Exception exp){
 
 			log.error("Exception Occured while uploading file: uploadFile method: "+exp);
 			Response.Status httpStatus = Response.Status.INTERNAL_SERVER_ERROR;
 			return Response.status(httpStatus).build() ;
-		}       
+		} 
+		//messages.put("error","ERROR: Not enough free space to upload. Please delete some old files to free some space!");
+		return Response.ok(response, MediaType.APPLICATION_JSON).build();
 	}
+
+	
 
 	public UploaderBean setUploaderBean(String emailId,double fileSizeMB,String id,String title,String filePath){
 
@@ -358,25 +255,16 @@ public class Uploader{
 
 		String pastMixesOrgNames="";
 		Gson gson = new Gson();
-		String uploadPath = UPLOAD_FILE_SERVER+"audio"+"/"+emailId+"/tracks/";
 		List<Map<String,String>> listUploadedTracks;
 		Map<String,Object> mapUploadedTracks = new HashMap<String, Object>();
 		try{
-			File folder = new File(uploadPath);
-
-			if(folder.exists()){
 
 				MixtriDAO mixtriDAO = new MixtriDAO();
 				log.debug("Getting past track info for the user: "+emailId);
 				listUploadedTracks = mixtriDAO.getUserPastTracksInfoDAO(emailId);
 				mapUploadedTracks.put("listUploadedTracks", listUploadedTracks);
-				mapUploadedTracks.put("path", uploadPath);
 				pastMixesOrgNames = gson.toJson(mapUploadedTracks);
-
-			}else{
-				mapUploadedTracks.put("", "");
-				pastMixesOrgNames = gson.toJson(mapUploadedTracks);
-			}
+				
 		}catch(Exception exp){
 
 			log.error("Exception Occured while retriving past mixes fro the user: "+exp);

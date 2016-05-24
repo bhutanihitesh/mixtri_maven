@@ -95,20 +95,21 @@
 			<version>2.6</version>
 		</dependency>
 
-		<dependency>
+	<!-- Dependencies For Uploading file to Google Drive through Java -->
+		<!-- <dependency>
 			<groupId>com.google.apis</groupId>
 			<artifactId>google-api-services-drive</artifactId>
 			<version>v2-rev219-1.22.0</version>
 		</dependency>
 
-		<!-- http://mvnrepository.com/artifact/com.google.oauth-client/google-oauth-client-java6 -->
+		http://mvnrepository.com/artifact/com.google.oauth-client/google-oauth-client-java6
 		<dependency>
 			<groupId>com.google.oauth-client</groupId>
 			<artifactId>google-oauth-client-java6</artifactId>
 			<version>1.22.0</version>
 		</dependency>
 
-		<!-- http://mvnrepository.com/artifact/com.google.oauth-client/google-oauth-client-jetty -->
+		http://mvnrepository.com/artifact/com.google.oauth-client/google-oauth-client-jetty
 		<dependency>
 			<groupId>com.google.oauth-client</groupId>
 			<artifactId>google-oauth-client-jetty</artifactId>
@@ -125,7 +126,7 @@
                 <groupId>org.mortbay.jetty</groupId>
             </exclusion>
         </exclusions>
-    </dependency>
+    </dependency> -->
 
 
 	</dependencies>
@@ -142,8 +143,8 @@
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>3.0</version>
 				<configuration>
-					<source>1.8</source>
-					<target>1.8</target>
+					<source>1.7</source>
+					<target>1.7</target>
 				</configuration>
 			</plugin>
 			<plugin>
