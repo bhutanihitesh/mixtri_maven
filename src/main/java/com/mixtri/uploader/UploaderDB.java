@@ -35,7 +35,7 @@ public class UploaderDB {
 
 		try {
 
-			String query ="INSERT INTO MIXTRI.ARCHIVEDMIXES(id,emailId,audioTitle,fileSize,audioSrc,dateUploaded,artistDisplayName,type)"
+			String query ="INSERT INTO mixtri.archivedmixes(id,emailId,audioTitle,fileSize,audioSrc,dateUploaded,artistDisplayName,type)"
 					+ "VALUES(?,?,?,?,?,?,?,?)";
 
 			connection = getConnection();

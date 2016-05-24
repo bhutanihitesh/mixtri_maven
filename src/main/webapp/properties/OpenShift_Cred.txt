@@ -1,0 +1,87 @@
+MySQL 5.5 database added.  Please make note of these credentials:
+
+   Root User: adminIpi9hL6
+   Root Password: K8q6cYICa3BJ
+   Database Name: mixtri
+   database: 127.10.183.130:3306
+
+Connection URL: mysql://$OPENSHIFT_MYSQL_DB_HOST:$OPENSHIFT_MYSQL_DB_PORT/
+
+You can manage your new MySQL database by also embedding phpmyadmin.
+The phpmyadmin username and password will be the same as the MySQL credentials above.
+
+
+Please make note of these MySQL credentials again:
+  Root User: adminIpi9hL6
+  Root Password: K8q6cYICa3BJ
+URL: https://mixtri-mixtri.rhcloud.com/phpmyadmin/
+
+
+
+ssh://572f92a589f5cf45800000b9@mixtri-mixtri.rhcloud.com/~/git/mixtri.git/
+git@github.com:bhutanihitesh/mixtri_maven.git
+https://github.com/bhutanihitesh/mixtri_maven.git
+
+
+
+Jenkins created successfully.  Please make note of these credentials:
+
+   User: admin
+   Password: 8wdrqseV1s5f
+
+
+Note:  You can change your password at: https://jenkins-mixtri.rhcloud.com/me/configure
+
+
+
+
+My Instance Username:
+
+user:572f92a589f5cf45800000b9
+hostname:mixtri-mixtri.rhcloud.com
+username:572f92a589f5cf45800000b9@mixtri-mixtri.rhcloud.com
+password:privateKey
+
+Command
+env | grep DB
+
+#########war location######
+
+/var/lib/openshift/572f92a589f5cf45800000b9/app-root/runtime/dependencies/jbossews/webapps
+
+######### Logs Location #######
+
+/var/lib/openshift/572f92a589f5cf45800000b9/app-root/logs
+
+String USERNAME = System.getEnv("OPENSHIFT_MYSQL_DB_USERNAME");
+String PASSWORD = System.getEnv("OPENSHIFT_MYSQL_DB_PASSWORD");
+String DB_NAME = System.getEnv("OPENSHIFT_APP_NAME");
+String FORNAME_URL = "com.mysql.jdbc.Driver";
+String URL = "jdbc:"+System.getEnv("OPENSHIFT_MYSQL_DB_URL")+ DB_NAME;
+Connection m_connection = DriverManager.getConnection(URL , USERNAME , PASSWORD);
+
+
+Port Forwarding to access DB Locally:
+
+ssh -N 572f92a589f5cf45800000b9@mixtri-mixtri.rhcloud.com
+
+ssh -f 572f92a589f5cf45800000b9@mixtri-mixtri.rhcloud.com -L 3307:127.10.183.130:3306 -N
+
+
+Deployment steps:
+
+ctl_app stop jbossews
+ctl_app start jbossews
+ 
+# Check Tomcat log file
+tail -f jbossews/logs/catalina.out
+
+
+Location of Java on Openshift
+
+/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.91-0.b14.el6_7.i386/
+
+******Update java on Openshift to java 8******
+
+export JAVA_HOME=/etc/alternatives/java_sdk_1.8.0
+export PATH=$JAVA_HOME/bin:$PATH
