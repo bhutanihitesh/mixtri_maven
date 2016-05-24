@@ -84,7 +84,7 @@ public class ProfileDB {
 		String country = userSignUpBean.getCountry();
 		String emailId = userSignUpBean.getEmailId();
 
-		String query = "UPDATE MIXTRI.USERS SET firstName=?,lastName=?,displayName=?,phoneNumber=?,biography=?,profilePicPath=?,city=?,state=?,country=? WHERE emailId=?";
+		String query = "UPDATE mixtri.users SET firstName=?,lastName=?,displayName=?,phoneNumber=?,biography=?,profilePicPath=?,city=?,state=?,country=? WHERE emailId=?";
 
 		try{
 
@@ -120,7 +120,7 @@ public class ProfileDB {
 		String emailId = userSignUpBean.getEmailId();
 		String password = userSignUpBean.getPassword();
 		String salt = userSignUpBean.getSalt();
-		String query = "UPDATE MIXTRI.USERS SET password=?,salt=? WHERE emailId=?";
+		String query = "UPDATE mixtri.users SET password=?,salt=? WHERE emailId=?";
 
 		try{
 

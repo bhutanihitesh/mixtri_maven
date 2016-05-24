@@ -38,7 +38,7 @@ public class EventDB {
 		int insertedRows;
 		try{
 
-			String query ="INSERT INTO MIXTRI.EVENTS(id,displayName,streamInfo,eventCreatedUTCTimeStamp,timeZone,eventDescription,genre,hashtags,streamingOption,"
+			String query ="INSERT INTO mixtri.events(id,displayName,streamInfo,eventCreatedUTCTimeStamp,timeZone,eventDescription,genre,hashtags,streamingOption,"
 					+ "eventPicPath,bgVideoPath,isLive,profileURLId,emailId,kudosCount)"
 					+ "VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 
@@ -374,7 +374,7 @@ public class EventDB {
 
 	public void saveEventFeedbackDB(EventBean eventBean) throws ClassNotFoundException, SQLException{
 
-		String query = "UPDATE MIXTRI.EVENTS SET FEEDBACK=? WHERE ID=?";
+		String query = "UPDATE mixtri.events SET FEEDBACK=? WHERE ID=?";
 
 		try{
 			String feedback = eventBean.getFeedback();
@@ -401,7 +401,7 @@ public class EventDB {
 
 	public void updateEventStatusDB(String eventId,String isLive) throws ClassNotFoundException, SQLException{
 
-		String query = "UPDATE MIXTRI.EVENTS SET isLive=? WHERE ID=?";
+		String query = "UPDATE mixtri.events SET isLive=? WHERE ID=?";
 
 		try{
 
@@ -427,7 +427,7 @@ public class EventDB {
 
 	public Map<String,Object> updateAttendeeCountDB(String eventId,String emailId) throws ClassNotFoundException, SQLException{
 
-		String query = "INSERT INTO MIXTRI.ATTENDEES(id,eventId,attendeeEmailId) VALUES(?,?,?)";
+		String query = "INSERT INTO mixtri.attendees(id,eventId,attendeeEmailId) VALUES(?,?,?)";
 		Map<String,Object> attendeeInfo = new HashMap<String, Object>();
 		Map<String,String> mapAttendeeInfo = new HashMap<String, String>();
 		int insertedRows;
