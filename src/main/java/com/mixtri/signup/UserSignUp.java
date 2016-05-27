@@ -82,8 +82,6 @@ public class UserSignUp{
 
 			SignUpDB signUpDB = new SignUpDB(); 
 			boolean isAccountExists = signUpDB.accountExists(emailId);
-			
-			System.out.println("isAccountExists: "+isAccountExists);
 
 			//We create an account for the user in our database the very first time he logs in using social login else just logs him in to mixtri if the account is already
 			//there.

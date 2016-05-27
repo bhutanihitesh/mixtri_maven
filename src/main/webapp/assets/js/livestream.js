@@ -446,31 +446,61 @@ $(document).ready(function() {
 			return false;
 
 		}
+		
+		var file = $('#mixUpload').get(0).files[0];
+		var mixTitle = $('#mix-title').val();
 
-		//uploadNewMix();
-		uploadToGoogleDrive();
+		if(file.size>140000000){
+
+			$('#maxFileSizeError').html('Please upload file less than 140 MB.');
+			$('#maxFileSizeError').show();
+			$('#maxFileSizeError').delay(4000).fadeOut();
+			return false;
+
+		}
+
+		if(file.type=='audio/mp3' || file.type=='audio/mpeg'){
+
+		}else{
+
+			$('#invalid-mp3-file').html('Please upload only mp3 files.');
+			$('#invalid-mp3-file').show();
+			$('#invalid-mp3-file').delay(4000).fadeOut();
+
+			return false;
+
+		}
+
+		var folderName =  $.cookie("emailId");
+		checkIfFolderExists(folderName);
 	});
 
-	function createFolder() {
-
-		var access_token = googleAuth.getAccessToken();
+	//0B_jU3ZFb1zpHQmFIMDNzc2dBRHM This is the id of the parent folder(upload) in google drive in which all the sub folders will be created.
+	
+	function createFolder(folderName) {
 
 		var request = gapi.client.request({
 			'path': '/drive/v2/files/',
 			'method': 'POST',
 			'headers': {
 				'Content-Type': 'application/json',
-				'Authorization': 'Bearer ' + access_token,             
 			},
 			'body':{
-				"title" : "Folder",
+				"title" : folderName,
 				"mimeType" : "application/vnd.google-apps.folder",
+				'parents': [{
+					"kind": "drive#fileLink",
+					"id": "0B_jU3ZFb1zpHQmFIMDNzc2dBRHM"
+					
+				}]
 			}
 		});
 
 		request.execute(function(resp) { 
-			console.log(resp); 
-			document.getElementById("info").innerHTML = "Created folder: " + resp.title;
+			
+			//Upload File to Google Drive after creating the folder
+			var folderId = resp.id;
+			uploadToGoogleDrive(folderId);
 		});
 	}
 
@@ -483,16 +513,41 @@ $(document).ready(function() {
 		});
 		return uuid;
 	};
+	
 
-	function uploadToGoogleDrive() {
+	function checkIfFolderExists(folderName) {
+		
+        var request = gapi.client.drive.files.list({
+        	
+        	'q':"mimeType = 'application/vnd.google-apps.folder' and title='"+folderName+"'"
+        	
+        	
+          });
+        
+        request.execute(function(resp) {
+        	
+        	//This means the folder exists
+        	if(resp.items.length>0){
+        		
+        		//Get the id and upload file in that
+        		var folderId = resp.items[0].id;
+        		uploadToGoogleDrive(folderId);
+        		
+        	}else{
+        		
+        		createFolder(folderName);
+        	}
+        	
 
-		var isFileValid = validateUploadedFile();
+        });
+	}
+	
+	
+	function uploadToGoogleDrive(folderId) {
 
-		if(isFileValid){
-
+		
 			var fileData = $('#mixUpload').get(0).files[0];
-			var fileName = $('#mix-title').val()+'.mp3';
-
+			
 			$.blockUI({ message: '<h5><img src="assets/img/icons/busy.gif" /> Do a little dance your music is being uploaded...</h5>' });
 
 			const boundary = '-------314159265358979323846';
@@ -508,7 +563,8 @@ $(document).ready(function() {
 						'mimeType': contentType,
 						'parents': [{
 							"kind": "drive#fileLink",
-							"id": "0B_jU3ZFb1zpHa0hpQ3JYRlBEVGc"
+							"id": folderId
+							
 						}]
 				};
 
@@ -546,38 +602,8 @@ $(document).ready(function() {
 					
 				});
 			}
-		} 
 	}
 
-	function validateUploadedFile(){
-
-		var file = $('#mixUpload').get(0).files[0];
-		var mixTitle = $('#mix-title').val();
-
-		if(file.size>140000000){
-
-			$('#maxFileSizeError').html('Please upload file less than 140 MB.');
-			$('#maxFileSizeError').show();
-			$('#maxFileSizeError').delay(4000).fadeOut();
-			return false;
-
-		}
-
-		if(file.type=='audio/mp3' || file.type=='audio/mpeg'){
-
-		}else{
-
-			$('#invalid-mp3-file').html('Please upload only mp3 files.');
-			$('#invalid-mp3-file').show();
-			$('#invalid-mp3-file').delay(4000).fadeOut();
-
-			return false;
-
-		}
-
-		return true;
-
-	}
 
 	function callbackAfterUpload(jsonResp,rawResp){
 

@@ -89,7 +89,7 @@ function handleAuthClick(event) {
  * Load Drive API client library.
  */
 function loadDriveApi() {
- gapi.client.load('drive', 'v3');
+ gapi.client.load('drive', 'v2');
 }
 
 </script>
