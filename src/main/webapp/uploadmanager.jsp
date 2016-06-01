@@ -41,6 +41,57 @@ Style Sheets
 <link rel="stylesheet" type="text/css" href="assets/css/green.css">
 <link rel="stylesheet" type="text/css" href="assets/css/purple.css">-->
 
+<script type="text/javascript">
+
+//Your Client ID can be retrieved from your project in the Google
+// Developer Console, https://console.developers.google.com
+var CLIENT_ID = '676570655548-ou0hs4elvqvqh4m1gv8os4s186us4v5l.apps.googleusercontent.com';
+
+//Changed scope from drive.metadata.readonly to drive.file
+//var SCOPES = ['https://www.googleapis.com/auth/drive.metadata.readonly'];
+
+ var SCOPES = ['https://www.googleapis.com/auth/drive.file'];
+
+/**
+ * Check if current user has authorized this application.
+ */
+  
+function checkAuth() {
+    
+  gapi.auth.authorize(
+    {
+      'client_id': CLIENT_ID,
+      'scope': SCOPES.join(' '),
+      'immediate': true
+    });
+  
+  loadDriveApi();
+ 
+}
+
+/**
+ * Initiate auth flow in response to user clicking authorize button.
+ *
+ * @param {Event} event Button click event.
+ */
+function handleAuthClick(event) {
+  gapi.auth.authorize(
+    {client_id: CLIENT_ID, scope: SCOPES, immediate: false},
+    handleAuthResult);
+  return false;
+}
+
+/**
+ * Load Drive API client library.
+ */
+function loadDriveApi() {
+ gapi.client.load('drive', 'v2');
+}
+
+</script>
+
+
+
 </head>
 <body>
 
@@ -115,7 +166,9 @@ Style Sheets
 	<footer id="footer">
 		<%@include file="footer.jsp"%>
 	</footer>
-	
+	 
+	 <script src="https://apis.google.com/js/client.js?onload=checkAuth"></script>
 	 <script src="assets/js/uploadmanager.js"></script>
+	 
 </body>
 </html>

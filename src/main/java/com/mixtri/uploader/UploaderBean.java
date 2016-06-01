@@ -11,6 +11,14 @@ public class UploaderBean {
 	String title;
 	String filePath;
 	Date dateUploaded;
+	String googleFileId;
+	
+	public String getGoogleFileId() {
+		return googleFileId;
+	}
+	public void setGoogleFileId(String googleFileId) {
+		this.googleFileId = googleFileId;
+	}
 	public double getFileSize() {
 		return fileSize;
 	}

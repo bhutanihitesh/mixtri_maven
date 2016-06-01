@@ -35,8 +35,8 @@ public class UploaderDB {
 
 		try {
 
-			String query ="INSERT INTO mixtri.archivedmixes(id,emailId,audioTitle,fileSize,audioSrc,dateUploaded,artistDisplayName,type)"
-					+ "VALUES(?,?,?,?,?,?,?,?)";
+			String query ="INSERT INTO mixtri.archivedmixes(id,emailId,audioTitle,fileSize,audioSrc,dateUploaded,artistDisplayName,type,googleDriveFileId)"
+					+ "VALUES(?,?,?,?,?,?,?,?,?)";
 
 			connection = getConnection();
 
@@ -51,6 +51,7 @@ public class UploaderDB {
 			statement.setDate(6,   uploaderBean.getDateUploaded());
 			statement.setString(7, displayName);
 			statement.setString(8, "upload");
+			statement.setString(9, uploaderBean.getGoogleFileId());
 			statement.executeUpdate();
 
 		}finally{
@@ -102,7 +103,7 @@ public class UploaderDB {
 	public List<Map<String,String>> getTracksInfo(String emailId) throws Exception{
 
 
-		String query = "SELECT ID,AUDIOTITLE,audioSrc FROM mixtri.archivedmixes WHERE type='upload' AND EMAILID=? order by dateUploaded asc";
+		String query = "SELECT ID,AUDIOTITLE,audioSrc,googleDriveFileId FROM mixtri.archivedmixes WHERE type='upload' AND EMAILID=? order by dateUploaded asc";
 		List<Map<String,String>> listUploadedTracks = new ArrayList<Map<String,String>>();
 		ResultSet rs =null;
 		try{
@@ -119,9 +120,11 @@ public class UploaderDB {
 				String id = rs.getString("id");
 				String audioTitle = rs.getString("audioTitle");
 				String audioSrc = rs.getString("audioSrc");
+				String googleDriveFileId = rs.getString("googleDriveFileId");
 				mapOrgNames.put("id",id);
 				mapOrgNames.put("audioTitle",audioTitle);
 				mapOrgNames.put("audioSrc",audioSrc);
+				mapOrgNames.put("googleDriveFileId",googleDriveFileId);
 				listUploadedTracks.add(mapOrgNames);
 			}
 

@@ -119,7 +119,7 @@ public class Uploader{
 	@Path("/saveSongDetails")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response saveSongDetails(@FormParam("uuid") String uuid,@FormParam("emailId") String emailId, @FormParam("mixTitle") String mixTitle,
-			@FormParam("uploadPath") String uploadPath,@FormParam("fileName") String fileName,@FormParam("fileSize") long fileSize){
+			@FormParam("uploadPath") String uploadPath,@FormParam("fileName") String fileName,@FormParam("fileSize") long fileSize,@FormParam("googleFileId") String googleFileId){
 		
 		String response=null;
 		
@@ -129,7 +129,7 @@ public class Uploader{
 		
 		Map<String,String> messages = new HashMap<String,String>();
 		
-		UploaderBean uploaderBean = setUploaderBean(emailId,fileSize,uuid,mixTitle,uploadPath);
+		UploaderBean uploaderBean = setUploaderBean(emailId,fileSize,uuid,mixTitle,uploadPath,googleFileId);
 		MixtriDAO mixtriDAO = new MixtriDAO();
 		mixtriDAO.saveUploadedMixDAO(uploaderBean);
 		messages.put("success",fileName+" Uploaded Successfully!");
@@ -148,7 +148,7 @@ public class Uploader{
 
 	
 
-	public UploaderBean setUploaderBean(String emailId,double fileSizeMB,String id,String title,String filePath){
+	public UploaderBean setUploaderBean(String emailId,double fileSizeMB,String id,String title,String filePath,String googleFileId){
 
 		UploaderBean uploaderBean = new UploaderBean();
 		uploaderBean.setFileSize(fileSizeMB);
@@ -159,6 +159,7 @@ public class Uploader{
 		Date utilDate = new Date();
 		java.sql.Date sqlDate = new java.sql.Date(utilDate.getTime());
 		uploaderBean.setDateUploaded(sqlDate);
+		uploaderBean.setGoogleFileId(googleFileId);
 
 
 		return uploaderBean;

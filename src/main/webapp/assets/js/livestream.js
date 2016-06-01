@@ -12,6 +12,7 @@ $(document).ready(function() {
 		$('#testStream').addClass('btn streamActive');
 	});
 
+	
 
 	$('#goLive').click(function(e){
 		e.preventDefault();
@@ -623,8 +624,9 @@ $(document).ready(function() {
 			var uploadPath = 'https://googledrive.com/host/'+jsonResp.id
 			var fileName = jsonResp.originalFilename;
 			var fileSize = jsonResp.fileSize;
+			var googleFileId = jsonResp.id;
 			
-			saveSongDetails(uuid,mixTitle,uploadPath,fileName,fileSize);
+			saveSongDetails(uuid,mixTitle,uploadPath,fileName,fileSize,googleFileId);
 
 		}else{
 
@@ -633,7 +635,7 @@ $(document).ready(function() {
 	}
 
 
-	function saveSongDetails(uuid,mixTitle,uploadPath,fileName,fileSize){
+	function saveSongDetails(uuid,mixTitle,uploadPath,fileName,fileSize,googleFileId){
 		
 		$.ajax({
 			url: '/mixtri/rest/saveSongDetails',
@@ -644,7 +646,8 @@ $(document).ready(function() {
 				mixTitle: mixTitle,
 				uploadPath: uploadPath,
 				fileName:fileName,
-				fileSize:fileSize
+				fileSize:fileSize,
+				googleFileId:googleFileId
 
 			},
 			dataType: 'json',
