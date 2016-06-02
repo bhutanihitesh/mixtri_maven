@@ -287,11 +287,7 @@ public class Uploader{
 			 * delete of the file would only cause the file to sit there in the hard drive consuming space but would not cause a dead link. 
 			 * 
 			 */
-			String trackPath = mixtriDAO.deleteUploadedTrackdDAO(uploadedSetId);
-			String fileToBeDeleted = trackPath+uploadedSetId+".mp3";
-			File file = new File(fileToBeDeleted);
-			MixtriUtils.delete(file);
-
+			mixtriDAO.deleteUploadedTrackdDAO(uploadedSetId);
 
 		}catch(Exception exp){
 			log.error("Error Occured while deleting a set: "+exp);

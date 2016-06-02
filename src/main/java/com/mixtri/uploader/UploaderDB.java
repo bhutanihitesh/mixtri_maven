@@ -180,11 +180,9 @@ public class UploaderDB {
 
 	}
 
-	public String deleteUploadedTrackDB(String uploadedSetId) throws ClassNotFoundException, SQLException{
+	public void deleteUploadedTrackDB(String uploadedSetId) throws ClassNotFoundException, SQLException{
 
-		String trackPath = getTrackPath(uploadedSetId);
-		
-		String query = "DELETE FROM mixtri.archivedmixes WHERE ID=?";
+		String query = "DELETE FROM mixtri.archivedmixes WHERE googleDriveFileId=?";
 		
 		try{
 
@@ -204,7 +202,7 @@ public class UploaderDB {
 				e.printStackTrace();
 			}
 		}
-		 return trackPath;
+		 
 	}
 	
 	public String getTrackPath(String uploadedSetId) throws ClassNotFoundException, SQLException{

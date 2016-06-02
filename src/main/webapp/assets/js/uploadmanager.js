@@ -61,7 +61,10 @@ $(document).ready(function() {
 		  
 		  if(resp.code!=404){
 			  
-			  console.log('Delete SuccessFul');
+			  console.log('Delete SuccessFul'); 
+			  
+			  window.location.reload();
+			  
 		  }else{
 			 
 			  console.log('Not Successful: '+resp.message);
@@ -73,9 +76,7 @@ $(document).ready(function() {
 	
 	$('#btnDeleteSetYes').on('click',function(e){
 		
-		deleteFile(uploadedSetId);
-		
-		/*$.ajax({
+		$.ajax({
 			url: '/mixtri/rest/deleteUploadedTrack',
 			type: 'POST',
 			data: {
@@ -83,14 +84,14 @@ $(document).ready(function() {
 			},
 			success: function(result){
 				
-				window.location.reload();
+				deleteFile(uploadedSetId);
 				
 		    },
 		    error: function(result){
 		      window.location.href = "error.jsp";
 		    }
 			
-		});*/
+		});
 		
 		
 	});

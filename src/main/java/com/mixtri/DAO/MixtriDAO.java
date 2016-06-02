@@ -229,10 +229,10 @@ public class MixtriDAO {
 		
 	}
 	
-	public String deleteUploadedTrackdDAO(String uploadedSetId) throws ClassNotFoundException, SQLException{
+	public void deleteUploadedTrackdDAO(String uploadedSetId) throws ClassNotFoundException, SQLException{
 		
 		UploaderDB uploaderDB = new UploaderDB();
-		String trackPath = uploaderDB.deleteUploadedTrackDB(uploadedSetId);
-		return trackPath;
+		uploaderDB.deleteUploadedTrackDB(uploadedSetId);
+		
 	}
 }
