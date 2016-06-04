@@ -78,22 +78,18 @@ public class Profile {
 	}
 
 	@POST
-	@Path("updateProfileInfo")
-	@Consumes(MediaType.MULTIPART_FORM_DATA)
-	public Response updateProfileInfo(@FormDataParam("emailId") String emailId,@FormDataParam("firstName") String firstName,@FormDataParam("lastName") String lastName
-			,@FormDataParam("displayName") String displayName,@FormDataParam("city") String city,@FormDataParam("state") String state,@FormDataParam("country") String country,
-			@FormDataParam("phoneNumber") String phoneNumber,@FormDataParam("biography") String biography,@FormDataParam("currentProfilePicPath") String currentProfilePicPath,
-			@FormDataParam("profilePic") InputStream fileInputStream, @FormDataParam("profilePic") FormDataContentDisposition fileFormDataContentDisposition){
+	@Path("/updateProfileInfo")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response updateProfileInfo(@FormParam("emailId") String emailId,@FormParam("firstName") String firstName,@FormParam("lastName") String lastName
+			,@FormParam("displayName") String displayName,@FormParam("city") String city,@FormParam("state") String state,@FormParam("country") String country,
+			@FormParam("phoneNumber") String phoneNumber,@FormParam("biography") String biography,@FormParam("currentProfilePicPath") String currentProfilePicPath,
+			@FormParam("fileName") String fileName){
 
 		try{	
-			Uploader fileServiceImpl = new Uploader();
 
-			//Give path of the pic saved for the event for the logged in user.
-			String profilePicPath = currentProfilePicPath;
-			if(fileFormDataContentDisposition.getFileName()!=null){
-
-				profilePicPath = fileServiceImpl.uploadEventPic(fileInputStream, fileFormDataContentDisposition, emailId,true);
-			}
+			if(currentProfilePicPath.isEmpty())
+				currentProfilePicPath = null;
+			
 			UserSignUpBean userSignUpBean = new UserSignUpBean();
 
 			userSignUpBean.setEmailId(emailId);
@@ -102,7 +98,7 @@ public class Profile {
 			userSignUpBean.setDisplayName(displayName);
 			userSignUpBean.setContact(phoneNumber);
 			userSignUpBean.setBiography(biography);
-			userSignUpBean.setProfilePicPath(profilePicPath);
+			userSignUpBean.setProfilePicPath(currentProfilePicPath);
 
 			if(city.equalsIgnoreCase("undefined")){
 				userSignUpBean.setCity(null);
@@ -131,7 +127,10 @@ public class Profile {
 			return Response.serverError().build();
 		}
 
-		return Response.ok().build();
+		Gson gson = new Gson();
+		String response = gson.toJson("Success");
+		//return Response.ok().build();
+		return Response.ok(response, MediaType.APPLICATION_JSON).build();
 	}
 
 	@POST

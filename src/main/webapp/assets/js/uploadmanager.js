@@ -57,6 +57,7 @@ $(document).ready(function() {
 	  var request = gapi.client.drive.files.delete({
 	    'fileId': fileId
 	  });
+	  
 	  request.execute(function(resp) {
 		  
 		  if(resp.code!=404){
