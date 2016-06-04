@@ -159,8 +159,6 @@ public class UploaderDB {
 			if(rs.next()){
 
 				usedDiskSpace= rs.getFloat("USED_DISK_SPACE");
-				//Space in MB used by the DJ
-				usedDiskSpace = usedDiskSpace/1000000;
 			}
 
 		}finally

@@ -1,5 +1,7 @@
 $(document).ready(function() {
 
+	var globalProfilePic;
+	
 	$.ajax({
 
 		type: 'GET',
@@ -31,6 +33,8 @@ $(document).ready(function() {
 				profilePicPath = 'assets/img/basic/logo_mixtri.png'
 			}
 			$('#profile-pic').attr('src',profilePicPath);
+			
+			globalProfilePic = $('#profile-pic')[0].src;
 		},
 
 		error: function(result){
@@ -181,10 +185,10 @@ $(document).ready(function() {
 
 
 		var fileData = $('#image-upload').get(0).files[0];
+		
+		$.blockUI({ message: '<h5><img src="assets/img/icons/busy.gif" /> Updating...</h5>' });
 
 		if(fileData!=undefined){
-
-			$.blockUI({ message: '<h5><img src="assets/img/icons/busy.gif" /> Do a little dance your music is being uploaded...</h5>' });
 
 			const boundary = '-------314159265358979323846';
 			const delimiter = "\r\n--" + boundary + "\r\n";
@@ -229,6 +233,20 @@ $(document).ready(function() {
 					callbackAfterUpload = function() {
 					};
 				}
+				
+				//Check if there is already a profile pic on google then delete it first and then upload a new one.
+				var flagProfilePic = globalProfilePic.includes("google");
+				
+				if(flagProfilePic){
+					
+					var arr = globalProfilePic.split('host/');
+					console.log(arr[1]);
+					
+					var profilePicGoogleId = arr[1];
+					
+					deleteProfilePic(profilePicGoogleId);
+					
+				}
 
 				//Should be returned by the request
 
@@ -246,11 +264,35 @@ $(document).ready(function() {
 
 	}
 
+	
+	/**
+	 * Permanently delete a file, skipping the trash.
+	 *
+	 * @param {String} fileId ID of the file to delete.
+	 */
+	function deleteProfilePic(fileId) {
+	  var request = gapi.client.drive.files.delete({
+	    'fileId': fileId
+	  });
+	  
+	  request.execute(function(resp) {
+		  
+		  if(resp.code!=404){
+			  
+			  console.log('Delete SuccessFul'); 
+			  
+		  }else{
+			 
+			  console.log('Not Successful: '+resp.message);
+		  }
+		  
+	  });
+	}
 
 	function callbackAfterUpload(jsonResp,rawResp){
 
 		$.unblockUI();
-
+		
 		var status = ($.parseJSON(rawResp)).gapiRequest.data.status;
 
 		//This means that the file has been uploaded on the google drive

@@ -12,7 +12,7 @@ $(document).ready(function() {
 		$('#testStream').addClass('btn streamActive');
 	});
 
-	
+
 
 	$('#goLive').click(function(e){
 		e.preventDefault();
@@ -447,7 +447,7 @@ $(document).ready(function() {
 			return false;
 
 		}
-		
+
 		var file = $('#mixUpload').get(0).files[0];
 		var mixTitle = $('#mix-title').val();
 
@@ -472,12 +472,51 @@ $(document).ready(function() {
 
 		}
 
-		var folderName =  $.cookie("emailId");
-		checkIfFolderExists(folderName);
+		getFreeDiskSpace(file.size);
+
 	});
 
+
+	function getFreeDiskSpace(fileSize){
+
+		$.ajax({
+			url: '/mixtri/rest/diskspace',
+			type: 'GET',
+			data: {
+				emailId: $.cookie("emailId")
+			},
+
+			success: function (data) {
+
+				var freeSpace = data;
+				
+				if(freeSpace-(fileSize/1000000)<0){
+					
+					$('#saveSetErrors').html("ERROR: You don't have enough free space. Please delete some old music.");
+					$('#saveSetErrors').show();
+					$('#saveSetErrors').delay(5000).fadeOut();
+					
+					return false;
+					
+				}else{
+					
+					var folderName =  $.cookie("emailId");
+					checkIfFolderExists(folderName);
+				}
+			},
+
+			error: function(data){
+				window.location.href = "error.jsp";
+			},
+
+
+		});
+
+
+	}
+
 	//0B_jU3ZFb1zpHQmFIMDNzc2dBRHM This is the id of the parent folder(upload) in google drive in which all the sub folders will be created.
-	
+
 	function createFolder(folderName) {
 
 		var request = gapi.client.request({
@@ -492,13 +531,13 @@ $(document).ready(function() {
 				'parents': [{
 					"kind": "drive#fileLink",
 					"id": "0B_jU3ZFb1zpHQmFIMDNzc2dBRHM"
-					
+
 				}]
 			}
 		});
 
 		request.execute(function(resp) { 
-			
+
 			//Upload File to Google Drive after creating the folder
 			var folderId = resp.id;
 			uploadToGoogleDrive(folderId);
@@ -514,118 +553,118 @@ $(document).ready(function() {
 		});
 		return uuid;
 	};
-	
+
 
 	function checkIfFolderExists(folderName) {
-		
-        var request = gapi.client.drive.files.list({
-        	
-        	'q':"mimeType = 'application/vnd.google-apps.folder' and title='"+folderName+"'"
-        	
-        	
-          });
-        
-        request.execute(function(resp) {
-        	
-        	//This means the folder exists
-        	if(resp.items.length>0){
-        		
-        		//Get the id and upload file in that
-        		var folderId = resp.items[0].id;
-        		uploadToGoogleDrive(folderId);
-        		
-        	}else{
-        		
-        		createFolder(folderName);
-        	}
-        	
 
-        });
+		var request = gapi.client.drive.files.list({
+
+			'q':"mimeType = 'application/vnd.google-apps.folder' and title='"+folderName+"'"
+
+
+		});
+
+		request.execute(function(resp) {
+
+			//This means the folder exists
+			if(resp.items.length>0){
+
+				//Get the id and upload file in that
+				var folderId = resp.items[0].id;
+				uploadToGoogleDrive(folderId);
+
+			}else{
+
+				createFolder(folderName);
+			}
+
+
+		});
 	}
-	
-	
+
+
 	function uploadToGoogleDrive(folderId) {
 
-		
-			var fileData = $('#mixUpload').get(0).files[0];
-			
-			$.blockUI({ message: '<h5><img src="assets/img/icons/busy.gif" /> Do a little dance your music is being uploaded...</h5>' });
 
-			const boundary = '-------314159265358979323846';
-			const delimiter = "\r\n--" + boundary + "\r\n";
-			const close_delim = "\r\n--" + boundary + "--";
+		var fileData = $('#mixUpload').get(0).files[0];
 
-			var reader = new FileReader();
-			reader.readAsBinaryString(fileData);
-			reader.onload = function(e) {
-				var contentType = fileData.type || 'application/octet-stream';
-				var metadata = {
-						'title': fileData.name,
-						'mimeType': contentType,
-						'parents': [{
-							"kind": "drive#fileLink",
-							"id": folderId
-							
-						}]
+		$.blockUI({ message: '<h5><img src="assets/img/icons/busy.gif" /> Do a little dance your music is being uploaded...</h5>' });
+
+		const boundary = '-------314159265358979323846';
+		const delimiter = "\r\n--" + boundary + "\r\n";
+		const close_delim = "\r\n--" + boundary + "--";
+
+		var reader = new FileReader();
+		reader.readAsBinaryString(fileData);
+		reader.onload = function(e) {
+			var contentType = fileData.type || 'application/octet-stream';
+			var metadata = {
+					'title': fileData.name,
+					'mimeType': contentType,
+					'parents': [{
+						"kind": "drive#fileLink",
+						"id": folderId
+
+					}]
+			};
+
+			var base64Data = btoa(reader.result);
+			var multipartRequestBody =
+				delimiter +
+				'Content-Type: application/json\r\n\r\n' +
+				JSON.stringify(metadata) +
+				delimiter +
+				'Content-Type: ' + contentType + '\r\n' +
+				'Content-Transfer-Encoding: base64\r\n' +
+				'\r\n' +
+				base64Data +
+				close_delim;
+
+			var request = gapi.client.request({
+				'path': '/upload/drive/v2/files',
+				'method': 'POST',
+				'params': {'uploadType': 'multipart'},
+				'headers': {
+					'Content-Type': 'multipart/mixed; boundary="' + boundary + '"'
+				},
+				'body': multipartRequestBody});
+
+			if (!callbackAfterUpload) {
+				callbackAfterUpload = function() {
 				};
-
-				var base64Data = btoa(reader.result);
-				var multipartRequestBody =
-					delimiter +
-					'Content-Type: application/json\r\n\r\n' +
-					JSON.stringify(metadata) +
-					delimiter +
-					'Content-Type: ' + contentType + '\r\n' +
-					'Content-Transfer-Encoding: base64\r\n' +
-					'\r\n' +
-					base64Data +
-					close_delim;
-
-				var request = gapi.client.request({
-					'path': '/upload/drive/v2/files',
-					'method': 'POST',
-					'params': {'uploadType': 'multipart'},
-					'headers': {
-						'Content-Type': 'multipart/mixed; boundary="' + boundary + '"'
-					},
-					'body': multipartRequestBody});
-
-				if (!callbackAfterUpload) {
-					callbackAfterUpload = function() {
-					};
-				}
-
-				//Should be returned by the request
-				
-				request.execute(function(jsonResp,rawResp){
-					
-					callbackAfterUpload(jsonResp,rawResp);
-					
-				});
 			}
+
+			//Should be returned by the request
+
+			request.execute(function(jsonResp,rawResp){
+
+				callbackAfterUpload(jsonResp,rawResp);
+
+			});
+		}
 	}
 
 
 	function callbackAfterUpload(jsonResp,rawResp){
 
 		$.unblockUI();
-		
+
 		var status = ($.parseJSON(rawResp)).gapiRequest.data.status;
-		
+
 		//This means that the file has been uploaded on the google drive
 		if(status===200){
 			//Generates a random track id
 			var uuid = generateUUID();
 
 			//On Successfully saving the song to google drive save the uploaded song's details on the data with an Ajax Call
-			
+
 			var mixTitle = $('#mix-title').val();
 			var uploadedFileId = jsonResp.id;
 			var uploadPath = 'https://googledrive.com/host/'+jsonResp.id
 			var fileName = jsonResp.originalFilename;
-			var fileSize = jsonResp.fileSize;
+			var fileSize = jsonResp.fileSize/1000000;
 			var googleFileId = jsonResp.id;
-			
+
 			saveSongDetails(uuid,mixTitle,uploadPath,fileName,fileSize,googleFileId);
 
 		}else{
@@ -636,7 +675,7 @@ $(document).ready(function() {
 
 
 	function saveSongDetails(uuid,mixTitle,uploadPath,fileName,fileSize,googleFileId){
-		
+
 		$.ajax({
 			url: '/mixtri/rest/saveSongDetails',
 			type: 'POST',
@@ -653,10 +692,10 @@ $(document).ready(function() {
 			dataType: 'json',
 
 			success: function (data) {
-				
+
 				//These are the global variables containing id/path for the recently uploaded track.
 				var uploadedTrackPath = data.path;
-				
+
 				var alreadySelectedMix = $('.pastMix');
 				var mixTitle = $('#mix-title').val();
 
@@ -679,7 +718,7 @@ $(document).ready(function() {
 				$('#saveSetErrors').empty();
 				$('#maxFileSizeError').empty();
 				$('#invalid-mp3-file').html();
-				
+
 
 			},
 
@@ -689,7 +728,7 @@ $(document).ready(function() {
 
 
 		});
-		
+
 	}
 
 	//On Document Load Remove any selected mixes
@@ -718,7 +757,8 @@ $(document).ready(function() {
 	/**
 			This function gets called on document.ready ie on load and then fetches the diskspace for the user by checking the folder side value.
 	 **/
-	function getDiskSpace(){	
+	function getDiskSpace(){
+
 		$.ajax({
 			url: '/mixtri/rest/diskspace',
 			type: 'GET',
@@ -740,6 +780,7 @@ $(document).ready(function() {
 
 
 		});
+
 
 	}
 

@@ -119,7 +119,7 @@ public class Uploader{
 	@Path("/saveSongDetails")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response saveSongDetails(@FormParam("uuid") String uuid,@FormParam("emailId") String emailId, @FormParam("mixTitle") String mixTitle,
-			@FormParam("uploadPath") String uploadPath,@FormParam("fileName") String fileName,@FormParam("fileSize") long fileSize,@FormParam("googleFileId") String googleFileId){
+			@FormParam("uploadPath") String uploadPath,@FormParam("fileName") String fileName,@FormParam("fileSize") float fileSize,@FormParam("googleFileId") String googleFileId){
 		
 		String response=null;
 		
@@ -129,6 +129,7 @@ public class Uploader{
 		
 		Map<String,String> messages = new HashMap<String,String>();
 		
+		//float fileSizeMB = Float.parseFloat(String.format("%.2f", fileSize/1000000));
 		UploaderBean uploaderBean = setUploaderBean(emailId,fileSize,uuid,mixTitle,uploadPath,googleFileId);
 		MixtriDAO mixtriDAO = new MixtriDAO();
 		mixtriDAO.saveUploadedMixDAO(uploaderBean);
@@ -142,7 +143,7 @@ public class Uploader{
 			Response.Status httpStatus = Response.Status.INTERNAL_SERVER_ERROR;
 			return Response.status(httpStatus).build() ;
 		} 
-		//messages.put("error","ERROR: Not enough free space to upload. Please delete some old files to free some space!");
+		
 		return Response.ok(response, MediaType.APPLICATION_JSON).build();
 	}
 
@@ -219,7 +220,7 @@ public class Uploader{
 			return Response.ok(spaceLeft, MediaType.APPLICATION_JSON).build();
 
 		}catch(Exception exp){
-			//log.error("Exception Occured while fetching disk space for the user:"+uploadPath);
+			
 			log.error("Exception Occured while fetching disk space for the user:"+exp);
 			Response.Status httpStatus = Response.Status.INTERNAL_SERVER_ERROR;
 			return Response.status(httpStatus).build() ;
