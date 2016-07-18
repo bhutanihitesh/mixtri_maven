@@ -39,8 +39,8 @@ public class EventDB {
 		try{
 
 			String query ="INSERT INTO mixtri.events(id,displayName,streamInfo,eventCreatedUTCTimeStamp,timeZone,eventDescription,genre,hashtags,streamingOption,"
-					+ "eventPicPath,bgVideoPath,isLive,profileURLId,emailId,kudosCount)"
-					+ "VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+					+ "eventPicPath,bgVideoPath,isLive,profileURLId,emailId,kudosCount,liveStreamURL)"
+					+ "VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 
 			String eventDescription = eventBean.getEventDescription().isEmpty() ? null : eventBean.getEventDescription();
 			String hastags = eventBean.getHastags().isEmpty() ? null : eventBean.getHastags();
@@ -63,6 +63,7 @@ public class EventDB {
 			statement.setString(13, eventBean.getProfileURLId());
 			statement.setString(14, eventBean.getEmailId());
 			statement.setInt(15, eventBean.getKudosCount());
+			statement.setString(16, eventBean.getLiveStreamURL());
 			insertedRows = statement.executeUpdate();
 
 		}finally

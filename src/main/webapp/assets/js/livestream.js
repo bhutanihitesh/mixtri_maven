@@ -312,7 +312,16 @@ $(document).ready(function() {
 
 				//We are manually submitting the form because we want to see if the value returned from server is correct and 5 mins validation satisfies or not.
 				if(formSubmit == 'true'){
-					submitEventForm();
+					//submitEventForm();
+										
+					//This uploads the event pic in the google drive.
+					var folderName =  $.cookie("emailId");
+					var fileData = $('#image-upload').get(0).files[0];
+					var waitMsg = '<h5><img src="assets/img/icons/busy.gif" /> Setting it up...</h5>';
+					var uploadType = 'setupLiveStream';
+
+					checkIfFolderExists(folderName,fileData,waitMsg,uploadType);
+					
 					$('#btnLiveStream').attr('disabled','disabled');
 
 				}
@@ -327,72 +336,7 @@ $(document).ready(function() {
 		})
 
 
-
-		function submitEventForm(){
-
-			var selectedVid = $('.selectedVid').get(0).id;
-
-			var strArr = [];
-			strArr = selectedVid.split("-"); //get id id of the selected div.
-			var vidFrame = "#vidFrame-"+strArr[1];
-
-			var emailId = $.cookie('emailId');
-			var displayName = $.cookie('displayName');
-			var streamInfo = $('#streamInfo').val();
-			var eventDate = $("#eventDatePicker" ).val();
-			var eventTime = $('#eventTimePicker').val();
-			var selectedTimeZone = $("#timeZone option:selected").val();
-			var eventDescription = $('#eventDescription').val();
-			var genre = $('#genre').val();
-			var hastags = $('#hashtags').val();
-			var streamingOption = $('.panel.panel-primary.pointer-cursor.selected').get(0).id;
-			var bgVideoTheme = $(vidFrame).get(0).currentSrc;
-			var eventPic = $('#image-upload').get(0).files[0];
-			var profileURLId = $.cookie('profileURLId');
-
-
-
-			var data = new FormData();
-			data.append('emailId', emailId);
-			data.append('displayName', displayName);
-			data.append('streamInfo', streamInfo);
-			data.append('eventDate', eventDate);
-			data.append('eventTime', eventTime);
-			data.append('selectedTimeZone', selectedTimeZone);
-			data.append('eventDescription', eventDescription);
-			data.append('genre', genre);
-			data.append('hastags', hastags);
-			data.append('streamingOption', streamingOption);
-			data.append('eventPic', eventPic);
-			data.append('bgVideoTheme',bgVideoTheme);
-			data.append('profileURLId',profileURLId);
-
-			var url = "/mixtri/rest/event";
-
-			$.ajax({
-				url: url,
-				type: 'POST',
-				contentType: false,
-				processData: false,
-				data: data,
-
-				success: function (result) {
-
-					$.cookie('eventId', result.id,{ path: '/'});
-					var profileURLId = $.cookie('profileURLId');
-					window.location.href = 'event.jsp?profileURLId='+profileURLId+'&eventId='+result.id;
-
-				},
-				error: function(result){
-
-					window.location.href = "error.jsp";
-
-				}
-
-			});
-
-		}
-
+		
 
 		/***
 	    	 		This function checks if the user has setup the event on the same day or not then only it checks for 5 mins validation.
@@ -489,19 +433,23 @@ $(document).ready(function() {
 			success: function (data) {
 
 				var freeSpace = data;
-				
+
 				if(freeSpace-(fileSize/1000000)<0){
-					
+
 					$('#saveSetErrors').html("ERROR: You don't have enough free space. Please delete some old music.");
 					$('#saveSetErrors').show();
 					$('#saveSetErrors').delay(5000).fadeOut();
-					
+
 					return false;
-					
+
 				}else{
-					
+
 					var folderName =  $.cookie("emailId");
-					checkIfFolderExists(folderName);
+					var fileData = $('#mixUpload').get(0).files[0];
+					var waitMsg = '<h5><img src="assets/img/icons/busy.gif" /> Do a little dance your music is being uploaded...</h5>';
+					var uploadType = 'Remixes';
+
+					checkIfFolderExists(folderName,fileData,waitMsg,uploadType);
 				}
 			},
 
@@ -514,10 +462,11 @@ $(document).ready(function() {
 
 
 	}
+	
 
 	//0B_jU3ZFb1zpHQmFIMDNzc2dBRHM This is the id of the parent folder(upload) in google drive in which all the sub folders will be created.
 
-	function createFolder(folderName) {
+	function createFolder(folderName,fileData,waitMsg,uploadType) {
 
 		var request = gapi.client.request({
 			'path': '/drive/v2/files/',
@@ -540,7 +489,7 @@ $(document).ready(function() {
 
 			//Upload File to Google Drive after creating the folder
 			var folderId = resp.id;
-			uploadToGoogleDrive(folderId);
+			uploadToGoogleDrive(folderId,fileData,waitMsg,uploadType);
 		});
 	}
 
@@ -555,7 +504,7 @@ $(document).ready(function() {
 	};
 
 
-	function checkIfFolderExists(folderName) {
+	function checkIfFolderExists(folderName,fileData,waitMsg,uploadType) {
 
 		var request = gapi.client.drive.files.list({
 
@@ -571,11 +520,11 @@ $(document).ready(function() {
 
 				//Get the id and upload file in that
 				var folderId = resp.items[0].id;
-				uploadToGoogleDrive(folderId);
+				uploadToGoogleDrive(folderId,fileData,waitMsg,uploadType);
 
 			}else{
 
-				createFolder(folderName);
+				createFolder(folderName,fileData,waitMsg,uploadType);
 			}
 
 
@@ -583,12 +532,10 @@ $(document).ready(function() {
 	}
 
 
-	function uploadToGoogleDrive(folderId) {
+	function uploadToGoogleDrive(folderId,fileData,waitMsg,uploadType) {
 
-
-		var fileData = $('#mixUpload').get(0).files[0];
-
-		$.blockUI({ message: '<h5><img src="assets/img/icons/busy.gif" /> Do a little dance your music is being uploaded...</h5>' });
+		
+		$.blockUI({ message: waitMsg });
 
 		const boundary = '-------314159265358979323846';
 		const delimiter = "\r\n--" + boundary + "\r\n";
@@ -630,22 +577,24 @@ $(document).ready(function() {
 				'body': multipartRequestBody});
 
 			if (!callbackAfterUpload) {
-				callbackAfterUpload = function() {
+			
+				callbackAfterMixUpload = function() {
 				};
+				
 			}
-
+			
 			//Should be returned by the request
 
 			request.execute(function(jsonResp,rawResp){
-
-				callbackAfterUpload(jsonResp,rawResp);
-
+				
+				callbackAfterUpload(jsonResp,rawResp,uploadType);
+				
 			});
 		}
 	}
 
 
-	function callbackAfterUpload(jsonResp,rawResp){
+	function callbackAfterUpload(jsonResp,rawResp,uploadType){
 
 		$.unblockUI();
 
@@ -654,18 +603,17 @@ $(document).ready(function() {
 		//This means that the file has been uploaded on the google drive
 		if(status===200){
 			//Generates a random track id
-			var uuid = generateUUID();
+			
 
 			//On Successfully saving the song to google drive save the uploaded song's details on the data with an Ajax Call
-
-			var mixTitle = $('#mix-title').val();
-			var uploadedFileId = jsonResp.id;
-			var uploadPath = 'https://googledrive.com/host/'+jsonResp.id
-			var fileName = jsonResp.originalFilename;
-			var fileSize = jsonResp.fileSize/1000000;
-			var googleFileId = jsonResp.id;
-
-			saveSongDetails(uuid,mixTitle,uploadPath,fileName,fileSize,googleFileId);
+			if(uploadType=='Remixes'){
+				
+				saveSongDetails(jsonResp);
+			}
+	
+			else if(uploadType=='setupLiveStream'){
+				submitEventForm(jsonResp);
+			}
 
 		}else{
 
@@ -673,8 +621,87 @@ $(document).ready(function() {
 		}	
 	}
 
+	
+	function submitEventForm(jsonResp){
 
-	function saveSongDetails(uuid,mixTitle,uploadPath,fileName,fileSize,googleFileId){
+		
+		
+		var selectedVid = $('.selectedVid').get(0).id;
+
+		var strArr = [];
+		strArr = selectedVid.split("-"); //get id id of the selected div.
+		var vidFrame = "#vidFrame-"+strArr[1];
+
+		var emailId = $.cookie('emailId');
+		var displayName = $.cookie('displayName');
+		var streamInfo = $('#streamInfo').val();
+		var eventDate = $("#eventDatePicker" ).val();
+		var eventTime = $('#eventTimePicker').val();
+		var selectedTimeZone = $("#timeZone option:selected").val();
+		var eventDescription = $('#eventDescription').val();
+		var genre = $('#genre').val();
+		var hastags = $('#hashtags').val();
+		var streamingOption = $('.panel.panel-primary.pointer-cursor.selected').get(0).id;
+		var bgVideoTheme = $(vidFrame).get(0).currentSrc;
+		var profileURLId = $.cookie('profileURLId');
+		var eventPicPath = 'https://googledrive.com/host/'+jsonResp.id
+		var uuid = generateUUID();
+		var liveStreamURL='http://52.77.202.27/mixtri/'+uuid;
+
+		var url = "/mixtri/rest/event";
+
+		$.ajax({
+			url: url,
+			type: 'POST',
+			data: {
+
+				emailId:emailId,
+				displayName:displayName,
+				streamInfo:streamInfo,
+				eventDate:eventDate,
+				eventTime:eventTime,
+				selectedTimeZone:selectedTimeZone,
+				eventDescription:eventDescription,
+				genre:genre,
+				hastags:hastags,
+				streamingOption:streamingOption,
+				bgVideoTheme:bgVideoTheme,
+				profileURLId:profileURLId,
+				eventPicPath:eventPicPath,
+				liveStreamURL:liveStreamURL
+			},
+
+			dataType: 'json',
+			success: function (result) {
+
+				$.cookie('eventId', result.id,{ path: '/'});
+				$.cookie('liveStreamURL', result.liveStreamURL,{ path: '/'});
+				var profileURLId = $.cookie('profileURLId');
+				window.location.href = 'event.jsp?profileURLId='+profileURLId+'&eventId='+result.id;
+
+			},
+			error: function(result){
+
+				window.location.href = "error.jsp";
+
+			}
+
+		});
+
+	}
+
+	
+	function saveSongDetails(jsonResp){
+		
+		var uuid = generateUUID();
+		
+		var mixTitle = $('#mix-title').val();
+		var uploadedFileId = jsonResp.id;
+		var uploadPath = 'https://drive.google.com/uc?export=download&id='+jsonResp.id
+		var fileName = jsonResp.originalFilename;
+		var fileSize = jsonResp.fileSize/1000000;
+		var googleFileId = jsonResp.id;
+		
 
 		$.ajax({
 			url: '/mixtri/rest/saveSongDetails',
@@ -741,6 +768,7 @@ $(document).ready(function() {
 		html+='<div>'+trackName+'</div>';
 		html+='<audio controls preload="metadata">';
 		html+='<source src="'+uploadedTrackPath+'" type="audio/mpeg">';
+		html+='<source src="'+uploadedTrackPath+'" type="audio/ogg">';
 		html+='</audio>';
 		html+='</div>';
 		$('#uploaded-past-mixes').prepend(html);

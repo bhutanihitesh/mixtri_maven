@@ -19,6 +19,7 @@ public class EventBean {
 	int attendeeCount;
 	String isLive;
 	String profileURLId;
+	String liveStreamURL;
 	int kudosCount;
 	String feedback;
 	Timestamp eventCreatedUTCTimestamp;
@@ -113,6 +114,12 @@ public class EventBean {
 	}
 	public void setProfileURLId(String profileURLId) {
 		this.profileURLId = profileURLId;
+	}
+	public String getLiveStreamURL() {
+		return liveStreamURL;
+	}
+	public void setLiveStreamURL(String liveStreamURL) {
+		this.liveStreamURL = liveStreamURL;
 	}
 	public int getKudosCount() {
 		return kudosCount;

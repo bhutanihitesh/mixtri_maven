@@ -555,14 +555,11 @@ function loadDriveApi() {
 						<!-- Vidoes Start -->
 						<div class="col-xs-12 col-sm-12 col-md-6">
 							<div id="bgTheme-1" class="bgThemeVideo">
-								<!-- <video id="vidFrame-1" controls muted class="vidFrames" preload="metadata">
-									<source src="assets/videos/Luminator.mp4" type="video/mp4">
-								</video> -->
-
+								
 								<video id="vidFrame-1" controls muted controls="controls"
 									class="vidFrames" preload="metadata">
 									<source
-										src="https://googledrive.com/host/0B5rjLGYHECZeOTBBTnFBNUJKeWM"
+										src="https://drive.google.com/uc?export=download&id=0B5rjLGYHECZeOTBBTnFBNUJKeWM"
 										type='video/mp4' />
 								</video>
 
@@ -572,7 +569,7 @@ function loadDriveApi() {
 								<video id="vidFrame-2" controls muted controls="controls"
 									class="vidFrames" preload="metadata">
 									<source
-										src="https://googledrive.com/host/0B5rjLGYHECZeNmVkUkJjanJLaEk"
+										src="https://drive.google.com/uc?export=download&id=0B5rjLGYHECZeNmVkUkJjanJLaEk"
 										type='video/mp4' />
 								</video>
 
@@ -582,16 +579,17 @@ function loadDriveApi() {
 								<video id="vidFrame-3" controls muted controls="controls"
 									class="vidFrames" preload="metadata">
 									<source
-										src="https://googledrive.com/host/0B5rjLGYHECZeMmpoU25adzhyeDA"
+										src="https://drive.google.com/uc?export=download&id=0B5rjLGYHECZeMmpoU25adzhyeDA"
 										type='video/mp4' />
-								</video>
+										
+										<source src="https://drive.google.com/uc?export=download&id=0B5rjLGYHECZeMmpoU25adzhyeDA" type='video/webm'/>								</video>
 							</div>
 
 							<div id="bgTheme-4" class="bgThemeVideo hidden">
 								<video id="vidFrame-4" controls muted class="vidFrames"
 									preload="metadata">
 									<source
-										src="https://googledrive.com/host/0B5rjLGYHECZeUloxT2tSa0FjTm8"
+										src="https://drive.google.com/uc?export=download&id=0B5rjLGYHECZeUloxT2tSa0FjTm8"
 										type='video/mp4' />
 								</video>
 
@@ -601,7 +599,7 @@ function loadDriveApi() {
 								<video id="vidFrame-5" controls muted class="vidFrames"
 									preload="metadata">
 									<source
-										src="https://googledrive.com/host/0B5rjLGYHECZebTgxWnh5RHRSWjA"
+										src="https://drive.google.com/uc?export=download&id=0B5rjLGYHECZebTgxWnh5RHRSWjA"
 										type='video/mp4' />
 								</video>
 							</div>
@@ -610,7 +608,7 @@ function loadDriveApi() {
 								<video id="vidFrame-6" controls class="vidFrames" muted
 									preload="metadata">
 									<source
-										src="https://googledrive.com/host/0B5rjLGYHECZealViOGJTVzhSakU"
+										src="https://drive.google.com/uc?export=download&id=0B5rjLGYHECZealViOGJTVzhSakU"
 										type='video/mp4' />
 								</video>
 

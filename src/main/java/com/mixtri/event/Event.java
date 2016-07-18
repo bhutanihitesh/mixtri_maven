@@ -1,8 +1,11 @@
 package com.mixtri.event;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.sql.Timestamp;
 import java.text.DateFormatSymbols;
 import java.text.ParseException;
@@ -14,7 +17,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.TimeZone;
-import javax.ws.rs.Consumes;
+
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -25,12 +28,9 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.apache.log4j.Logger;
-import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
-import org.glassfish.jersey.media.multipart.FormDataParam;
 
 import com.google.gson.Gson;
 import com.mixtri.DAO.MixtriDAO;
-import com.mixtri.uploader.Uploader;
 import com.mixtri.utils.MixtriUtils;
 @Path("/")
 public class Event {
@@ -62,15 +62,6 @@ public class Event {
 
 	}
 	
-	/***
-	 * While Saving the event we check if the event time and the server time are valid ie user is setting the event in advance. Also, We also check while saving the event
-	 * that the same event exists with this name or not. If not then it sends in one more restful service request and saves the event 
-	 * @param selectedTimeZone
-	 * @param streamInfo
-	 * @param profileURLId
-	 * @return
-	 */
-	
 	
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
@@ -81,6 +72,15 @@ public class Event {
 		return Response.ok("Success Again and Again", MediaType.APPLICATION_JSON).build();
 	}
 	
+	
+	/***
+	 * While Saving the event we check if the event time and the server time are valid ie user is setting the event in advance. Also, We also check while saving the event
+	 * that the same event exists with this name or not. If not then it sends in one more restful service request and saves the event 
+	 * @param selectedTimeZone
+	 * @param streamInfo
+	 * @param profileURLId
+	 * @return
+	 */
 	
 	@GET
 	@Path("/servertime")
@@ -134,22 +134,17 @@ public class Event {
 	
 	@POST
 	@Path("/event")
-	@Consumes(MediaType.MULTIPART_FORM_DATA)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response setEventFormData(@FormDataParam("emailId") String emailId,@FormDataParam("displayName") String displayName, @FormDataParam("streamInfo") String streamInfo,
-			@FormDataParam("eventDate") String eventDate,@FormDataParam("eventTime") String eventTime, @FormDataParam("selectedTimeZone") String selectedTimeZone,
-			@FormDataParam("eventDescription") String eventDescription,@FormDataParam("genre") String genre, @FormDataParam("hastags") String hastags,
-			@FormDataParam("streamingOption") String streamingOption,@FormDataParam("eventPic") InputStream fileInputStream,
-			@FormDataParam("eventPic") FormDataContentDisposition fileFormDataContentDisposition,@FormDataParam("bgVideoTheme") String bgVideoTheme,
-			@FormDataParam("profileURLId") String profileURLId){
+	public Response setEventDetails(@FormParam("emailId") String emailId,@FormParam("displayName") String displayName, @FormParam("streamInfo") String streamInfo,
+			@FormParam("eventDate") String eventDate,@FormParam("eventTime") String eventTime, @FormParam("selectedTimeZone") String selectedTimeZone,
+			@FormParam("eventDescription") String eventDescription,@FormParam("genre") String genre, @FormParam("hastags") String hastags,
+			@FormParam("streamingOption") String streamingOption,@FormParam("bgVideoTheme") String bgVideoTheme,
+			@FormParam("profileURLId") String profileURLId,@FormParam("eventPicPath") String eventPicPath,@FormParam("liveStreamURL") String liveStreamURL){
 		
 		String response="";
 		try{
 		 EventBean eventBean;
-		 Uploader fileServiceImpl = new Uploader();
 		 
-		 //Give path of the pic saved for the event for the logged in user.
-		 String eventPicPath = fileServiceImpl.uploadEventPic(fileInputStream, fileFormDataContentDisposition, emailId,false); 
 		 String bgVideoPath = bgVideoTheme;
 		 
 		 String fromFormat = "MM/dd/yyyy";
@@ -164,16 +159,17 @@ public class Event {
 			 genre = "Open Format";
 		 }
 		 eventBean = setEventBean(emailId,displayName,streamInfo,eventCreatedUTCTimestamp,selectedTimeZone,eventDescription,genre,hastags
-				 				  ,streamingOption,eventPicPath,bgVideoPath,profileURLId);
+				 				  ,streamingOption,eventPicPath,bgVideoPath,profileURLId,liveStreamURL);
 		 
 		 MixtriDAO mixtriDAO = new MixtriDAO();
 		 boolean isSaved = mixtriDAO.saveEventInfoDAO(eventBean);
 		 
-		 HashMap<String,String> eventId = new HashMap<String, String>();
+		 HashMap<String,String> mapEvent = new HashMap<String, String>();
 		 if(isSaved){
 			 Gson gson = new Gson();
-			 eventId.put("id", eventBean.getId());
-			 response = gson.toJson(eventId);
+			 mapEvent.put("id", eventBean.getId());
+			 mapEvent.put("liveStreamURL", liveStreamURL);
+			 response = gson.toJson(mapEvent);
 		 }
 		
 		}catch(Exception exp){
@@ -185,7 +181,7 @@ public class Event {
 	}
 	
 	public EventBean setEventBean(String emailId,String displayName,String streamInfo,Timestamp eventCreatedUTCTimestamp,String selectedTimeZone,String eventDescription, 
-			String genre,String hastags,String streamingOption,String eventPicPath,String bgVideoPath,String profileURLId){
+			String genre,String hastags,String streamingOption,String eventPicPath,String bgVideoPath,String profileURLId,String liveStreamURL){
 		
 		final String id = MixtriUtils.getUUID();
 		
@@ -206,6 +202,7 @@ public class Event {
 		eventBean.setIsLive("");
 		eventBean.setProfileURLId(profileURLId);
 		eventBean.setKudosCount(0);
+		eventBean.setLiveStreamURL(liveStreamURL);
 		
 		return eventBean;
 		

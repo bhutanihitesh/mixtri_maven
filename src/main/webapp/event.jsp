@@ -144,6 +144,8 @@ Style Sheets
            <button id="btn-fbShare" style="margin-bottom: 10px;" type="button" class="btn btn-primary">
 					<i class="fa fa-facebook"></i> Facebook
 			</button>
+			
+			<div id="liveStreamURL"></div>
           
         
         </div>

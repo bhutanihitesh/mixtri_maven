@@ -8,9 +8,9 @@ $(document).ready(function() {
 
 
 
-	/*var trackURL = "assets/audio/Capital Cities - Safe and Sound.mp3";*/
+	var trackURL = "http://ec2-52-77-202-27.ap-southeast-1.compute.amazonaws.com/mixtri/ddded585a2f24aa1be99f681fa858494.ogg";
 	
-	var trackURL = "http://192.168.1.19:8000/mixtri/1234.ogg";
+	/*var trackURL = "http://192.168.1.19:8000/mixtri/1234.ogg";*/
 
 	//Saving the eventId for the user to submit the feedback, end and end event
 	var eventId = $.cookie('eventId');
@@ -173,7 +173,7 @@ $(document).ready(function() {
 			}, 2500);
 
 			var timeRemaining = countdown.getTimeRemaining();
-			if(timeRemaining=='0'){
+			if(timeRemaining<='0'){
 				$("#bgVideoTheme video")[0].load();
 				$("#bgVideoTheme video")[0].play();
 				playStopTrack('#jPlayerLiveTrack',trackURL,'play');	

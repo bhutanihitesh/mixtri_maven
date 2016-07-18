@@ -1,9 +1,11 @@
 package com.mixtri.utils;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
@@ -277,7 +279,22 @@ public class MixtriUtils{
 
 	public static void main(String[] args) {
 		
-		TimeZone tz = TimeZone.getTimeZone("Pacific/Samoa");
-		displayTimeZone(tz);
+		try{
+
+
+			ProcessBuilder builder = new ProcessBuilder(
+					"cmd.exe", "/c", "cd \"C:\\Program Files (x86)\\VideoLAN\\VLC\" && vlc --sout #transcode{vcodec=none,acodec=mp3,ab=128,channels=2,samplerate=44100}:std{access=shout,mux=ogg,dst=source:mixtri@52.77.202.27:80/mixtri/mystream.mp3} http://ec2-52-77-202-27.ap-southeast-1.compute.amazonaws.com/mixtri/hitesh.ogg");
+		    builder.redirectErrorStream(true);
+	        Process p = builder.start();
+	        BufferedReader r = new BufferedReader(new InputStreamReader(p.getInputStream()));
+	        String line;
+	        while (true) {
+	            line = r.readLine();
+	            if (line == null) { break; }
+	            System.out.println(line);
+	        }
+		}catch(IOException exp){
+			System.out.println("Exception Occured while executing windows command line commands");
+		}
 	}
 }

@@ -118,7 +118,8 @@ http://calculator.s3.amazonaws.com/index.html#r=IAD&s=S3&key=calc-03CAF6B6-1C38-
 
 
 
-
+ALTER TABLE `mixtri`.`events` 
+ADD COLUMN `liveStreamURL` VARCHAR(240) NOT NULL COMMENT '' AFTER `feedback`;
 
 
 

@@ -36,7 +36,8 @@ $(document).ready(function() {
 	var loggedInUserProfileId = $.cookie('profileURLId');
 	 
 	 if(profileURLId==loggedInUserProfileId){
-		
+		 var liveStreamURL = $.cookie('liveStreamURL');
+		 $('#liveStreamURL').html(liveStreamURL);
 		 $('#eventSetUpModal').modal('show');	 
 	 }
 	

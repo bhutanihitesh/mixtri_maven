@@ -40,44 +40,97 @@
  */
 -->
 
-<%@page contentType="text/html" pageEncoding="UTF-8"%>
+
+<!-- <!DOCTYPE html>
+<html>
+<body>
+
+<audio controls>
+  <source src="http://ec2-52-77-202-27.ap-southeast-1.compute.amazonaws.com/mixtri/ddded585a2f24aa1be99f681fa858494.ogg" type="audio/ogg">
+  <source src="http://ec2-52-77-202-27.ap-southeast-1.compute.amazonaws.com/mixtri/ddded585a2f24aa1be99f681fa858494.ogg" type="audio/mpeg">
+Your browser does not support the audio element.
+</audio>
+
+</body>
+</html> -->
+
+
 <!DOCTYPE html>
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title>WebSocket : Chat</title>
+        
+        <script type="text/javascript">
+        
+           function playStopTrack(){
+        	
+        	//var trackURL = "http://ec2-52-77-202-27.ap-southeast-1.compute.amazonaws.com/mixtri/ddded585a2f24aa1be99f681fa858494.ogg";
+        	var trackURL = "assets/audio/Meenal_Performance.ogg";
+        	var id='#jPlayerLiveTrack';
+        	var action='play';
+        	
+    		console.log('Testing url'+trackURL);
+    		$(id).jPlayer({
+    			ready: function() {
+    				$(this).jPlayer("setMedia", {
+    					mp3: trackURL,
+    					ogg: trackURL
+    					}
+    				).jPlayer(action);
+    				var click = document.ontouchstart === undefined ? 'click' : 'touchstart';
+    				var kickoff = function () {
+    					$(id).jPlayer(action);
+
+    				};
+
+    			},
+    			swfPath: "assets/jPlayer/jquery.jplayer.swf",
+    			solution: 'flash,html',
+    			nativeSupport: true,
+    			oggSupport: true,
+            	customCssIds: true,
+    			loop: false
+    		});
+
+    	}
+    	
+    	
+     /* function playStopTrack(){
+    		
+    	
+        var trackURL = "http://ec2-52-77-202-27.ap-southeast-1.compute.amazonaws.com/mixtri/ddded585a2f24aa1be99f681fa858494.ogg";
+    	var id='#jPlayerLiveTrack';
+    	var action='play';
+        
+    	console.log('Hello: '+trackURL);
+    	
+        $(id).jPlayer({
+        	ready: function(){
+        		$(this).jPlayer("setFile",trackURL);
+        	},
+        	swfPath: "assets/jPlayer",
+        	nativeSupport: true,
+        	oggSupport: true,
+        	customCssIds: true
+        }).jPlayer(action);
+        
+    }  */ 
+        </script>
+        
     </head>
     <body>
-        <h1>WebSocket : Chat</h1>
-        <div style="text-align: center;">
-            <form action=""> 
-                
-                <table>
-                    <tr>
-                        <td>
-                            Users<br/>
-                            <textarea readonly="true" rows="6" cols="20" id="userField"></textarea>
-                        </td>
-                        <td>
-                            Chat Log<br/>
-                            <textarea readonly="true" rows="6" cols="50" id="chatlogField"></textarea> 
-                        </td>
-                    </tr>
-                    <tr>
-                        <td colspan="2">
-                            <input id="textField" name="name" value="Duke" type="text"><br>
-                            <input onclick="join();" value="Join" type="button"> 
-                            <input onclick="send_message();" value="Chat" type="button"> 
-                        </td>
-                    </tr>
-                </table>
-
-            </form>
-        </div>
-        <div id="output"></div>
-        <script language="javascript" type="text/javascript" src="assets/js/messengerebsocket.js">
-            
-        </script>
+    
+    <button onclick="playStopTrack()">Play Live Stream</button>
+    <div id="jPlayerLiveTrack">Jplayer Mixer</div>
+    
+    <audio controls preload="none" src="assets/audio/Meenal_Performance.mp3" type="audio/mpeg"></audio>
+    <audio id="id" controls preload="none" src="assets/audio/Meenal_Performance.ogg" type="audio/ogg"></audio>
+    
+    
+   <script type="text/javascript" src="assets/js/jquery-1.11.1.min.js"></script>
+    <script defer src="assets/jPlayer/jquery.jplayer.min.js"></script>
+    <script defer src="assets/jPlayer/add-on/jplayer.playlist.min.js"></script>
 
     </body>
 </html>

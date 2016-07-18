@@ -85,3 +85,14 @@ Location of Java on Openshift
 
 export JAVA_HOME=/etc/alternatives/java_sdk_1.8.0
 export PATH=$JAVA_HOME/bin:$PATH
+
+
+
+
+************** Icecast Transcoding and live streaming using vlc commandline***********
+In vlc player:
+Go to Tools->Perferences->At bottom select radio button All->Search for Shoutcast->Select Stream mp3 checkbox
+
+vlc --sout "#transcode{vcodec=none,acodec=mp3,ab=128,channels=2,samplerate=44100}:std{access=shout,mux=ogg,dst=source:mixtri@52.77.202.27:80/mixtri/mystream.mp3}" http://ec2-52-77-202-27.ap-southeast-1.compute.amazonaws.com/mixtri/hitesh.ogg
+
+logging in at mountpoint "/mixtri/mystream.mp3" from 52.77.202.27

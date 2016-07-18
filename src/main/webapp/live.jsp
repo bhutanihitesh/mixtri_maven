@@ -585,7 +585,6 @@ z-index: 9999;
 		src="assets/js/modernizr-2.6.2-respond-1.1.0.min.js"></script>
 	<!-- Modernizr -->
 	<script type="text/javascript" src="assets/js/jquery-1.11.1.min.js"></script>
-	<!-- <script src="https://code.jquery.com/jquery-2.2.3.min.js"></script> -->
 	<script defer src="assets/js/bootstrap.min.js"></script>
 	<script defer src="assets/js/jquery.cookie.js"></script>
 	<script type="text/javascript" src="assets/js/jquery.countdown360.min.js"></script>
