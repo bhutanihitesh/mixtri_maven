@@ -645,9 +645,7 @@ $(document).ready(function() {
 		var bgVideoTheme = $(vidFrame).get(0).currentSrc;
 		var profileURLId = $.cookie('profileURLId');
 		var eventPicPath = 'https://googledrive.com/host/'+jsonResp.id
-		var uuid = generateUUID();
-		var liveStreamURL='http://52.77.202.27/mixtri/'+uuid;
-
+		
 		var url = "/mixtri/rest/event";
 
 		$.ajax({
@@ -667,8 +665,7 @@ $(document).ready(function() {
 				streamingOption:streamingOption,
 				bgVideoTheme:bgVideoTheme,
 				profileURLId:profileURLId,
-				eventPicPath:eventPicPath,
-				liveStreamURL:liveStreamURL
+				eventPicPath:eventPicPath,				
 			},
 
 			dataType: 'json',
@@ -676,6 +673,8 @@ $(document).ready(function() {
 
 				$.cookie('eventId', result.id,{ path: '/'});
 				$.cookie('liveStreamURL', result.liveStreamURL,{ path: '/'});
+				//Set isDJ true if a user is setting up an event
+				$.cookie('isDj',true,{ path: '/'});
 				var profileURLId = $.cookie('profileURLId');
 				window.location.href = 'event.jsp?profileURLId='+profileURLId+'&eventId='+result.id;
 

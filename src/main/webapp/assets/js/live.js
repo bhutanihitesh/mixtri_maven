@@ -6,27 +6,30 @@ $(document).ready(function() {
 	websocket.onerror = function(evt) { onError(evt) };
 	websocket.onclose = function(evt) {onClose(evt)};
 
-
-
-	var trackURL = "http://ec2-52-77-202-27.ap-southeast-1.compute.amazonaws.com/mixtri/ddded585a2f24aa1be99f681fa858494.ogg";
 	
-	/*var trackURL = "http://192.168.1.19:8000/mixtri/1234.ogg";*/
 
-	//Saving the eventId for the user to submit the feedback, end and end event
-	var eventId = $.cookie('eventId');
-
+	var liveStreamURL = $.cookie('liveStreamURL');	
+    var isDj = false;
+	
+    //Saving the eventId for the user to submit the feedback, end and end event
+	var eventId = getQueryVariable('eventId');
+	
+	// On Page Load Just setup the URLs for the html Audio Tags and we will figure out if we need to play it or not depening on if the user is a listener or a dj.
+	var srcOgg = "http://52.77.202.27/mixtri/"+eventId+".ogg";
+	var srcMp3 = "http://52.77.202.27/mixtri/"+eventId+".mp3";
+	
+	$('#srcOgg').attr('src',srcOgg);
+	$('#srcMp3').attr('src',srcMp3);
+	
 	var profileURLId = getQueryVariable('profileURLId');
-	var streamInfo = getQueryVariable('eventId');
-
-	var loggedInUserProfileId = $.cookie('profileURLId');
 
 	//When the Dj starts to live stream set his cookie to isDj=true. So that in his chat session we can Identify if he is Dj then give him a different
 	//color div when he writting anything in the chat box. And when he ends the event just remove the cookie isTrue.
 	//This condition checks if the user who is joining the event is same as the logged in user i.e if Dj is himself joining his own event.
 	//isDj cookie is being used in messengerWebsocket.js
-	if(profileURLId == loggedInUserProfileId){
-		$.cookie("isDj", true,{ path: '/'});
-	}
+	//Now we are setting this cookie in livestream.js file when the user is setting up the event.
+	
+	isDj = $.cookie('isDj');
 
 	//Gets the url params
 	function getQueryVariable(variable) {
@@ -122,7 +125,7 @@ $(document).ready(function() {
 			timeLeft = $('#timeLeft');
 			startTimer(seconds, timeLeft);
 
-			if(streamingOption=="panel-icecast" && profileURLId==loggedInUserProfileId){
+			if(streamingOption=="panel-icecast" && isDj){
 				$('.btnIcecastSettings').removeClass('hidden');
 				$('#divIcecastStreaming').removeClass('hidden');
 			}	
@@ -157,7 +160,7 @@ $(document).ready(function() {
 	$('#countdown').hide();
 	var countdown =  $("#countdown").countdown360({
 		radius      : 60,
-		seconds     : 1,
+		seconds     : 2,
 		fontColor   : '#FFFFFF',
 		strokeStyle : '#e62948',
 		fillStyle   : '#333333',
@@ -176,8 +179,15 @@ $(document).ready(function() {
 			if(timeRemaining<='0'){
 				$("#bgVideoTheme video")[0].load();
 				$("#bgVideoTheme video")[0].play();
-				playStopTrack('#jPlayerLiveTrack',trackURL,'play');	
-
+				
+				var isDj = $.cookie('isDj');
+				
+				if(isDj==undefined || !isDj){
+					
+					//playStopTrack('#jPlayerLiveTrack',liveStreamURL,'play');
+					$('#streamAudioPlayer')[0].load();
+					$('#streamAudioPlayer')[0].play();
+				}
 			}		
 		}
 	});
@@ -188,7 +198,7 @@ $(document).ready(function() {
 	//Hide End Event button by default and show it only to the Dj.
 	$('#btnEndEvent').hide();
 
-	if(profileURLId==loggedInUserProfileId){
+	if(isDj){
 		$('#btnJoinEvent').hide();
 		$('#btnStartEvent').show();
 		$('#btnEndEvent').show();
@@ -294,11 +304,13 @@ $(document).ready(function() {
 			},
 
 			success: function(result){
-
+				
+				transcodeToMp3();
 				$('#countdown').show(1000);
 				countdown.start();
 
 				playStopTrack("#jPlayerSiren",'assets/audio/siren.mp3','play');
+				
 
 			},
 			error: function(result){
@@ -310,6 +322,35 @@ $(document).ready(function() {
 
 	});
 
+	function transcodeToMp3(){
+		
+		$.ajax({
+
+			type: 'GET',
+			url: 'http://ec2-52-77-202-27.ap-southeast-1.compute.amazonaws.com:8080/mediatranscoder/rest/transcode',
+			dataType: 'json',
+			data: {
+				streamId: eventId,
+			},
+
+			success: function(result){
+				
+				$('#streamAudioPlayer').play();
+			},
+			error: function(result){
+				
+				/*This REST Service is returning 200 OK code but error text. Not sure why. So its a hack to play the stream in the error function*/
+				$('#streamAudioPlayer').play();
+				
+				console.log("Cannot Transcode to .mp3: "+liveStreamURL);
+				console.log('Errors: '+result);
+				
+			}
+
+		});
+		
+	}
+	
 	function textBlink(options,obj) {
 
 		var options = options;
@@ -328,12 +369,12 @@ $(document).ready(function() {
 	//Play Siren Sound on countdown
 
 
-	function playStopTrack(id,trackURL,action){
-		console.log('Testing url'+trackURL);
+	function playStopTrack(id,liveStreamURL,action){
+		console.log('Testing url'+liveStreamURL);
 		$(id).jPlayer({
 			ready: function() {
 				$(this).jPlayer("setMedia", {
-					mp3: trackURL
+					mp3: liveStreamURL
 				}).jPlayer(action);
 				var click = document.ontouchstart === undefined ? 'click' : 'touchstart';
 				var kickoff = function () {
@@ -377,7 +418,7 @@ $(document).ready(function() {
 	}
 
 
-	if(profileURLId == loggedInUserProfileId){
+	if(isDj){
 		$('.kudo-fan-attendee-count').hide();
 	}
 
@@ -548,7 +589,9 @@ $(document).ready(function() {
 				$.removeCookie('eventId', { path: '/' });
 
 				//stop the track currently being played
-				playStopTrack('#jPlayerLiveTrack',trackURL,'pause');
+				//playStopTrack('#jPlayerLiveTrack',liveStreamURL,'pause');
+				
+				$('#streamAudioPlayer')[0].stop();
 
 				$("#bgVideoTheme video")[0].pause();
 				$('#feedbackModal').modal('show');

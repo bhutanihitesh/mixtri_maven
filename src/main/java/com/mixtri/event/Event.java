@@ -139,11 +139,13 @@ public class Event {
 			@FormParam("eventDate") String eventDate,@FormParam("eventTime") String eventTime, @FormParam("selectedTimeZone") String selectedTimeZone,
 			@FormParam("eventDescription") String eventDescription,@FormParam("genre") String genre, @FormParam("hastags") String hastags,
 			@FormParam("streamingOption") String streamingOption,@FormParam("bgVideoTheme") String bgVideoTheme,
-			@FormParam("profileURLId") String profileURLId,@FormParam("eventPicPath") String eventPicPath,@FormParam("liveStreamURL") String liveStreamURL){
+			@FormParam("profileURLId") String profileURLId,@FormParam("eventPicPath") String eventPicPath){
 		
 		String response="";
 		try{
 		 EventBean eventBean;
+		 
+		 System.out.println("Restfull service called...");
 		 
 		 String bgVideoPath = bgVideoTheme;
 		 
@@ -158,8 +160,16 @@ public class Event {
 		 if(genre==null || genre.isEmpty()){
 			 genre = "Open Format";
 		 }
-		 eventBean = setEventBean(emailId,displayName,streamInfo,eventCreatedUTCTimestamp,selectedTimeZone,eventDescription,genre,hastags
+		 
+		 final String uuid = MixtriUtils.getUUID();
+		 final String liveStreamURL="http://52.77.202.27/mixtri/"+uuid+".ogg"; 
+		 
+		 System.out.println("Live Stream URL..."+liveStreamURL);
+		 
+		 eventBean = setEventBean(uuid,emailId,displayName,streamInfo,eventCreatedUTCTimestamp,selectedTimeZone,eventDescription,genre,hastags
 				 				  ,streamingOption,eventPicPath,bgVideoPath,profileURLId,liveStreamURL);
+		 
+		 System.out.println("Event Bean Done....");
 		 
 		 MixtriDAO mixtriDAO = new MixtriDAO();
 		 boolean isSaved = mixtriDAO.saveEventInfoDAO(eventBean);
@@ -173,6 +183,8 @@ public class Event {
 		 }
 		
 		}catch(Exception exp){
+			
+			System.out.println("Here is the error: "+exp.getMessage());
 			log.error("Exception Occured: "+ exp.getLocalizedMessage());
 			return Response.serverError().build();
 		}
@@ -180,13 +192,11 @@ public class Event {
 		
 	}
 	
-	public EventBean setEventBean(String emailId,String displayName,String streamInfo,Timestamp eventCreatedUTCTimestamp,String selectedTimeZone,String eventDescription, 
+	public EventBean setEventBean(String uuid,String emailId,String displayName,String streamInfo,Timestamp eventCreatedUTCTimestamp,String selectedTimeZone,String eventDescription, 
 			String genre,String hastags,String streamingOption,String eventPicPath,String bgVideoPath,String profileURLId,String liveStreamURL){
 		
-		final String id = MixtriUtils.getUUID();
-		
 		EventBean eventBean = new EventBean();
-		eventBean.setId(id);
+		eventBean.setId(uuid);
 		eventBean.setEmailId(emailId);
 		eventBean.setDisplayName(displayName);
 		eventBean.setStreamInfo(streamInfo);

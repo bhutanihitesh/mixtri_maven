@@ -28,14 +28,16 @@ $(document).ready(function() {
 	//Show Manage Live Stream links only to the Dj.
 	$('#manageLiveStreamLinks').hide();
 	
-	if(profileURLId==loggedInUserProfileId){
+	var isDj = $.cookie('isDj');
+	
+	if(isDj){
 		$('#manageLiveStreamLinks').show();
 	}
 	
 	//Show modal on load only to Dj who has setup the event.
 	var loggedInUserProfileId = $.cookie('profileURLId');
 	 
-	 if(profileURLId==loggedInUserProfileId){
+	 if(isDj){
 		 var liveStreamURL = $.cookie('liveStreamURL');
 		 $('#liveStreamURL').html(liveStreamURL);
 		 $('#eventSetUpModal').modal('show');	 
@@ -79,7 +81,7 @@ $(document).ready(function() {
 				    	$('#eventPic').attr('src',eventPicPath);
 				    	
 				    	
-				    	if(streamingOption=="panel-icecast" && profileURLId==loggedInUserProfileId)
+				    	if(streamingOption=="panel-icecast" && isDj)
 				    		$('#btnIcecastSettings').removeClass('hidden');
 				    	
 				    },
