@@ -145,8 +145,6 @@ public class Event {
 		try{
 		 EventBean eventBean;
 		 
-		 System.out.println("Restfull service called...");
-		 
 		 String bgVideoPath = bgVideoTheme;
 		 
 		 String fromFormat = "MM/dd/yyyy";
@@ -164,12 +162,8 @@ public class Event {
 		 final String uuid = MixtriUtils.getUUID();
 		 final String liveStreamURL="http://52.77.202.27/mixtri/"+uuid+".ogg"; 
 		 
-		 System.out.println("Live Stream URL..."+liveStreamURL);
-		 
 		 eventBean = setEventBean(uuid,emailId,displayName,streamInfo,eventCreatedUTCTimestamp,selectedTimeZone,eventDescription,genre,hastags
 				 				  ,streamingOption,eventPicPath,bgVideoPath,profileURLId,liveStreamURL);
-		 
-		 System.out.println("Event Bean Done....");
 		 
 		 MixtriDAO mixtriDAO = new MixtriDAO();
 		 boolean isSaved = mixtriDAO.saveEventInfoDAO(eventBean);
