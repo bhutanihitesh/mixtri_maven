@@ -86,8 +86,8 @@ Your browser does not support the audio element.
     			},
     			error: function(result){
     				
-    				var oggSrc = 'http://52.77.202.27/mixtri/f9bb3e6e752d4788933d99896431cd3d.ogg';
-    				var mp3Src = 'http://52.77.202.27/mixtri/f9bb3e6e752d4788933d99896431cd3d.mp3';
+    				var oggSrc = 'http://52.77.202.27/mixtri/f61e3a3377b74fb7a006caa89673a413.ogg';
+    				var mp3Src = 'http://52.77.202.27/mixtri/f61e3a3377b74fb7a006caa89673a413.mp3';
     				
     				$('#srcOgg').attr('src',oggSrc);
     				$('#srcMp3').attr('src',mp3Src);
@@ -117,12 +117,14 @@ Your browser does not support the audio element.
   <source id="srcMp3" src="" type="audio/mpeg">
 Your browser does not support the audio element.
 </audio>
+
+<!-- http://52.77.202.27/mixtri/f61e3a3377b74fb7a006caa89673a413.mp3 -->
     
-<!-- <audio controls preload="auto" oncanplaythrough="this.play();">
-  <source src="http://ec2-52-77-202-27.ap-southeast-1.compute.amazonaws.com/mixtri/f9bb3e6e752d4788933d99896431cd3d.ogg" type="audio/ogg">
-  <source src="http://ec2-52-77-202-27.ap-southeast-1.compute.amazonaws.com/mixtri/f9bb3e6e752d4788933d99896431cd3d.mp3" type="audio/mpeg">
+<audio controls preload="auto" oncanplaythrough="this.play();">
+  <source src="http://ec2-52-77-202-27.ap-southeast-1.compute.amazonaws.com/mixtri/f61e3a3377b74fb7a006caa89673a413.ogg" type="audio/ogg">
+  <source src="http://ec2-52-77-202-27.ap-southeast-1.compute.amazonaws.com/mixtri/f61e3a3377b74fb7a006caa89673a413.mp3" type="audio/mpeg">
 Your browser does not support the audio element.
-</audio> -->
+</audio>
     
     <!-- <div id="jPlayerLiveTrack">Jplayer Mixer</div>
     

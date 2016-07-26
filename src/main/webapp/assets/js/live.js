@@ -14,13 +14,6 @@ $(document).ready(function() {
     //Saving the eventId for the user to submit the feedback, end and end event
 	var eventId = getQueryVariable('eventId');
 	
-	// On Page Load Just setup the URLs for the html Audio Tags and we will figure out if we need to play it or not depening on if the user is a listener or a dj.
-	var srcOgg = "http://52.77.202.27/mixtri/"+eventId+".ogg";
-	var srcMp3 = "http://52.77.202.27/mixtri/"+eventId+".mp3";
-	
-	$('#srcOgg').attr('src',srcOgg);
-	$('#srcMp3').attr('src',srcMp3);
-	
 	var profileURLId = getQueryVariable('profileURLId');
 
 	//When the Dj starts to live stream set his cookie to isDj=true. So that in his chat session we can Identify if he is Dj then give him a different
@@ -184,7 +177,6 @@ $(document).ready(function() {
 				
 				if(isDj==undefined || !isDj){
 					
-					//playStopTrack('#jPlayerLiveTrack',liveStreamURL,'play');
 					$('#streamAudioPlayer')[0].load();
 					$('#streamAudioPlayer')[0].play();
 				}
@@ -213,7 +205,13 @@ $(document).ready(function() {
 
 	$('#btnJoinEvent').on('click',function(e){
 
-
+		//On Button click set the URLs for the html Audio Tags and we will figure out if we need to play it or not depending on if the user is a listener or a dj.
+		
+		var srcOgg = "http://52.77.202.27/mixtri/"+eventId+".ogg";
+		var srcMp3 = "http://52.77.202.27/mixtri/"+eventId+".mp3";
+		
+		$('#srcOgg').attr('src',srcOgg);
+		$('#srcMp3').attr('src',srcMp3);
 
 		$.ajax({
 
@@ -328,6 +326,7 @@ $(document).ready(function() {
 
 			type: 'GET',
 			url: 'http://ec2-52-77-202-27.ap-southeast-1.compute.amazonaws.com:8080/mediatranscoder/rest/transcode',
+			/*url:'http://localhost:8000/mediatranscoder/rest/transcode',*/
 			dataType: 'json',
 			data: {
 				streamId: eventId,

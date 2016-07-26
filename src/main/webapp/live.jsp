@@ -573,7 +573,7 @@ Style Sheets
 
 				<p class="clubMixtri mixtri pointer-cursor">MIXTRI</p>
 
-				<audio id="streamAudioPlayer" controls preload="auto">
+				<audio id="streamAudioPlayer" preload="auto">
 					<source id="srcOgg" src="" type="audio/ogg">
 					<source id="srcMp3" src="" type="audio/mpeg">
 				</audio>
