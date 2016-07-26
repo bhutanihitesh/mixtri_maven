@@ -14,6 +14,11 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import com.google.gson.Gson;
+/**
+ * 
+ * @author Hitesh
+ * This class opens vlc player on the server and transcodes it.
+ */
 
 @Path("/")
 public class MediaTranscoder {
