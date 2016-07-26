@@ -20,7 +20,6 @@ public class MediaTranscoder {
 
 	@GET
 	@Path("/transcode")
-	/*@Produces(MediaType.APPLICATION_JSON)*/
 	public Response transcodeMedia(@QueryParam("streamId") String streamId){
 	
 	try{
