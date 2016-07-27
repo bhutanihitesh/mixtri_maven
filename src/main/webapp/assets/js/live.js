@@ -15,6 +15,11 @@ $(document).ready(function() {
 	var eventId = getQueryVariable('eventId');
 	
 	var profileURLId = getQueryVariable('profileURLId');
+	
+	/**
+	 * Load the siren first on page load and then play on button click of start live stream or join event.
+	 */
+	$('#playSiren')[0].load();
 
 	//When the Dj starts to live stream set his cookie to isDj=true. So that in his chat session we can Identify if he is Dj then give him a different
 	//color div when he writting anything in the chat box. And when he ends the event just remove the cookie isTrue.
@@ -153,7 +158,7 @@ $(document).ready(function() {
 	$('#countdown').hide();
 	var countdown =  $("#countdown").countdown360({
 		radius      : 60,
-		seconds     : 2,
+		seconds     : 10,
 		fontColor   : '#FFFFFF',
 		strokeStyle : '#e62948',
 		fillStyle   : '#333333',
@@ -177,7 +182,7 @@ $(document).ready(function() {
 				
 				if(isDj==undefined || !isDj){
 					
-					$('#streamAudioPlayer')[0].load();
+					//Auto Play the track when the page loads.
 					$('#streamAudioPlayer')[0].play();
 				}
 			}		
@@ -212,6 +217,10 @@ $(document).ready(function() {
 		
 		$('#srcOgg').attr('src',srcOgg);
 		$('#srcMp3').attr('src',srcMp3);
+		
+		//Auto play of audio is not supported in mobile browsers. To play the audio automatically on page load we are doing a hack where we are loading the audio first when
+		//User clicks on JoinEvent button and then when timer finishes it will play the music.
+		$('#streamAudioPlayer')[0].load();
 
 		$.ajax({
 
@@ -231,7 +240,8 @@ $(document).ready(function() {
 				$('#countdown').show(1000);
 				countdown.start();
 
-				playStopTrack("#jPlayerSiren",'assets/audio/siren.mp3','play');
+				$('#playSiren')[0].play();
+				//playStopTrack("#jPlayerSiren",'https://drive.google.com/uc?export=download&id=0B_jU3ZFb1zpHQktFWHR3OVcxWjA','play');
 
 				var msg = {
 						type: "attendeeCount",
@@ -307,7 +317,8 @@ $(document).ready(function() {
 				$('#countdown').show(1000);
 				countdown.start();
 
-				playStopTrack("#jPlayerSiren",'assets/audio/siren.mp3','play');
+				$('#playSiren')[0].play();
+				//playStopTrack("#jPlayerSiren",'https://drive.google.com/uc?export=download&id=0B_jU3ZFb1zpHQktFWHR3OVcxWjA','play');
 				
 
 			},
@@ -757,7 +768,7 @@ $(document).ready(function() {
 	//if user navigates from the page remove the isDj Cookie, delete the user from the attendee count
 	$(window).bind("beforeunload", function() { 
 
-		$.removeCookie('isDj', { path: '/' });
+		//$.removeCookie('isDj', { path: '/' });
 
 		$.ajax({
 

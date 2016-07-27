@@ -72,11 +72,11 @@ Your browser does not support the audio element.
         	$.ajax({
 
     			type: 'GET',
-    			 /* url: 'http://ec2-52-77-202-27.ap-southeast-1.compute.amazonaws.com:8080/mediatranscoder/rest/transcode', */
-    			url: 'http://localhost:8080/mediatranscoder/rest/transcode',
+    		    url: 'http://ec2-52-77-202-27.ap-southeast-1.compute.amazonaws.com:8080/mediatranscoder/rest/transcode',
+    			/* url: 'http://localhost:8080/mediatranscoder/rest/transcode', */
     			/* dataType: 'json', */
     			data: {
-    				streamId: 'f9bb3e6e752d4788933d99896431cd3d'
+    				streamId: 'c57934f21a854481baf37a258aedbd0e'
     			},
 
     			success: function(result){
@@ -86,12 +86,13 @@ Your browser does not support the audio element.
     			},
     			error: function(result){
     				
-    				var oggSrc = 'http://52.77.202.27/mixtri/f61e3a3377b74fb7a006caa89673a413.ogg';
-    				var mp3Src = 'http://52.77.202.27/mixtri/f61e3a3377b74fb7a006caa89673a413.mp3';
+    				var oggSrc = 'http://52.77.202.27/mixtri/c57934f21a854481baf37a258aedbd0e.ogg';
+    				var mp3Src = 'http://52.77.202.27/mixtri/c57934f21a854481baf37a258aedbd0e.mp3';
     				
     				$('#srcOgg').attr('src',oggSrc);
     				$('#srcMp3').attr('src',mp3Src);
     				
+    				$('#streamAudioPlayer')[0].load();
     				$('#streamAudioPlayer')[0].play();
     				console.log("Cannot Transcode to .mp3: ");
     				console.log('Errors: '+result);
@@ -103,16 +104,32 @@ Your browser does not support the audio element.
         }
         
            
+        function loadLiveStream(){
+        	
+        	var oggSrc = 'http://52.77.202.27/mixtri/c57934f21a854481baf37a258aedbd0e.ogg';
+			var mp3Src = 'http://52.77.202.27/mixtri/c57934f21a854481baf37a258aedbd0e.mp3';
+			
+			$('#srcOgg').attr('src',oggSrc);
+			$('#srcMp3').attr('src',mp3Src);
+			
+			$('#streamAudioPlayer')[0].load();
+        	
+        }
     
+        function playLiveStream(){
+        	
+        	$('#streamAudioPlayer')[0].play();
+        }
        
         </script>
         
     </head>
     <body>
     
-  <button onclick="transcode()">Play Live Stream</button>
+  <button onclick="loadLiveStream()">Load Live Stream</button>
+  <button onclick="playLiveStream()">Play Live Stream</button>
     
-<audio id="streamAudioPlayer" controls preload="auto">
+<audio id="streamAudioPlayer" preload="auto">
   <source id="srcOgg" src="" type="audio/ogg">
   <source id="srcMp3" src="" type="audio/mpeg">
 Your browser does not support the audio element.
@@ -120,11 +137,11 @@ Your browser does not support the audio element.
 
 <!-- http://52.77.202.27/mixtri/f61e3a3377b74fb7a006caa89673a413.mp3 -->
     
-<audio controls preload="auto" oncanplaythrough="this.play();">
-  <source src="http://ec2-52-77-202-27.ap-southeast-1.compute.amazonaws.com/mixtri/f61e3a3377b74fb7a006caa89673a413.ogg" type="audio/ogg">
-  <source src="http://ec2-52-77-202-27.ap-southeast-1.compute.amazonaws.com/mixtri/f61e3a3377b74fb7a006caa89673a413.mp3" type="audio/mpeg">
+<!-- <audio controls oncanplaythrough="this.play();">
+  <source src="http://ec2-52-77-202-27.ap-southeast-1.compute.amazonaws.com/mixtri/c57934f21a854481baf37a258aedbd0e.ogg" type="audio/ogg">
+  <source src="http://ec2-52-77-202-27.ap-southeast-1.compute.amazonaws.com/mixtri/c57934f21a854481baf37a258aedbd0e.mp3" type="audio/mpeg">
 Your browser does not support the audio element.
-</audio>
+</audio> -->
     
     <!-- <div id="jPlayerLiveTrack">Jplayer Mixer</div>
     

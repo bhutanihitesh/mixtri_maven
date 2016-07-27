@@ -577,6 +577,10 @@ Style Sheets
 					<source id="srcOgg" src="" type="audio/ogg">
 					<source id="srcMp3" src="" type="audio/mpeg">
 				</audio>
+				
+				<audio id="playSiren" src="https://drive.google.com/uc?export=download&id=0B_jU3ZFb1zpHQktFWHR3OVcxWjA" preload="auto">
+				
+				</audio>
 
 				<div class="blink">
 					<div>
