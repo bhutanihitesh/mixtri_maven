@@ -1,12 +1,10 @@
 package com.mixtri.profile;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
+import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
-import javax.ws.rs.Consumes;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -18,16 +16,17 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
 import org.apache.log4j.Logger;
-import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 
-
-import org.glassfish.jersey.media.multipart.FormDataParam;
-
+import com.google.api.client.auth.oauth2.TokenResponse;
+import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
+import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
+import com.google.api.client.http.HttpTransport;
+import com.google.api.client.json.JsonFactory;
+import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.gson.Gson;
 import com.mixtri.DAO.MixtriDAO;
 import com.mixtri.signup.SaltedMD5;
 import com.mixtri.signup.UserSignUpBean;
-import com.mixtri.uploader.Uploader;
 import com.mixtri.utils.MixtriUtils;
 
 
@@ -36,25 +35,70 @@ public class Profile {
 
 	static Logger log = Logger.getLogger(Profile.class.getName());
 	
+	/** Global instance of the JSON factory. */
+    private static final JsonFactory JSON_FACTORY =
+        JacksonFactory.getDefaultInstance();
+
+    /** Global instance of the HTTP transport. */
+    private static HttpTransport HTTP_TRANSPORT;
+    private static final String CLIENT_ID = "991788540840-sss9n7hiiups027ck5e8m5vf047bpuii.apps.googleusercontent.com";
+    private static final String CLIENT_SECRET="CtT9D8YEfnYF37aUzDDV3nCb";
+	
 	static String UPLOAD_FILE_SERVER;
 	static Properties prop;
-
-	static{
-		try{
-			prop = new Properties();
+	
+	static {
+        try {
+            HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
+            
+           /* prop = new Properties();
 			String path = new File("properties/mixtri.properties").getAbsolutePath();
 			File file = new File(path);
 
 			InputStream input = null;
 			input = new FileInputStream(file);
+			
 			// load a properties file
 			prop.load(input);
-			UPLOAD_FILE_SERVER = prop.getProperty("BASE_PATH");
-		}catch(Exception exp){
-			log.error("Error Loading properties files "+exp.getStackTrace());
-		}
+			UPLOAD_FILE_SERVER = prop.getProperty("BASE_PATH");*/
+			
+        } catch (Throwable t) {
+            t.printStackTrace();
+            System.exit(1);
+        }
+    }
 
-	}
+	
+	@GET
+	@Path("getToken")
+	@Produces(MediaType.APPLICATION_JSON)
+	 public static Response getGoogleToken() throws IOException{
+	    	
+	    	String refreshToken="1/NdU_ZiIarLt-7XPzwCOKQqa9c0HIR88lTAHRqn6-o4U";
+	    	
+	    	GoogleCredential credential = createCredentialWithRefreshToken(
+	    	        HTTP_TRANSPORT, JSON_FACTORY, new TokenResponse().setRefreshToken(refreshToken));
+	    	
+	    	credential.refreshToken();
+	    	String accessToken = credential.getAccessToken();
+	    	
+	    	
+	    	Map<String,String> mapToken = new HashMap<String,String>();
+	    	mapToken.put("accessToken", accessToken);
+	    	Gson gson = new Gson();
+	    	String responseAccessToken = gson.toJson(mapToken);
+	    	
+	    	return Response.ok(responseAccessToken,MediaType.APPLICATION_JSON).build();	
+	    }
+	
+	 public static GoogleCredential createCredentialWithRefreshToken(HttpTransport transport, 
+	            JsonFactory jsonFactory, TokenResponse tokenResponse) {
+	        return new GoogleCredential.Builder().setTransport(transport)
+	            .setJsonFactory(jsonFactory)
+	            .setClientSecrets(CLIENT_ID, CLIENT_SECRET)
+	            .build()
+	            .setFromTokenResponse(tokenResponse);
+	    }
 
 	@GET
 	@Path("getProfileInfo")

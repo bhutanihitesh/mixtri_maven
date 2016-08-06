@@ -1,7 +1,7 @@
 $(document).ready(function() {
 	
 	//Global Variable
-	var uploadedSetId;
+	var globalUploadedSetId;
 	
 	$.ajax({
 		url: '/mixtri/rest/pastmixes',
@@ -42,20 +42,91 @@ $(document).ready(function() {
 		$('.deleteSet').on('click',function(e){
 			
 			//Save the id of the track which user has selected to be deleted in a global varible
-			uploadedSetId = this.id;
+			globalUploadedSetId = this.id;
 			$('#modalDeleteSet').modal('show');
 		});
 	}
 	
+	
+ $('#btnDeleteSetYes').on('click',function(e){
+		
+		$.ajax({
+			url: '/mixtri/rest/deleteUploadedTrack',
+			type: 'POST',
+			data: {
+				uploadedSetId: globalUploadedSetId
+			},
+			success: function(result){
+				
+				getAccessToken();
+				
+				
+		    },
+		    error: function(result){
+		      window.location.href = "error.jsp";
+		    }
+			
+		});
+		
+		
+	});
+	
+	
+	function getAccessToken() {
+
+		$.ajax({
+
+			type: 'GET',
+			url: '/mixtri/rest/profile/getToken',
+			success: function(result){
+
+				//Setting access token in global variable.
+				ACCESS_TOKEN = result.accessToken;
+				setAccessToken();
+				
+			},
+
+			error: function(result){
+
+				console.log('Error recieving access token '+result);
+				window.location.href = "error.jsp";	
+			}
+
+		});
+
+
+	}
+
+	
+	/** 
+	 * Set access token retrieved on server side. This replaces client side explicit
+	 * authentication through authentication dialog.
+	 */
+	function setAccessToken() { 
+	
+	 gapi.auth.setToken({
+		    access_token: ACCESS_TOKEN
+		});	
+	 
+		gapi.client.load('drive', 'v2', onDriveClientLoaded);
+	}
+	
+	 
+	/** After the drive api has loaded.. */
+	function onDriveClientLoaded() {
+		
+		deleteFile();
+	}
 	
 	/**
 	 * Permanently delete a file, skipping the trash.
 	 *
 	 * @param {String} fileId ID of the file to delete.
 	 */
-	function deleteFile(fileId) {
+	function deleteFile() {
+		
 	  var request = gapi.client.drive.files.delete({
-	    'fileId': fileId
+	    'fileId': globalUploadedSetId
 	  });
 	  
 	  request.execute(function(resp) {
@@ -73,29 +144,6 @@ $(document).ready(function() {
 		  
 	  });
 	}
-	
-	
-	$('#btnDeleteSetYes').on('click',function(e){
-		
-		$.ajax({
-			url: '/mixtri/rest/deleteUploadedTrack',
-			type: 'POST',
-			data: {
-				uploadedSetId: uploadedSetId
-			},
-			success: function(result){
-				
-				deleteFile(uploadedSetId);
-				
-		    },
-		    error: function(result){
-		      window.location.href = "error.jsp";
-		    }
-			
-		});
-		
-		
-	});
 	
 	
 });

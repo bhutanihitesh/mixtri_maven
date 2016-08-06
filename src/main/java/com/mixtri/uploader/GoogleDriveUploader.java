@@ -1,13 +1,17 @@
 /*package com.mixtri.uploader;
 
 import com.google.api.client.auth.oauth2.Credential;
+import com.google.api.client.auth.oauth2.TokenResponse;
 import com.google.api.client.extensions.java6.auth.oauth2.AuthorizationCodeInstalledApp;
 import com.google.api.client.extensions.jetty.auth.oauth2.LocalServerReceiver;
 import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeFlow;
 import com.google.api.client.googleapis.auth.oauth2.GoogleClientSecrets;
+import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
+import com.google.api.client.http.FileContent;
 import com.google.api.client.http.HttpTransport;
 import com.google.api.client.http.InputStreamContent;
+import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.client.json.JsonFactory;
 import com.google.api.client.util.store.FileDataStoreFactory;
@@ -22,10 +26,16 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 import com.google.api.services.drive.model.File;
 import com.google.api.services.drive.model.ParentReference;
+import com.google.gson.Gson;
 
 *//****
  * 
@@ -60,7 +70,10 @@ public class GoogleDriveUploader {
      *//*
     private static final List<String> SCOPES =
         Arrays.asList(DriveScopes.DRIVE_FILE);
+    
+    private static final String CLIENT_ID = "991788540840-sss9n7hiiups027ck5e8m5vf047bpuii.apps.googleusercontent.com";
 
+    private static final String CLIENT_SECRET="CtT9D8YEfnYF37aUzDDV3nCb";
     static {
         try {
             HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
@@ -71,6 +84,30 @@ public class GoogleDriveUploader {
         }
     }
 
+    
+    public static String getGoogleToken() throws IOException{
+    	
+    	String refreshToken="1/NdU_ZiIarLt-7XPzwCOKQqa9c0HIR88lTAHRqn6-o4U";
+    	
+    	GoogleCredential credential = createCredentialWithRefreshToken(
+    	        HTTP_TRANSPORT, JSON_FACTORY, new TokenResponse().setRefreshToken(refreshToken));
+    	
+    	credential.refreshToken();
+    	String accessToken = credential.getAccessToken();
+    	System.out.println(accessToken);
+    	return accessToken;
+    }
+    
+    
+    public static GoogleCredential createCredentialWithRefreshToken(HttpTransport transport, 
+            JsonFactory jsonFactory, TokenResponse tokenResponse) {
+        return new GoogleCredential.Builder().setTransport(transport)
+            .setJsonFactory(jsonFactory)
+            .setClientSecrets(CLIENT_ID, CLIENT_SECRET)
+            .build()
+            .setFromTokenResponse(tokenResponse);
+    }
+    
     *//**
      * Creates an authorized Credential object.
      * @return an authorized Credential object.
@@ -80,7 +117,7 @@ public class GoogleDriveUploader {
         // Load client secrets.
     	
     	InputStream in = 
-    		      new FileInputStream("C:/Users/Hitesh/git/mixtri_maven/src/main/webapp/resources/client_secret_mixtri.json");
+    		      new FileInputStream("C:/Users/Hitesh/git/mixtri_maven/src/main/webapp/properties/client_secret_mixtri_server_app.json");
     	
         GoogleClientSecrets clientSecrets =
             GoogleClientSecrets.load(JSON_FACTORY, new InputStreamReader(in));
@@ -95,11 +132,18 @@ public class GoogleDriveUploader {
        
         Credential credential = new AuthorizationCodeInstalledApp(
             flow, new LocalServerReceiver()).authorize("user");
+        
+       // credential.refreshToken();
+        String token = credential.getAccessToken();
+        
+        System.out.println("Token: "+token);
+        
         System.out.println(
                 "Credentials saved to " + DATA_STORE_DIR.getAbsolutePath());
         return credential;
     }
-
+    
+   
     *//**
      * Build and return an authorized Drive client service.
      * @return an authorized Drive client service
@@ -248,10 +292,13 @@ public class GoogleDriveUploader {
     }
     
     public static void main(String[] args) throws IOException {
+    	getGoogleToken();
+    	//authorize();   	
+    	
         // Build a new authorized API client service.
         Drive service = getDriveService();
         
-        System.out.println("Hello....");
+       System.out.println("Hello....");
         
         String folderToBeCreated ="Invoices";
         String folderId = createGoogleDriveFolder(service,"0B_jU3ZFb1zpHQmFIMDNzc2dBRHM",folderToBeCreated);

@@ -1,7 +1,8 @@
 $(document).ready(function() {
 
 	var globalProfilePic;
-	
+	var ACCESS_TOKEN;
+
 	$.ajax({
 
 		type: 'GET',
@@ -33,7 +34,7 @@ $(document).ready(function() {
 				profilePicPath = 'assets/img/basic/logo_mixtri.png'
 			}
 			$('#profile-pic').attr('src',profilePicPath);
-			
+
 			globalProfilePic = $('#profile-pic')[0].src;
 		},
 
@@ -116,16 +117,63 @@ $(document).ready(function() {
 
 		}
 
-		var folderName = $.cookie('emailId');
-
-		checkIfFolderExists(folderName);
+		
+		getAccessToken();
 
 	});
 
 
 
-	function checkIfFolderExists(folderName) {
+	function getAccessToken() {
 
+		$.ajax({
+
+			type: 'GET',
+			url: '/mixtri/rest/profile/getToken',
+			success: function(result){
+
+				//Setting access token in global variable.
+				ACCESS_TOKEN = result.accessToken;
+				setAccessToken();
+				
+			},
+
+			error: function(result){
+
+				console.log('Error recieving access token '+result);
+				window.location.href = "error.jsp";	
+			}
+
+		});
+
+
+	}
+
+	
+	/** 
+	 * Set access token retrieved on server side. This replaces client side explicit
+	 * authentication through authentication dialog.
+	 */
+	function setAccessToken() { 
+	
+	 gapi.auth.setToken({
+		    access_token: ACCESS_TOKEN
+		});	
+	 
+		gapi.client.load('drive', 'v2', onDriveClientLoaded);
+	}
+	
+	 
+	/** After the drive api has loaded.. */
+	function onDriveClientLoaded() {
+		
+		checkIfFolderExists();
+	}
+	
+	
+	function checkIfFolderExists() {
+
+		var folderName = $.cookie('emailId');
 		var request = gapi.client.drive.files.list({
 
 			'q':"mimeType = 'application/vnd.google-apps.folder' and title='"+folderName+"'"
@@ -150,8 +198,10 @@ $(document).ready(function() {
 
 		});
 	}
+	
+	
 
-
+	
 	//0B_jU3ZFb1zpHQmFIMDNzc2dBRHM This is the id of the parent folder(upload) in google drive in which all the sub folders will be created.
 
 	function createFolder(folderName) {
@@ -180,12 +230,12 @@ $(document).ready(function() {
 			uploadToGoogleDrive(folderId);
 		});
 	}
-
+	
 	function uploadToGoogleDrive(folderId) {
 
 
 		var fileData = $('#image-upload').get(0).files[0];
-		
+
 		$.blockUI({ message: '<h5><img src="assets/img/icons/busy.gif" /> Updating...</h5>' });
 
 		if(fileData!=undefined){
@@ -233,19 +283,19 @@ $(document).ready(function() {
 					callbackAfterUpload = function() {
 					};
 				}
-				
+
 				//Check if there is already a profile pic on google then delete it first and then upload a new one.
 				var flagProfilePic = globalProfilePic.includes("google");
-				
+
 				if(flagProfilePic){
-					
+
 					var arr = globalProfilePic.split('host/');
 					console.log(arr[1]);
-					
+
 					var profilePicGoogleId = arr[1];
-					
+
 					deleteProfilePic(profilePicGoogleId);
-					
+
 				}
 
 				//Should be returned by the request
@@ -258,41 +308,42 @@ $(document).ready(function() {
 			}
 
 		}else{
-			
-			saveProfilePicDetails(null,null);
+
+			saveProfilePicDetails(null);
 		}
 
 	}
 
-	
+
 	/**
 	 * Permanently delete a file, skipping the trash.
 	 *
 	 * @param {String} fileId ID of the file to delete.
 	 */
+	
 	function deleteProfilePic(fileId) {
-	  var request = gapi.client.drive.files.delete({
-	    'fileId': fileId
-	  });
-	  
-	  request.execute(function(resp) {
-		  
-		  if(resp.code!=404){
-			  
-			  console.log('Delete SuccessFul'); 
-			  
-		  }else{
-			 
-			  console.log('Not Successful: '+resp.message);
-		  }
-		  
-	  });
+		var request = gapi.client.drive.files.delete({
+			'fileId': fileId
+		});
+
+		request.execute(function(resp) {
+
+			if(resp.code!=404){
+
+				console.log('Delete SuccessFul'); 
+
+			}else{
+
+				console.log('Not Successful: '+resp.message);
+			}
+
+		});
 	}
 
 	function callbackAfterUpload(jsonResp,rawResp){
 
 		$.unblockUI();
-		
+
 		var status = ($.parseJSON(rawResp)).gapiRequest.data.status;
 
 		//This means that the file has been uploaded on the google drive
@@ -325,7 +376,7 @@ $(document).ready(function() {
 		var biography = $('#profile-biography').val();
 		var profilePic = $('#image-upload').get(0).files[0];
 		var emailId = $.cookie('emailId');
-		
+
 
 		var city;
 		var state;

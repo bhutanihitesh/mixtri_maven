@@ -6,6 +6,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.security.GeneralSecurityException;
 import java.sql.Timestamp;
 import java.text.DateFormatSymbols;
 import java.text.ParseException;
@@ -32,6 +33,7 @@ import org.apache.log4j.Logger;
 import com.google.gson.Gson;
 import com.mixtri.DAO.MixtriDAO;
 import com.mixtri.utils.MixtriUtils;
+
 @Path("/")
 public class Event {
 	
@@ -43,7 +45,6 @@ public class Event {
 	 */
 	static Logger log = Logger.getLogger(Event.class.getName());
 	static String BASE_PATH;
-	
 	
 	static{
 		try{

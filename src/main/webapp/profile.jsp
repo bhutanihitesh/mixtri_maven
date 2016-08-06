@@ -83,11 +83,21 @@ function checkAuth() {
       'client_id': CLIENT_ID,
       'scope': SCOPES.join(' '),
       'immediate': true
-    });
+    },handleAuthResult);
   
-  loadDriveApi();
+  //loadDriveApi();
  
 }
+
+ function handleAuthResult(authResult) {
+    
+    if (authResult && !authResult.error) {
+      loadDriveApi();
+    } else {
+     
+    	console.log('Not authorized by google server'+authResult.error);
+    }
+  }
 
 /**
  * Initiate auth flow in response to user clicking authorize button.

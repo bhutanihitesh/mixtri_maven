@@ -444,12 +444,9 @@ $(document).ready(function() {
 
 				}else{
 
-					var folderName =  $.cookie("emailId");
-					var fileData = $('#mixUpload').get(0).files[0];
-					var waitMsg = '<h5><img src="assets/img/icons/busy.gif" /> Do a little dance your music is being uploaded...</h5>';
-					var uploadType = 'Remixes';
-
-					checkIfFolderExists(folderName,fileData,waitMsg,uploadType);
+					
+					getAccessToken();
+					//checkIfFolderExists(folderName,fileData,waitMsg,uploadType);
 				}
 			},
 
@@ -463,10 +460,86 @@ $(document).ready(function() {
 
 	}
 	
+	
+	function getAccessToken() {
+
+		$.ajax({
+
+			type: 'GET',
+			url: '/mixtri/rest/profile/getToken',
+			success: function(result){
+
+				//Setting access token in global variable.
+				ACCESS_TOKEN = result.accessToken;
+				setAccessToken();
+				
+			},
+
+			error: function(result){
+
+				console.log('Error recieving access token '+result);
+				window.location.href = "error.jsp";	
+			}
+
+		});
+
+
+	}
+
+	
+	/** 
+	 * Set access token retrieved on server side. This replaces client side explicit
+	 * authentication through authentication dialog.
+	 */
+	function setAccessToken() { 
+	
+	 gapi.auth.setToken({
+		    access_token: ACCESS_TOKEN
+		});	
+	 
+		gapi.client.load('drive', 'v2', onDriveClientLoaded);
+	}
+	
+	 
+	/** After the drive api has loaded.. */
+	function onDriveClientLoaded() {
+		
+		checkIfFolderExists();
+	}
+	
+	
+	function checkIfFolderExists() {
+		
+		var folderName =  $.cookie("emailId");
+
+		var request = gapi.client.drive.files.list({
+
+			'q':"mimeType = 'application/vnd.google-apps.folder' and title='"+folderName+"'"
+
+
+		});
+
+		request.execute(function(resp) {
+
+			//This means the folder exists
+			if(resp.items.length>0){
+
+				//Get the id and upload file in that
+				var folderId = resp.items[0].id;
+				uploadToGoogleDrive(folderId);
+
+			}else{
+
+				createFolder(folderName);
+			}
+
+
+		});
+	}
 
 	//0B_jU3ZFb1zpHQmFIMDNzc2dBRHM This is the id of the parent folder(upload) in google drive in which all the sub folders will be created.
 
-	function createFolder(folderName,fileData,waitMsg,uploadType) {
+	function createFolder(folderName) {
 
 		var request = gapi.client.request({
 			'path': '/drive/v2/files/',
@@ -489,7 +562,7 @@ $(document).ready(function() {
 
 			//Upload File to Google Drive after creating the folder
 			var folderId = resp.id;
-			uploadToGoogleDrive(folderId,fileData,waitMsg,uploadType);
+			uploadToGoogleDrive(folderId);
 		});
 	}
 
@@ -504,36 +577,11 @@ $(document).ready(function() {
 	};
 
 
-	function checkIfFolderExists(folderName,fileData,waitMsg,uploadType) {
+	function uploadToGoogleDrive(folderId) {
 
-		var request = gapi.client.drive.files.list({
-
-			'q':"mimeType = 'application/vnd.google-apps.folder' and title='"+folderName+"'"
-
-
-		});
-
-		request.execute(function(resp) {
-
-			//This means the folder exists
-			if(resp.items.length>0){
-
-				//Get the id and upload file in that
-				var folderId = resp.items[0].id;
-				uploadToGoogleDrive(folderId,fileData,waitMsg,uploadType);
-
-			}else{
-
-				createFolder(folderName,fileData,waitMsg,uploadType);
-			}
-
-
-		});
-	}
-
-
-	function uploadToGoogleDrive(folderId,fileData,waitMsg,uploadType) {
-
+		var fileData = $('#mixUpload').get(0).files[0];
+		var waitMsg = '<h5><img src="assets/img/icons/busy.gif" /> Do a little dance your music is being uploaded...</h5>';
+		var uploadType = 'Remixes';
 		
 		$.blockUI({ message: waitMsg });
 
