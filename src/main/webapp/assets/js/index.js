@@ -70,14 +70,26 @@ $(document).ready(function() {
 						
 						div='<li class="Live-Djs-TimeLeft">in next <span id="timeLeft">'+parseInt(timeLeft)+'</span> mins</li>';
 					 }
-				}	
+				}
+			
+			  var djName="\""+listAllEvents[i].displayName+"\"";
+			  
+			  /**
+			   * Both eventURL and joinEventURL are same. Jus the way JSON returns the values which contains double quotes we are using two different variables.
+			   */
 			  var joinEventURL = 'event.jsp?profileURLId='+listAllEvents[i].profileURLId+'&eventId='+listAllEvents[i].id;
+			  var eventURL = "\""+'event.jsp?profileURLId='+listAllEvents[i].profileURLId+'&eventId='+listAllEvents[i].id+"\"";
+			  var eventLogo="\""+listAllEvents[i].eventPicPath+"\"";
+			  var eventDate="\""+listAllEvents[i].eventDate+"\"";
+			  var eventTime="\""+listAllEvents[i].eventTime+"\"";
+			  var timeZone="\""+listAllEvents[i].timeZone+"\"";
+			  
 			  html+='<div class="col-lg-5 col-md-5 col-sm-5">';
 			  html+='<div class="container-live-dj">';
 			  html+='<div class="Live-Djs">';
 			  html+='<div class="show-image"><div class="hoverJoin"><span style="margin-left: 6px;" class="fa fa-sign-in"></span><br><span>Join</span></div><a href="'+joinEventURL+'"><img style="width: 310px;height:320px;" src="'+listAllEvents[i].eventPicPath+'" alt="dummy"></a></div>';
 			  html+='<div class="Live-Djs-Content">';
-			  html+='<div class="Genre">'+listAllEvents[i].genre+'<span style="float: right"><i onclick=fbShare("'+listAllEvents[i].displayName+'","'+joinEventURL+'","'+listAllEvents[i].eventPicPath+'") class="fa fa-facebook-square" style="color: #268EE7; cursor: pointer;"> Share</i></span></div>';
+			  html+="<div class='Genre'>"+listAllEvents[i].genre+"<span style='float: right'><i onclick='fbShare("+djName+","+eventURL+","+eventLogo+","+eventDate+","+eventTime+","+timeZone+")' class='fa fa-facebook-square' style='color: #268EE7; cursor: pointer;'> Share</i></span></div>";
 			  html+='<div class="Dj-name">';
 			  html+='<a id='+i+' href="'+joinEventURL+'">'+listAllEvents[i].displayName+'</a>';
 			  html+='</div><br>';
@@ -149,19 +161,17 @@ $(document).ready(function() {
 	}
   /************************ Facebook Share******************************/ 
   
-  fbShare = function (djName,joinEventURL,eventPicURL) {
+  fbShare = function (djName,joinEventURL,eventPicURL,eventDate,eventTime,timeZone) {
 	  var baseURL = document.location.origin+"/"+'mixtri/';
-	  console.log(baseURL+joinEventURL);
-	  console.log(baseURL+eventPicURL);
 	  var fbShareURL = document.location.origin+"/"+'mixtri/'+joinEventURL;
 	  
 	  FB.ui(
 			  {
 				  method: 'feed',
-				  name: 'Listen to '+djName+' Spinning Live Exclusively @ Mixtri',
-				  link: 'www.mixtri.com',
-				  picture: 'http://cdn.shopify.com/s/files/1/0277/1157/products/nabi_Headphones_FrontView_1500_v3_e4114922-e90a-420b-b6fe-bf2c7b888f9e_1024x1024.png?v=1423341327',
-				  message: ''
+				  name: 'Listen to '+djName+' Spinning Live Exclusively @ Mixtri . Live Streaming starts on '+eventDate+' at '+eventTime+' '+timeZone+'',
+				  link: baseURL+joinEventURL,
+				  picture: eventPicURL,
+				  message: 'Please Listen to me live!'
 			  });	
   }
   

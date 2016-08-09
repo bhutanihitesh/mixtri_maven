@@ -226,7 +226,7 @@ z-index: 9999;
 
 							<div>
 								<a href="#">Forgot password?</a>
-							</div>
+							</div><br>
 
 
 
@@ -238,7 +238,7 @@ z-index: 9999;
 									
 									<div id="btnFBLogin"> <img style="width: 35%;cursor: pointer;"
 										src="assets/img/icons/facebookloginbutton.png" />
-									</div>
+									</div><br>
 									
 									<!-- <a href="#"> <img style="width: 35%"
 										src="assets/img/icons/facebookloginbutton.png" />
