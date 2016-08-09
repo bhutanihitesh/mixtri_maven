@@ -3404,25 +3404,6 @@ transition: opacity .25s ease-in-out;
 	font-size: large;
 }
 
-#loginbox
-{
-	position: absolute;
-	margin-top:50px; 
-	display: none; 
-	z-index: 9999;
-	margin-left: 250px;
-}
-
-#signupbox
-{
-	position: absolute;
-	margin-top:50px; 
-	display: none; 
-	z-index: 9999;
-	align: center;
-	margin-left: 250px;
-}
-
 .close {
 	
 	float: right;

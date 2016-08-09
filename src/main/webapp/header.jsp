@@ -148,6 +148,66 @@ z-index: 9999;
 
 		</nav>
 
+	<!-- =================================================
+	  
+	  			FORGOT PASSWORD MODAL
+	  
+	  ====================================================== -->
+	  
+	  <div class="modal fade" id="forgotPwdbox" style="left: 25%" tabindex="-1" role="dialog" aria-labelledby="forgotPwdLabel">
+  			<div id="forgotPwdtab" class="mainbox modal-dialog col-md-6 col-md-offset-3 col-sm-8 col-sm-offset-2">
+				<div class="panel panel-info">
+					<div class="panel-heading">
+
+						<button type="button" class="close" data-dismiss="modal">&times;</button>
+						
+						<div style="font-size: x-large; color: #e62948; font-family: serif;">
+						 Forgot Password
+						</div>
+					</div>
+
+					<div class="panel-body">
+
+						<div style="display: none" id="login-alert"
+							class="alert alert-danger col-sm-12"></div>
+
+						<form id="forgotPwdform" style="text-align: center; margin-top: 20px;" class="form-horizontal" role="form">
+
+							<div class="form-group signUpFormAlignment">
+								<div class="input-group marginSignup">
+									<span class="input-group-addon"><i
+										class="fa fa-envelope"></i></span>
+									<div>
+										<input id="emailId" type="email" class="form-control"
+											name="emailId" placeholder="Email" autocomplete="email"
+											style="border-bottom-right-radius: 5px; border-top-right-radius: 5px; width: 80%"
+											required />
+									</div>
+								</div>
+							</div>
+
+							<div class="form-group">
+								<div>
+									<button type="submit" id="btnSendPwdLink"
+										class="btn btn-default commonButton buttonSize"
+										style="width: 200px; padding-right: 20px; margin:0px; border-width: thin; border-color: #e62948">Send Reset Password link</button>
+
+								</div>
+							</div>
+							
+						</form>
+
+					</div>
+
+
+
+				</div>
+			</div>
+		</div>
+	  
+	 <!--   ==================== END OF FORGOT PASSWORD MODAL ============================================   -->
+	 
+	 
 
 		<!--  ==============================================
 		  
@@ -156,7 +216,7 @@ z-index: 9999;
 		=================================================== -->
 		
 
-<div class="modal fade" id="loginbox" style="position: fixed; align: center;" tabindex="-1" role="dialog" aria-labelledby="loginboxLabel">
+<div class="modal fade" id="loginbox" style="left: 25%" tabindex="-1" role="dialog" aria-labelledby="loginboxLabel">
   <div id="logintab" class="mainbox modal-dialog col-md-6 col-md-offset-3 col-sm-8 col-sm-offset-2">
 				<div class="panel panel-info">
 					<div class="panel-heading">
@@ -170,17 +230,6 @@ z-index: 9999;
 								Sign Up
 							</a>
 						</div>
-						<!-- <div style="float: right; font-size: 80%; position: relative; top: -10px">
-							<button type="button" id="" onclick="$('#loginbox').modal('hide'); $('#signupbox').modal('show');" style="color: greenyellow; font-size: medium; border: none; background: none;">
-								Sign Up
-							</button>
-							
-							 <a href="#signuptab" onclick="$('#loginbox').modal('hide'); $('#signupbox').modal('show');"
-							   style="color: greenyellow; font-size: medium; border: none; background: none;">
-								Sign Up
-							</a>
-							
-						</div> -->
 					</div>
 
 					<div class="panel-body">
@@ -225,7 +274,12 @@ z-index: 9999;
 							</div>
 
 							<div>
-								<a href="#">Forgot password?</a>
+							
+							<a href="#forgotPwdtab" onclick="$('#loginbox').modal('hide'); $('#forgotPwdbox').modal('show');"
+							   style="font-size: medium; border: none; background: none;">
+								Forgot password?
+							</a>
+								
 							</div><br>
 
 
@@ -267,7 +321,7 @@ z-index: 9999;
 		
 		<!-- Start Signup Modal -->
 		
-		<div class="modal fade"  style="position: fixed;" id="signupbox" tabindex="-1" role="dialog" aria-labelledby="signupboxLabel">
+		<div class="modal fade"  style="left: 25%" id="signupbox" tabindex="-1" role="dialog" aria-labelledby="signupboxLabel">
 		
 		<div id="signuptab" class="mainbox modal-dialog col-md-6 col-md-offset-3 col-sm-8 col-sm-offset-2">
 			<div class="panel panel-info">
