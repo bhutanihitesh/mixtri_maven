@@ -62,14 +62,17 @@ public class LoginDB {
 					userLoginBean.setPasswordAuthenticated(false);
 					return userLoginBean;
 				}
-				String hashedPassword = saltedMD5.getSecurePassword(pwdFromUI,salt);
-
+				String hashedPassword=null;
+				
+				if(pwdFromUI!=null){
+					hashedPassword = saltedMD5.getSecurePassword(pwdFromUI,salt);
+				}
 				if(emailIdFromUI.equalsIgnoreCase(emailIdDB)){
 
 					userLoginBean.setUsernameAuthenticated(true);
 					log.debug("Username Authenticated: "+emailIdDB);
 
-					if(hashedPassword.equals(passwordDB)){
+					if(hashedPassword!=null && hashedPassword.equals(passwordDB)){
 						userLoginBean.setPasswordAuthenticated(true);
 						userLoginBean.setDisplayName(displayName);
 						userLoginBean.setProfileURLId(profileURLId);

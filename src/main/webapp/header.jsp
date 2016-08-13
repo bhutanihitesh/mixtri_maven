@@ -168,7 +168,7 @@ z-index: 9999;
 
 					<div class="panel-body">
 
-						<div style="display: none" id="login-alert"
+						<div style="display: none" id="errorAlert"
 							class="alert alert-danger col-sm-12"></div>
 
 						<form id="forgotPwdform" style="text-align: center; margin-top: 20px;" class="form-horizontal" role="form">
@@ -196,6 +196,7 @@ z-index: 9999;
 							</div>
 							
 						</form>
+						<div id="showSuccessMessage"></div>
 
 					</div>
 

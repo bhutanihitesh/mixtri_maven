@@ -21,7 +21,8 @@
         	com.mixtri.signup,
         	com.mixtri.uploader,
         	com.mixtri.event,
-        	com.mixtri.profile
+        	com.mixtri.profile,
+        	com.mixtri.changePassword
         </param-value>
     </init-param>
     <init-param>

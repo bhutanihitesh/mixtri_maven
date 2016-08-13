@@ -9,6 +9,7 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 
+import com.mixtri.changePassword.ChangePasswordDB;
 import com.mixtri.event.EventBean;
 import com.mixtri.event.EventDB;
 import com.mixtri.login.LoginDB;
@@ -32,6 +33,14 @@ public class MixtriDAO {
 		userLoginBean = loginDB.getLoginInfoDB(userLoginBean);
         
 		return userLoginBean;
+	}
+	
+	public String getChangePasswordHashCodeDAO(String recipientEmail){
+		String hashCode=null;
+		ChangePasswordDB changePwd = new ChangePasswordDB();
+		hashCode=changePwd.getChangePasswordHashCode(recipientEmail);
+		
+		return hashCode;
 	}
 
 	public UserSignUpBean setSignUpInfoDAO(UserSignUpBean userSignUpBean) throws SQLException,Exception{

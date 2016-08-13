@@ -1,6 +1,7 @@
 package com.mixtri.login;
 
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -15,6 +16,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.FormParam;
+
 import org.apache.log4j.Logger;
 
 import com.google.gson.Gson;
@@ -26,14 +28,11 @@ import com.mixtri.login.UserLoginBean;
 @Path("/")
 public class Userlogin{
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
+	
 	static Logger log = Logger.getLogger(Userlogin.class.getName());
+
 	
 @Context private HttpServletRequest request;	
-//@Resource	
 @POST
 @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 @Produces(MediaType.APPLICATION_JSON)

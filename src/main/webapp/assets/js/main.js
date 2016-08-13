@@ -432,6 +432,50 @@ $(document).ready(function(){
 	
 	//end Session Cookie Maintainence
 	
+	
+	//Forgot Password
+	
+	$('#forgotPwdform').submit(function(e){
+        e.preventDefault();
+		var emailId = $('#forgotPwdform').find('input[id="emailId"]').val();
+		var baseURL = window.location.origin;
+		$.ajax({
+			url: '/mixtri/rest/changePasswordLink',
+			method: 'POST',
+			contentType: "application/x-www-form-urlencoded",
+			data: {
+				emailId: emailId,
+				baseURL:baseURL
+
+			},
+
+			success: function (data) {
+
+				if(typeof data.error!='undefined'){
+						$('#loginform').show();
+						$('#errorAlert').show();
+						$('#errorAlert').html(data.error);
+						$('#errorAlert').delay(5000).fadeOut();
+					}else{
+						//showSuccessMessage
+						$('#forgotPwdform').hide();
+						$('#showSuccessMessage').html('Reset password link has been sent to your registered email id');	
+					}
+        			    	  
+			},
+
+			error: function (data, textStatus, jqXHR){
+				window.location.href = "error.jsp";
+				
+			}
+		});
+
+
+	});
+	
+	
+	//End of Forgot Password
+	
     //Login Functionality
 	$('#loginform').submit(function(e){
         e.preventDefault();
