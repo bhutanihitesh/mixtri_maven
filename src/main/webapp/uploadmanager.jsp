@@ -5,7 +5,7 @@
 <!--<![endif]-->
 <head>
 <meta charset="utf-8">
-<title>Mixtri-Upload Manager</title>
+<title>Upload Manager</title>
 
 <!--=================================
 Meta tags

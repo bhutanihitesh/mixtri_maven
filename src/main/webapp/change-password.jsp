@@ -5,7 +5,7 @@
 <!--<![endif]-->
 <head>
 <meta charset="utf-8">
-<title>Archived Mixes</title>
+<title>Change Password</title>
 
 <!--=================================
 Meta tags
@@ -39,77 +39,56 @@ Style Sheets
 <link rel="stylesheet" type="text/css" href="assets/css/red.css">
 <link rel="stylesheet" type="text/css" href="assets/css/green.css">
 <link rel="stylesheet" type="text/css" href="assets/css/purple.css">-->
+
+<!-- <script async src="assets/js/modernizr-2.6.2-respond-1.1.0.min.js"></script>
+<script defer src="assets/js/jquery.js"></script>
+<script defer src="assets/js/ajaxify.min.js"></script>
+ -->
 </head>
 <body>
+
+
 
 	<!--=================================
 	Header
 	=================================-->
-	<header id="header">
+	<div id="header">
 		<%@include file="header.jsp"%>
-	</header>
+	</div>
+	<div class="container" style="padding-bottom: 50px;" align="center">
 
+		<h2 style="color: #e62948;">Reset your password</h2>
+		<br>
 
-	<div class="pageContentArea">
-		<!--=================================
-      bread crums
-      =================================-->
-		<section class="breadcrumb">
+		<form id="changePasswordForm" role="form" style="margin-bottom: 50px;">
+			<div class="form-components">
 
-			<div class="container">
-				<div class="row">
-					<div class="col-lg-12 col-md-12 col-sm-12">
-						<h1>Archived Mixes</h1>
-					</div>
-
+				<div class="form-group inputBoxes">
+					<input type="password" class="form-control inputLiveStreamInfo"
+						id="newPassword" name="newPassword"
+						placeholder="New Password" minlength=3 required />
+				</div>
+				<div class="form-group inputBoxes">
+					<input type="password" class="form-control inputLiveStreamInfo"
+						id="confirmPassword" name="confirmPassword"
+						placeholder="Confirm Password" minlength=3 required />
 				</div>
 			</div>
-		</section>
 
-		<!-- ======= Rows for Archived Mixes start =======-->
+			<div>
+				<button id="btnUpatePassword" class="btn btn-default commonButton"
+					style="width: 150px;" type="submit">Update</button>
 
-
-
-		<div class="container" style="position: relative;">
-			<div class="row">
-
-				<div class="col-lg-9 col-md-9 col-sm-9 alltracks">
-					<h1>tracks</h1>
-
-
-
-					<div class="theHeaders">
-					</div>
-					<div class="news-feed-btn"></div>
-					<!--\\artist col-->
-				</div>
-				
-				<div class="col-lg-3 col-md-3 col-sm-3 djsignup">
-							<ul class="sitemap">
-								<li><a id="featured" href="#">Featured <span class="fa fa-star"></span></a></li>
-								<li><a id="mostPopular" href="#">Most Popular <span
-										class="caret"></span></a></li>
-								<li><a id="myDjs" href="#">My Djs <span class="fa fa-heart"></span></a></li>
-							</ul>
-
-					</div>
-				
-				
+				<h4 id="successPasswordUpdated" style="color: #e62948;"></h4>
+				<div id="error" style="color: red;font-size:larger"></div>
 			</div>
-			<!--row-->
-		</div>
-		<!--container-->
 
+		</form>
 
 	</div>
-	<!--=================================
-	Footer
-	=================================-->
 	<footer id="footer">
 		<%@include file="footer.jsp"%>
 	</footer>
-	<script type="text/javascript" src="assets/js/archives.js">	</script>
-	<script>/*Place Your Google Analytics code here*/</script>
-
+	<script defer src="assets/js/change-password.js"></script>
 </body>
 </html>

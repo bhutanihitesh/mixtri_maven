@@ -17,12 +17,14 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 
 import org.apache.log4j.Logger;
 
 import com.google.gson.Gson;
 import com.mixtri.DAO.MixtriDAO;
 import com.mixtri.login.UserLoginBean;
+import com.mixtri.profile.Profile;
 
 @Path("/")
 public class ChangePasswordService {
@@ -35,14 +37,85 @@ public class ChangePasswordService {
 	private String PASSWORD="fxarapxzwmmlrjrn";
 	
 	
-	@Path("/changePasswordLink")
+	
+	@Path("validateUser")
 	@POST
-	public Response changePassword(@FormParam("emailId") String recipientEmail,@FormParam("baseURL") String baseURL){
-		
-		Gson gson = new Gson();
-		Map<String,String> mapResponse = new HashMap<String, String>();
-		String response;
+	public Response validateUser(@FormParam("emailId") String recipientEmail){
+
 		try{
+			UserLoginBean userLoginBean = new UserLoginBean();
+			userLoginBean.setEmailId(recipientEmail);
+			MixtriDAO mixtriDAO = new MixtriDAO();
+			userLoginBean = mixtriDAO.retriveLoginInfoDAO(userLoginBean);
+
+			if(!userLoginBean.isUsernameAuthenticated()){
+
+				log.debug("Change Password: User name is not authenticated: "+userLoginBean.isUsernameAuthenticated());
+				log.debug("Invalid emailId while changing password.");
+				return Response.status(Status.BAD_REQUEST).entity("This account is not listed with us. Please create an account!").build();
+
+
+			}
+
+		}catch(SQLException sqlExp){
+			log.error("SQL Exception Occured: "+sqlExp);
+			return Response.serverError().build();
+
+		}
+		catch(Exception exp){ 
+			log.error("Exception Occured UserLogin: authenticate method: "+exp);
+			return Response.serverError().build();
+		}
+		return Response.ok().build();
+	}
+	
+	
+	@Path("sendPasswordLink")
+	@POST
+	public Response sendChangePasswordLink(@FormParam("emailId") String recipientEmail,@FormParam("baseURL") String baseURL){
+
+		Map<String,String> mapResponse = new HashMap<String, String>();
+		String response=null;
+		Gson gson = new Gson();
+		MixtriDAO mixtriDAO = new MixtriDAO();
+		try{
+			String emailToken = mixtriDAO.getChangePasswordHashCodeDAO(recipientEmail);
+			String changePasswordLink=baseURL+"/mixtri/change-password.jsp?emailId="+recipientEmail+"&emailToken="+emailToken;
+
+			log.debug("Change Password: Link: "+changePasswordLink);
+			Boolean emailSent = sendEmail(recipientEmail,changePasswordLink);
+
+			if(emailSent){
+
+				mapResponse.put("changePasswordLink", changePasswordLink);
+				response = gson.toJson(mapResponse);
+			}
+
+		}catch(SQLException sqlExp){
+			log.error("SQL Exception Occured: "+sqlExp);
+			return Response.serverError().build();
+
+		}
+		catch(Exception exp){ 
+			log.error("Exception Occured UserLogin: authenticate method: "+exp);
+			return Response.serverError().build();
+		}
+		return Response.ok(response,MediaType.APPLICATION_JSON).build();	
+	}
+	
+
+	
+	@Path("changePassword")
+	@POST
+	public Response changePassword(@FormParam("emailId") String recipientEmail,@FormParam("emailToken") String emailToken,
+			@FormParam("newPassword") String newPassword,@FormParam("confirmPassword") String confirmPassword){
+		
+		Response serviceResponse;
+		
+		boolean validEmailToken = false;
+		
+		try{
+		
 		UserLoginBean userLoginBean = new UserLoginBean();
 		userLoginBean.setEmailId(recipientEmail);
 		MixtriDAO mixtriDAO = new MixtriDAO();
@@ -50,26 +123,25 @@ public class ChangePasswordService {
 		
 		if(userLoginBean.isUsernameAuthenticated()){
 			
-			String emailToken = mixtriDAO.getChangePasswordHashCodeDAO(recipientEmail);
-			String changePasswordLink=baseURL+"/mixtri/changePasswordPage.jsp?emailId="+recipientEmail+"&emailToken="+emailToken;
-			Boolean emailSent = sendEmail(recipientEmail,changePasswordLink);
-			
-			if(emailSent){
+			validEmailToken = mixtriDAO.validateEmailTokenDAO(emailToken);
+			if(!validEmailToken){
 				
-				mapResponse.put("changePasswordLink", changePasswordLink);
-				response = gson.toJson(mapResponse);
+				return Response.status(Status.BAD_REQUEST).entity("Either the URL is incorrect or it has expired.").build();
+				
+			}else{
+				
+				Profile profile = new Profile();
+				serviceResponse=profile.changePassword(recipientEmail, newPassword, confirmPassword);
+				
 			}
+			
 			
 		}else{
 			
-			mapResponse.put("error", "This account is not listed with us. Please create an account!");
-		    log.debug("Invalid emailId while changing password.");
-		    response = gson.toJson(mapResponse);	
+			return Response.status(Status.BAD_REQUEST).entity("Either the URL is incorrect or it has expired.").build();
 		}
 		
-		response = gson.toJson(mapResponse);
-		
-	  }catch(SQLException sqlExp){
+		}catch(SQLException sqlExp){
 			log.error("SQL Exception Occured: "+sqlExp);
 			return Response.serverError().build();
 			
@@ -78,7 +150,8 @@ public class ChangePasswordService {
 			 log.error("Exception Occured UserLogin: authenticate method: "+exp);
 			 return Response.serverError().build();
 		}
-		return Response.ok(response,MediaType.APPLICATION_JSON).build();
+		
+		return serviceResponse;
 	}
 	
 	public boolean sendEmail(String recipientEmail,String changePasswordLink){
@@ -103,12 +176,11 @@ public class ChangePasswordService {
 			Message message = new MimeMessage(session);
 			message.setFrom(new InternetAddress("bhutanihitesh@gmail.com"));
 			message.setRecipients(Message.RecipientType.TO,
-				InternetAddress.parse(recipientEmail));
+			InternetAddress.parse(recipientEmail));
 			message.setSubject("Change your password");
-			//message.setContent("<p>Congratulation Darling..... For your first Job... :-*</p>", "text/html" );
-			message.setText("Hi there,\nYou requested to change your password for your mixtri account. Click on the link below or copy "
-					+ "and paste it in the browser:\n\n"+changePasswordLink+"\n \n This link will expire in 24 hrs. Please donnot reply to this email.\n\nRegards,\n"
-					+ "Team Mixtri");
+			message.setText("Hi there,\n\nYou requested to change your password for your mixtri account. Click on the link below or copy "
+			+ "and paste it in the browser:\n\n"+changePasswordLink+"\n \nThis link will expire in 24 hrs. Please donnot reply to this email.\n\nRegards,\n"
+			+ "Team Mixtri");
 			Transport.send(message);
 
 		} catch (MessagingException e) {

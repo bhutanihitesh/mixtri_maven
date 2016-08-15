@@ -5,7 +5,7 @@
 <!--<![endif]-->
 <head>
 <meta charset="utf-8">
-<title>Mixtri-Home</title>
+<title>Home</title>
 
 <!--=================================
 Meta tags

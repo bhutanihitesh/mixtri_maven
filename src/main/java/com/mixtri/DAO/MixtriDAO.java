@@ -10,6 +10,7 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 
 import com.mixtri.changePassword.ChangePasswordDB;
+import com.mixtri.changePassword.ChangePasswordService;
 import com.mixtri.event.EventBean;
 import com.mixtri.event.EventDB;
 import com.mixtri.login.LoginDB;
@@ -35,12 +36,20 @@ public class MixtriDAO {
 		return userLoginBean;
 	}
 	
-	public String getChangePasswordHashCodeDAO(String recipientEmail){
+	public String getChangePasswordHashCodeDAO(String recipientEmail) throws SQLException, ClassNotFoundException{
 		String hashCode=null;
 		ChangePasswordDB changePwd = new ChangePasswordDB();
 		hashCode=changePwd.getChangePasswordHashCode(recipientEmail);
 		
 		return hashCode;
+	}
+	
+	public boolean validateEmailTokenDAO(String emailToken) throws ClassNotFoundException, SQLException{
+		boolean isValidEmailToken=false;
+		
+		ChangePasswordDB changePasswordDB = new ChangePasswordDB();
+		isValidEmailToken = changePasswordDB.validateEmailTokenDB(emailToken);
+		return isValidEmailToken;
 	}
 
 	public UserSignUpBean setSignUpInfoDAO(UserSignUpBean userSignUpBean) throws SQLException,Exception{

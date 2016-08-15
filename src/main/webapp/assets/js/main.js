@@ -438,30 +438,56 @@ $(document).ready(function(){
 	$('#forgotPwdform').submit(function(e){
         e.preventDefault();
 		var emailId = $('#forgotPwdform').find('input[id="emailId"]').val();
-		var baseURL = window.location.origin;
+		
 		$.ajax({
-			url: '/mixtri/rest/changePasswordLink',
+			url: '/mixtri/rest/validateUser',
 			method: 'POST',
-			contentType: "application/x-www-form-urlencoded",
 			data: {
-				emailId: emailId,
-				baseURL:baseURL
-
+				emailId: emailId
 			},
 
 			success: function (data) {
+				sendPasswordLink();	    	  
+			},
 
-				if(typeof data.error!='undefined'){
-						$('#loginform').show();
-						$('#errorAlert').show();
-						$('#errorAlert').html(data.error);
-						$('#errorAlert').delay(5000).fadeOut();
-					}else{
-						//showSuccessMessage
-						$('#forgotPwdform').hide();
-						$('#showSuccessMessage').html('Reset password link has been sent to your registered email id');	
-					}
-        			    	  
+			error: function (data, textStatus, jqXHR){
+				
+				if(data.status == 400){
+					
+					$('#errorAlert').html(data.responseText);
+					$('#errorAlert').show();
+					$('#errorAlert').delay(4000).fadeOut();
+					return false; 
+					
+				}else{
+				
+					window.location.href = "error.jsp";
+				}
+			}
+		});
+
+
+	});
+	
+	
+  function sendPasswordLink(){
+		
+	    var emailId = $('#forgotPwdform').find('input[id="emailId"]').val();
+		var baseURL = window.location.origin;
+		
+		$('#forgotPwdform').hide();
+		$('#showSuccessMessage').html('Reset password link has been sent to your registered email Id.');	
+		
+		$.ajax({
+			url: '/mixtri/rest/sendPasswordLink',
+			method: 'POST',
+			data: {
+				emailId: emailId,
+				baseURL:baseURL
+			},
+
+			success: function (data) {
+					    	  
 			},
 
 			error: function (data, textStatus, jqXHR){
@@ -469,9 +495,8 @@ $(document).ready(function(){
 				
 			}
 		});
-
-
-	});
+		
+	}
 	
 	
 	//End of Forgot Password

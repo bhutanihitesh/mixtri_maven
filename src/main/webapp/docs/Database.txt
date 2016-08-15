@@ -154,3 +154,12 @@ ADD CONSTRAINT `fk_djEmailId`
   ON DELETE NO ACTION
   ON UPDATE NO ACTION;
   
+  
+  
+  CREATE TABLE `mixtri`.`changepassword` (
+  `id` VARCHAR(45) NOT NULL COMMENT '',
+  `emailId` VARCHAR(45) NOT NULL COMMENT '',
+  `changePasswordTS` TIMESTAMP NOT NULL COMMENT '',
+  PRIMARY KEY (`id`)  COMMENT '',
+  UNIQUE INDEX `id_UNIQUE` (`id` ASC)  COMMENT '');
+  

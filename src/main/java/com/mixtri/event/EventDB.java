@@ -8,7 +8,6 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -17,7 +16,6 @@ import org.apache.log4j.Logger;
 
 import com.mixtri.database.ConnectionFactory;
 import com.mixtri.utils.MixtriUtils;
-import com.mysql.jdbc.Statement;
 
 public class EventDB {
 

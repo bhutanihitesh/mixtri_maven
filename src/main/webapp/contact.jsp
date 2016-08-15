@@ -5,7 +5,7 @@
 <!--<![endif]-->
 <head>
 <meta charset="utf-8">
-<title>WeRock</title>
+<title>Contact US</title>
 
 <!--=================================
 Meta tags

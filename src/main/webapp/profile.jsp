@@ -5,7 +5,7 @@
 <!--<![endif]-->
 <head>
 <meta charset="utf-8">
-<title>Mixtri-My Profile</title>
+<title>My Profile</title>
 
 <!--=================================
 Meta tags
@@ -261,7 +261,6 @@ function loadDriveApi() {
 		<%@include file="footer.jsp"%>
 	</footer>
 	
-	<script src="https://apis.google.com/js/client.js?onload=checkAuth"></script>
 	<script type="text/javascript" src="assets/js/jquery.blockUI.js"></script>
 	<script defer src="assets/js/profile.js"></script>
 </body>

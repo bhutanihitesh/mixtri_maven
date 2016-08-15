@@ -5,7 +5,7 @@
 <!--<![endif]-->
 <head>
 <meta charset="utf-8">
-<title>Mixtri-Account Settings</title>
+<title>Account Settings</title>
 
 <!--=================================
 Meta tags

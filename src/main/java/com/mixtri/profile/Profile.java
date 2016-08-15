@@ -181,6 +181,11 @@ public class Profile {
 	@Path("changePassword")
 	public Response changePassword(@FormParam("emailId")String emailId,@FormParam("changePassword") String changePassword,@FormParam("re_enterPassword") String re_enterPassword){
 
+		Map<String,String> responseMessage = new HashMap<String, String>();
+		
+		Gson gson = new Gson();
+		String successMsg;
+		
 		try{
 			if(!changePassword.equals(re_enterPassword)){
 				return Response.status(Status.BAD_REQUEST).entity("Passwords donnot match").build();
@@ -194,13 +199,17 @@ public class Profile {
 
 				MixtriDAO mixtriDAO = new MixtriDAO();
 				mixtriDAO.changePasswordDAO(userSignUpBean);
+				
+				responseMessage.put("success", "Your password has been updated successfully. Login to continue your musical journey.");
+				
+				successMsg=gson.toJson(responseMessage);
 			}
 
 		}catch(Exception exp){
 			log.error("Exception occured while changing the password "+exp);
 			return Response.serverError().build();
 		}
-		return Response.ok().build();
+		return Response.ok(successMsg,MediaType.APPLICATION_JSON).build();
 	}
 
 	@POST

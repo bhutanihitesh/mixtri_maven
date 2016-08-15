@@ -8,7 +8,7 @@
 <!--<![endif]-->
 <head>
 <meta charset="utf-8">
-<title></title>
+<title>Header</title>
 
 <!--=================================
 Meta tags
@@ -196,7 +196,7 @@ z-index: 9999;
 							</div>
 							
 						</form>
-						<div id="showSuccessMessage"></div>
+						<div id="showSuccessMessage" style="font-size: larger"></div>
 
 					</div>
 

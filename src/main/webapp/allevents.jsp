@@ -5,7 +5,7 @@
 <!--<![endif]-->
 <head>
 <meta charset="utf-8">
-<title></title>
+<title>All Events</title>
 
 <!--=================================
 Meta tags

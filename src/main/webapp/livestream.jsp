@@ -5,7 +5,7 @@
 <!--<![endif]-->
 <head>
 <meta charset="utf-8">
-<title>Mixtri-Livestream</title>
+<title>Livestream</title>
 
 <!--=================================
 Meta tags

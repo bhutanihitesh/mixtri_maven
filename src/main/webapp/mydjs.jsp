@@ -5,7 +5,7 @@
 <!--<![endif]-->
 <head>
 <meta charset="utf-8">
-<title>WeRock</title>
+<title>My Djs</title>
 
 <!--=================================
 Meta tags
