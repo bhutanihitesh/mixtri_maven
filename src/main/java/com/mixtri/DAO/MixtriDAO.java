@@ -239,6 +239,12 @@ public class MixtriDAO {
 		ProfileDB profileDB = new ProfileDB();
 		profileDB.changePasswordDB(userSignUpBean);
 	}
+	
+	public void deleteEmailPwdTokenDAO(String emailPwdToken) throws ClassNotFoundException, SQLException{
+		
+		ChangePasswordDB changePwdDB = new ChangePasswordDB();
+		changePwdDB.deleteEmailPwdTokenDB(emailPwdToken);
+	}
 
 	public void deleteAccountDAO(String emailId) throws ClassNotFoundException, SQLException{
 		

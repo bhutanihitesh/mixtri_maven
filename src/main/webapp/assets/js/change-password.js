@@ -6,7 +6,6 @@ $(document).ready(function() {
 		e.preventDefault();
 		validatePassword();
 
-		submitChangePasswordForm();
 	});
 
 	
