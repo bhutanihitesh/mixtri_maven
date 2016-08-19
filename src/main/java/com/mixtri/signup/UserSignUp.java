@@ -1,4 +1,7 @@
 package com.mixtri.signup;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import com.google.gson.Gson;
@@ -21,6 +24,7 @@ import org.apache.log4j.Logger;
 
 import com.mixtri.BusinessExceptions.ExceptionHttpStatusResolver;
 import com.mixtri.DAO.MixtriDAO;
+import com.mixtri.database.ConnectionFactory;
 import com.mixtri.signup.UserSignUpBean;
 import com.mixtri.utils.MixtriUtils;
 
@@ -28,6 +32,8 @@ import com.mixtri.utils.MixtriUtils;
 @WebService
 public class UserSignUp{
 	static Logger log = Logger.getLogger(UserSignUp.class.getName());
+	Connection connection;
+	PreparedStatement statement;
 	@POST
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/signup")
@@ -81,9 +87,23 @@ public class UserSignUp{
 			}
 
 			SignUpDB signUpDB = new SignUpDB(); 
-			boolean isAccountExists = signUpDB.accountExists(emailId);
+			
+			connection = ConnectionFactory.getInstance().getConnection();
+			
+			ResultSet rs = signUpDB.accountExists(emailId,connection,statement);
+			boolean isAccountExists = false;
+			
+			while(rs.next()){
+				  
+				if(rs.getString("EmailId")!=null & rs.getInt("Active")==1){
+					
+					log.debug("Account already Exists and is active "+rs.getString("EmailId"));
+					isAccountExists = true;
+					break;
+				}	
+			}
 
-			//We create an account for the user in our database the very first time he logs in using social login else just logs him in to mixtri if the account is already
+			//We create an account for the user in our database the very first time he login using social login else just log him in to mixtri if the account is already
 			//there.
 			Map<String,String> userData;
 			if(isAccountExists && !mixtriSignUp){
@@ -102,7 +122,6 @@ public class UserSignUp{
 				return Response.ok(json, MediaType.APPLICATION_JSON).build();
 			}
 
-			if(serverResponse.isEmpty()){
 				String hashedPassword = null;
 
 				if(Signup_password!=null){
@@ -134,7 +153,7 @@ public class UserSignUp{
 				userSignUpBean.setCountry(country);
 
 				MixtriDAO mixtriDAO = new MixtriDAO();
-				userSignUpBean = mixtriDAO.setSignUpInfoDAO(userSignUpBean);
+				userSignUpBean = mixtriDAO.createNewUserDAO(userSignUpBean);
 				isUserCreated = userSignUpBean.isUsercreated();	
 
 				if(isUserCreated){
@@ -146,10 +165,6 @@ public class UserSignUp{
 
 
 				}
-			}else{
-				json = gson.toJson(serverResponse);
-				return Response.ok(json,MediaType.APPLICATION_JSON).build();
-			}
 
 		}catch(SQLException sqlExp){
 			log.error("SQL Exception Occured createUser Method: "+sqlExp.getStackTrace());
@@ -160,6 +175,15 @@ public class UserSignUp{
 		catch(Exception exp){ 
 			log.error("Exception Occured UserSignup: CreateUser method: "+exp);
 			return Response.serverError().build();
+		}finally{
+			
+				if(connection!=null){
+					try {
+						connection.close();
+					} catch (SQLException e) {
+						e.printStackTrace();
+					}
+				}
 		}
 
 		return Response.ok(json,MediaType.APPLICATION_JSON).build();

@@ -52,7 +52,7 @@ public class MixtriDAO {
 		return isValidEmailToken;
 	}
 
-	public UserSignUpBean setSignUpInfoDAO(UserSignUpBean userSignUpBean) throws SQLException,Exception{
+	public UserSignUpBean createNewUserDAO(UserSignUpBean userSignUpBean) throws SQLException,Exception{
 		SignUpDB signUpDB = new SignUpDB();
 
 		int insertedRows;

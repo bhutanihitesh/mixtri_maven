@@ -1,4 +1,7 @@
 $(document).ready(function() {
+	
+	var EMAIL_ID = $.cookie('emailId');
+	
 	$('#error').hide();
 	$('#changePasswordForm').on('submit',function(e){
 		e.preventDefault();
@@ -75,7 +78,8 @@ $(document).ready(function() {
 				
 				$("#welcomeUser").addClass('hidden');
 				$('#loginUser').show();
-				window.location.href  = "index.jsp";
+				
+				getAccessToken();
 				
 			},
 
@@ -86,5 +90,102 @@ $(document).ready(function() {
 		});
 		
 	});
+	
+	
+	
+	function getAccessToken() {
+
+		$.ajax({
+
+			type: 'GET',
+			url: '/mixtri/rest/profile/getToken',
+			success: function(result){
+
+				//Setting access token in global variable.
+				ACCESS_TOKEN = result.accessToken;
+				setAccessToken();
+				
+			},
+
+			error: function(result){
+
+				console.log('Error recieving access token '+result);
+				window.location.href = "error.jsp";	
+			}
+
+		});
+
+
+	}
+
+	
+	/** 
+	 * Set access token retrieved on server side. This replaces client side explicit
+	 * authentication through authentication dialog.
+	 */
+	function setAccessToken() { 
+	
+	 gapi.auth.setToken({
+		    access_token: ACCESS_TOKEN
+		});	
+	 
+		gapi.client.load('drive', 'v2', checkIfFolderExists);
+	}
+	
+	 
+	
+	function checkIfFolderExists() {
+		
+		var request = gapi.client.drive.files.list({
+
+			'q':"mimeType = 'application/vnd.google-apps.folder' and title='"+EMAIL_ID+"'"
+
+
+		});
+
+		request.execute(function(resp) {
+
+			//This means the folder exists
+			if(resp.items.length>0){
+
+				//Get the id and upload file in that
+				var folderId = resp.items[0].id;
+				deleteFromGoogleDrive(folderId);
+
+			}
+
+
+		});
+	}
+	
+	
+	/**
+	 * Permanently delete a file, skipping the trash.
+	 *
+	 * @param {String} fileId ID of the file to delete.
+	 */
+	
+	function deleteFromGoogleDrive(fileId) {
+		
+		var request = gapi.client.drive.files.delete({
+			'fileId': fileId
+		});
+
+		request.execute(function(resp) {
+
+			if(resp.code!=404){
+
+				console.log('Delete SuccessFul'); 
+
+			}else{
+
+				console.log('Not Successful: '+resp.message);
+			}
+			
+			window.location.href = 'index.jsp';
+
+		});
+	}
+	
 
 });

@@ -9,7 +9,14 @@ public class UserLoginBean {
 	private String  displayName;
 	private String  sessionMessage;
 	private String  profileURLId;
+	private boolean isActive;
 	
+	public boolean isActive() {
+		return isActive;
+	}
+	public void setActive(boolean isActive) {
+		this.isActive = isActive;
+	}
 	public String getSessionMessage() {
 		return sessionMessage;
 	}

@@ -149,7 +149,7 @@ public class ProfileDB {
 	public void deleteAccountDB(String emailId) throws ClassNotFoundException, SQLException{
 
 		try{
-			String query = "DELETE FROM mixtri.users WHERE emailId=?";
+			String query = "update mixtri.users set active=0 where emailId=?";
 			connection = getConnection();
 			statement = connection.prepareStatement(query);    
 			statement.setString(1, emailId);

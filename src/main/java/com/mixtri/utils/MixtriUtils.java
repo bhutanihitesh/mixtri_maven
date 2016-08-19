@@ -185,69 +185,6 @@ public class MixtriUtils{
         
     }
 	
-	public static void deleteUserHomeDirectory(String path){
-		
-		File directory = new File(path);
-		 
-    	//make sure directory exists
-    	if(!directory.exists()){
- 
-           log.info("Directory does not exist.");
-    	}else{
- 
-           try{
-        	   
-               delete(directory);
-        	
-           }catch(IOException e){
-               e.printStackTrace();
-           }
-        }
- 
-    	log.debug("Directory Deleted Successfully at path:  "+path);
-	}
-	
-	
-	public static void delete(File file)
-	    	throws IOException{
-	 
-	    	if(file.isDirectory()){
-	 
-	    		//directory is empty, then delete it
-	    		if(file.list().length==0){
-	    			
-	    		   file.delete();
-	    		   log.info("Directory is deleted : " 
-	                                                 + file.getAbsolutePath());
-	    			
-	    		}else{
-	    			
-	    		   //list all the directory contents
-	        	   String files[] = file.list();
-	     
-	        	   for (String temp : files) {
-	        	      //construct the file structure
-	        	      File fileDelete = new File(file, temp);
-	        		 
-	        	      //recursive delete
-	        	     delete(fileDelete);
-	        	   }
-	        		
-	        	   //check the directory again, if empty then delete it
-	        	   if(file.list().length==0){
-	           	     file.delete();
-	        	     log.debug("Directory is deleted : " 
-	                                                  + file.getAbsolutePath());
-	        	   }
-	    		}
-	    		
-	    	}else{
-	    		//if file, then delete it
-	    		file.delete();
-	    		log.debug("File is deleted : " + file.getAbsolutePath());
-	    	}
-	    }
-	
 	private static String displayTimeZone(TimeZone tz) {
 
 		long hours = TimeUnit.MILLISECONDS.toHours(tz.getRawOffset());

@@ -1,3 +1,8 @@
+AWS Error:
+
+If your instance is not reachable that means your machine ip has changed and inbound rule for security group
+needs to be udpated with your new public ip.
+
 MySQL 5.5 database added.  Please make note of these credentials:
 
    Root User: adminIpi9hL6
@@ -96,3 +101,7 @@ Go to Tools->Perferences->At bottom select radio button All->Search for Shoutcas
 vlc --sout "#transcode{vcodec=none,acodec=mp3,ab=128,channels=2,samplerate=44100}:std{access=shout,mux=ogg,dst=source:mixtri@52.77.202.27:80/mixtri/mystream.mp3}" http://ec2-52-77-202-27.ap-southeast-1.compute.amazonaws.com/mixtri/hitesh.ogg
 
 logging in at mountpoint "/mixtri/mystream.mp3" from 52.77.202.27
+
+
+
+

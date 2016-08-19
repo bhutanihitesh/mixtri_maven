@@ -50,18 +50,6 @@ public class Profile {
 	static {
         try {
             HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
-            
-           /* prop = new Properties();
-			String path = new File("properties/mixtri.properties").getAbsolutePath();
-			File file = new File(path);
-
-			InputStream input = null;
-			input = new FileInputStream(file);
-			
-			// load a properties file
-			prop.load(input);
-			UPLOAD_FILE_SERVER = prop.getProperty("BASE_PATH");*/
-			
         } catch (Throwable t) {
             t.printStackTrace();
             System.exit(1);
@@ -218,10 +206,6 @@ public class Profile {
 		try{
 			MixtriDAO mixtriDAO = new MixtriDAO();
 			mixtriDAO.deleteAccountDAO(emailId);
-			String picsPath = UPLOAD_FILE_SERVER+prop.getProperty("EVENT_PICS")+emailId+"/";
-			String mediaFilesPath = UPLOAD_FILE_SERVER+"audio"+"/"+emailId+"/";
-			MixtriUtils.deleteUserHomeDirectory(picsPath);
-			MixtriUtils.deleteUserHomeDirectory(mediaFilesPath);
 		}catch(Exception exp){
 			log.error("Exception Occured while deleting account: "+exp);
 			Response.serverError().build();

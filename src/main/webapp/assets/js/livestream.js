@@ -635,14 +635,14 @@ $(document).ready(function() {
 
 			request.execute(function(jsonResp,rawResp){
 				
-				callbackAfterUpload(jsonResp,rawResp,uploadType);
+				callbackAfterUpload(jsonResp,rawResp,uploadType,folderId);
 				
 			});
 		}
 	}
 
 
-	function callbackAfterUpload(jsonResp,rawResp,uploadType){
+	function callbackAfterUpload(jsonResp,rawResp,uploadType,folderId){
 
 		$.unblockUI();
 
@@ -656,7 +656,7 @@ $(document).ready(function() {
 			//On Successfully saving the song to google drive save the uploaded song's details on the data with an Ajax Call
 			if(uploadType=='Remixes'){
 				
-				saveSongDetails(jsonResp);
+				saveSongDetails(jsonResp,folderId);
 			}
 	
 			else if(uploadType=='setupLiveStream'){
@@ -738,7 +738,7 @@ $(document).ready(function() {
 	}
 
 	
-	function saveSongDetails(jsonResp){
+	function saveSongDetails(jsonResp,folderId){
 		
 		var uuid = generateUUID();
 		
@@ -748,6 +748,7 @@ $(document).ready(function() {
 		var fileName = jsonResp.originalFilename;
 		var fileSize = jsonResp.fileSize/1000000;
 		var googleFileId = jsonResp.id;
+		var parentFolderId = folderId;
 		
 
 		$.ajax({
@@ -760,7 +761,8 @@ $(document).ready(function() {
 				uploadPath: uploadPath,
 				fileName:fileName,
 				fileSize:fileSize,
-				googleFileId:googleFileId
+				googleFileId:googleFileId,
+				parentFolderId:parentFolderId
 
 			},
 			dataType: 'json',

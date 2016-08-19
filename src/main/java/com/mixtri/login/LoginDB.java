@@ -30,7 +30,7 @@ public class LoginDB {
 
 	public UserLoginBean getLoginInfoDB(UserLoginBean userLoginBean) throws ClassNotFoundException, SQLException, NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException{
 
-		String query = "SELECT EMAILID,PASSWORD,SALT,DISPLAYNAME,PROFILEURLID FROM mixtri.users WHERE EMAILID=?";
+		String query = "SELECT EMAILID,PASSWORD,SALT,DISPLAYNAME,PROFILEURLID,ACTIVE FROM mixtri.users WHERE EMAILID=?";
 		ResultSet rs =null;
 		try{
 
@@ -48,12 +48,13 @@ public class LoginDB {
 				String emailIdFromUI = userLoginBean.getEmailId();
 				String pwdFromUI = userLoginBean.getPassword();
 				String profileURLId = rs.getString("profileURLId");
+				int active = rs.getInt("active");
 
 				SaltedMD5 saltedMD5 = new SaltedMD5();
 				
 				if(passwordDB==null){
 					
-					if(emailIdFromUI.equalsIgnoreCase(emailIdDB)){
+					if(emailIdFromUI.equalsIgnoreCase(emailIdDB) && active==1){
 						userLoginBean.setUsernameAuthenticated(true);
 					}else{
 						userLoginBean.setUsernameAuthenticated(false);
@@ -67,7 +68,7 @@ public class LoginDB {
 				if(pwdFromUI!=null){
 					hashedPassword = saltedMD5.getSecurePassword(pwdFromUI,salt);
 				}
-				if(emailIdFromUI.equalsIgnoreCase(emailIdDB)){
+				if(emailIdFromUI.equalsIgnoreCase(emailIdDB) && active==1){
 
 					userLoginBean.setUsernameAuthenticated(true);
 					log.debug("Username Authenticated: "+emailIdDB);

@@ -49,6 +49,10 @@ ADD INDEX `idx_users_emailId` (`emailId` ASC)  COMMENT '',
 ADD INDEX `idx_users_profileURLId` (`profileURLId` ASC)  COMMENT '';
 
 
+ALTER TABLE `mixtri`.`users` 
+ADD COLUMN `active` TINYINT NOT NULL DEFAULT 1 COMMENT '' AFTER `biography`;
+
+
   
   
 ****************Table Name: Events***************
@@ -154,7 +158,7 @@ ADD CONSTRAINT `fk_djEmailId`
   ON DELETE NO ACTION
   ON UPDATE NO ACTION;
   
-  
+  ****************** Table Name: ChangePassword**********
   
   CREATE TABLE `mixtri`.`changepassword` (
   `id` VARCHAR(45) NOT NULL COMMENT '',
@@ -162,4 +166,5 @@ ADD CONSTRAINT `fk_djEmailId`
   `changePasswordTS` TIMESTAMP NOT NULL COMMENT '',
   PRIMARY KEY (`id`)  COMMENT '',
   UNIQUE INDEX `id_UNIQUE` (`id` ASC)  COMMENT '');
+  
   

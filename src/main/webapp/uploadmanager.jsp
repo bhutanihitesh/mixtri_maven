@@ -116,7 +116,7 @@ Style Sheets
 		<%@include file="footer.jsp"%>
 	</footer>
 	 
-	 <script src="https://apis.google.com/js/client.js?onload=checkAuth"></script>
+	 <script src="https://apis.google.com/js/client.js"></script>
 	 <script src="assets/js/uploadmanager.js"></script>
 	 
 </body>

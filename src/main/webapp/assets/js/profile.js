@@ -302,7 +302,7 @@ $(document).ready(function() {
 
 				request.execute(function(jsonResp,rawResp){
 
-					callbackAfterUpload(jsonResp,rawResp);
+					callbackAfterUpload(jsonResp,rawResp,folderId);
 
 				});
 			}
@@ -340,7 +340,7 @@ $(document).ready(function() {
 		});
 	}
 
-	function callbackAfterUpload(jsonResp,rawResp){
+	function callbackAfterUpload(jsonResp,rawResp,folderId){
 
 		$.unblockUI();
 
@@ -357,7 +357,7 @@ $(document).ready(function() {
 			var fileSize = jsonResp.fileSize;
 			var googleFileId = jsonResp.id;
 
-			saveProfilePicDetails(uploadPath);
+			saveProfilePicDetails(uploadPath,folderId);
 
 		}else{
 
@@ -366,7 +366,7 @@ $(document).ready(function() {
 	}
 
 
-	function saveProfilePicDetails(uploadPath){
+	function saveProfilePicDetails(uploadPath,folderId){
 
 		var firstName = $('#profile-firstName').val();
 		var lastName = $('#profile-lastName').val();
@@ -376,6 +376,8 @@ $(document).ready(function() {
 		var biography = $('#profile-biography').val();
 		var profilePic = $('#image-upload').get(0).files[0];
 		var emailId = $.cookie('emailId');
+		var parentFolderId = folderId;
+		
 
 
 		var city;
@@ -405,7 +407,8 @@ $(document).ready(function() {
 				country:country,
 				phoneNumber:phoneNumber,
 				biography:biography,
-				currentProfilePicPath:uploadPath
+				currentProfilePicPath:uploadPath,
+				parentFolderId:parentFolderId
 
 			},
 

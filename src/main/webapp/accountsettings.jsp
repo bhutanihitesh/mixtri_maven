@@ -163,6 +163,7 @@ Style Sheets
 		<%@include file="footer.jsp"%>
 	</footer>
 	
+	<script src="https://apis.google.com/js/client.js"></script>	
 	<script defer src="assets/js/accountsettings.js"></script>
 </body>
 </html>

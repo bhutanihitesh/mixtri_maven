@@ -29,8 +29,9 @@ public class SignUpDB {
 	
 	public int createNewUserDB(UserSignUpBean userSignUpBean) throws IOException, ClassNotFoundException, SQLException{
 		
+		Connection connection = getConnection();
+		
 		int insertedRows=0;
-		try{
 
 			String displayName =  userSignUpBean.getDisplayName();
 			String emailId = userSignUpBean.getEmailId();
@@ -67,9 +68,44 @@ public class SignUpDB {
 				} 
 			}
 			  String uuid = MixtriUtils.getUUID();
-			  userSignUpBean.setProfileURLId(profileURLId);
-              
-			  String query ="INSERT INTO mixtri.users(id,emailId,password,salt,displayName,createDate,profileURLId,phoneNumber,city,state,country,showContactInfo)"
+			  
+			  
+			 ResultSet rs1 = accountExists(emailId,connection,null);
+			 boolean inactiveAccountExists = false;
+			 
+			 while(rs1.next()){
+				  
+				 //This condition tell if while creating an account, the account already exists and is inactive then activate the inactive account and update the info
+					if(rs1.getString("EmailId")!=null & rs1.getInt("Active")==0){
+						inactiveAccountExists = true;
+						
+						//If the account is getting reinstated then use the old profileURLID
+						profileURLId = rs1.getString("profileURLId");
+						break;
+					}	
+			 }
+			 
+			 
+			 if(inactiveAccountExists){
+				 
+				 insertedRows = activateInactiveUser(uuid,emailId,password,salt,displayName,createDate,profileURLId,contact,city,state,country,showContactInfo);
+				 
+			 }else{
+				 
+				 insertedRows = createNewUser(uuid,emailId,password,salt,displayName,createDate,profileURLId,contact,city,state,country,showContactInfo);
+			 }
+		
+		return insertedRows;
+	}
+	
+	public int createNewUser(String uuid,String emailId,String password,String salt,String displayName,Date createDate,String profileURLId,String contact,String city,
+							String state,String country,String showContactInfo) throws ClassNotFoundException, SQLException{
+		
+		int insertedRows=0;
+		
+		try{
+			
+			String query ="INSERT INTO mixtri.users(id,emailId,password,salt,displayName,createDate,profileURLId,phoneNumber,city,state,country,showContactInfo)"
 			  		+ "VALUES(?,?,?,?,?,?,?,?,?,?,?,?)";
 			  
 			  connection = getConnection();
@@ -99,6 +135,49 @@ public class SignUpDB {
 				e.printStackTrace();
 			}
 		}
+		
+		return insertedRows;
+	}
+	
+	public int activateInactiveUser(String uuid,String emailId,String password,String salt,String displayName,Date createDate,String profileURLId,String contact,String city,
+			String state,String country,String showContactInfo) throws ClassNotFoundException, SQLException{
+		
+		int insertedRows=0;
+		try{
+		Connection connection = getConnection();
+		PreparedStatement statement;
+		
+		String query="Update mixtri.users set id=?,password=?,salt=?,displayName=?,createDate=?,phoneNumber=?,city=?,state=?,country=?,showContactInfo=?,active=1 where emailId=?";
+		
+		statement = connection.prepareStatement(query);
+		
+		  statement.setString(1, uuid);
+		  statement.setString(2, password);
+		  statement.setString(3, salt);
+		  statement.setString(4, displayName);
+		  statement.setDate(5, createDate);
+		  statement.setString(6, contact);
+		  statement.setString(7, city);
+		  statement.setString(8, state);
+		  statement.setString(9, country);
+		  statement.setString(10, showContactInfo);
+		  statement.setString(11, emailId);
+		  
+		  insertedRows = statement.executeUpdate();
+		}finally{
+			
+
+			try {
+				if(statement != null)
+					statement.close();
+				if(connection != null)
+					connection.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		
+			
+		}
 		return insertedRows;
 	}
 	
@@ -123,35 +202,15 @@ public class SignUpDB {
 		return profileId;
 	}
 	
-	public boolean accountExists(String emailId) throws ClassNotFoundException, SQLException{
-		
-		boolean emailExists = false;
-		
-		try{
+	public ResultSet accountExists(String emailId, Connection connection, PreparedStatement statement) throws ClassNotFoundException, SQLException{
+		 
+			ResultSet rs = null;
 			
-			connection = getConnection();
-			statement = connection.prepareStatement("SELECT EMAILID FROM mixtri.users WHERE EMAILID=?");    
+		
+			statement = connection.prepareStatement("SELECT EMAILID,Active,profileURLId FROM mixtri.users WHERE EMAILID=?");    
 			statement.setString(1, emailId);    
-			ResultSet resultSet = statement.executeQuery();
-			
-			if(resultSet.next()){
-				emailExists = true;
-			}
-			
-		}finally{
-			
-			try {
-				if(statement != null)
-					statement.close();
-				if(connection != null)
-					connection.close();
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
-		}
-		
-		return emailExists;
-		
+			rs = statement.executeQuery();
+			return rs;
 	}
 	
 	public boolean profileNameExists(String profileURLName) throws ClassNotFoundException, SQLException{
