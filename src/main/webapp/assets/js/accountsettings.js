@@ -152,6 +152,9 @@ $(document).ready(function() {
 				var folderId = resp.items[0].id;
 				deleteFromGoogleDrive(folderId);
 
+			}else{
+				
+				window.location.href = 'index.jsp';
 			}
 
 
