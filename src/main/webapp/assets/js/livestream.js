@@ -2,6 +2,12 @@
 
 $(document).ready(function() {
 
+	/**These methods gets called on DOM Ready
+	 **/
+	getServerDateTime();
+	getPastMixes();
+	getDiskSpace();
+
 	//Go Live and Test Stream buttons
 
 	$('#testStream').click(function(e){
@@ -320,7 +326,7 @@ $(document).ready(function() {
 					var waitMsg = '<h5><img src="assets/img/icons/busy.gif" /> Setting it up...</h5>';
 					var uploadType = 'setupLiveStream';
 
-					checkIfFolderExists(folderName,fileData,waitMsg,uploadType);
+					getAccessToken(fileData,waitMsg,uploadType);
 					
 					$('#btnLiveStream').attr('disabled','disabled');
 
@@ -415,13 +421,16 @@ $(document).ready(function() {
 			return false;
 
 		}
-
-		getFreeDiskSpace(file.size);
+		
+		var waitMsg = '<h5><img src="assets/img/icons/busy.gif" /> Do a little dance your music is being uploaded...</h5>';
+		var uploadType="Remixes";
+		
+		getFreeDiskSpace(file.size,file,waitMsg,uploadType);
 
 	});
 
 
-	function getFreeDiskSpace(fileSize){
+	function getFreeDiskSpace(fileSize,file,waitMsg,uploadType){
 
 		$.ajax({
 			url: '/mixtri/rest/diskspace',
@@ -445,8 +454,8 @@ $(document).ready(function() {
 				}else{
 
 					
-					getAccessToken();
-					//checkIfFolderExists(folderName,fileData,waitMsg,uploadType);
+					getAccessToken(file,waitMsg,uploadType);
+					
 				}
 			},
 
@@ -461,7 +470,7 @@ $(document).ready(function() {
 	}
 	
 	
-	function getAccessToken() {
+	function getAccessToken(file,waitMsg,uploadType) {
 
 		$.ajax({
 
@@ -471,7 +480,7 @@ $(document).ready(function() {
 
 				//Setting access token in global variable.
 				ACCESS_TOKEN = result.accessToken;
-				setAccessToken();
+				setAccessToken(file,waitMsg,uploadType);
 				
 			},
 
@@ -491,24 +500,21 @@ $(document).ready(function() {
 	 * Set access token retrieved on server side. This replaces client side explicit
 	 * authentication through authentication dialog.
 	 */
-	function setAccessToken() { 
+	function setAccessToken(file,waitMsg,uploadType) { 
 	
 	 gapi.auth.setToken({
 		    access_token: ACCESS_TOKEN
 		});	
 	 
-		gapi.client.load('drive', 'v2', onDriveClientLoaded);
-	}
-	
-	 
-	/** After the drive api has loaded.. */
-	function onDriveClientLoaded() {
-		
-		checkIfFolderExists();
+		gapi.client.load('drive', 'v2', function onDriveClientLoaded(){
+			
+			/** After the drive api has loaded.. */
+			checkIfFolderExists(file,waitMsg,uploadType);
+		});
 	}
 	
 	
-	function checkIfFolderExists() {
+	function checkIfFolderExists(file,waitMsg,uploadType) {
 		
 		var folderName =  $.cookie("emailId");
 
@@ -526,11 +532,11 @@ $(document).ready(function() {
 
 				//Get the id and upload file in that
 				var folderId = resp.items[0].id;
-				uploadToGoogleDrive(folderId);
+				uploadToGoogleDrive(folderId,file,waitMsg,uploadType);
 
 			}else{
 
-				createFolder(folderName);
+				createFolder(folderName,file,waitMsg,uploadType);
 			}
 
 
@@ -539,7 +545,7 @@ $(document).ready(function() {
 
 	//0B_jU3ZFb1zpHQmFIMDNzc2dBRHM This is the id of the parent folder(upload) in google drive in which all the sub folders will be created.
 
-	function createFolder(folderName) {
+	function createFolder(folderName,file,waitMsg,uploadType) {
 
 		var request = gapi.client.request({
 			'path': '/drive/v2/files/',
@@ -562,7 +568,7 @@ $(document).ready(function() {
 
 			//Upload File to Google Drive after creating the folder
 			var folderId = resp.id;
-			uploadToGoogleDrive(folderId);
+			uploadToGoogleDrive(folderId,file,waitMsg,uploadType);
 		});
 	}
 
@@ -577,12 +583,8 @@ $(document).ready(function() {
 	};
 
 
-	function uploadToGoogleDrive(folderId) {
+	function uploadToGoogleDrive(folderId,fileData,waitMsg,uploadType) {
 
-		var fileData = $('#mixUpload').get(0).files[0];
-		var waitMsg = '<h5><img src="assets/img/icons/busy.gif" /> Do a little dance your music is being uploaded...</h5>';
-		var uploadType = 'Remixes';
-		
 		$.blockUI({ message: waitMsg });
 
 		const boundary = '-------314159265358979323846';
@@ -912,13 +914,5 @@ $(document).ready(function() {
 
 		}
 	});
-
-
-
-	/**These methods gets called on DOM Ready
-	 **/
-	getServerDateTime();
-	getPastMixes();
-	getDiskSpace();
 
 });

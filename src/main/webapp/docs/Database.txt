@@ -168,3 +168,14 @@ ADD CONSTRAINT `fk_djEmailId`
   UNIQUE INDEX `id_UNIQUE` (`id` ASC)  COMMENT '');
   
   
+  
+  ********************** Mysql Event to delete old change password URLs*********************
+  
+  CREATE EVENT deleteChangePwdUrls
+    ON SCHEDULE EVERY 1 MINUTE
+    COMMENT 'Clears out old change password links from table every 1 hour.'
+    DO
+      delete from mixtri.changepassword where TIMESTAMPDIFF(HOUR,changePasswordTS,CURRENT_TIMESTAMP) > 24;
+      
+  
+  SET GLOBAL event_scheduler = ON;    

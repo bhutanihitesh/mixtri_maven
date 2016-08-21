@@ -595,8 +595,8 @@ Style Sheets
 		<footer id="footer">
 			<%@include file="footer.jsp"%>
 		</footer>
-		<script src="https://apis.google.com/js/client.js"></script>
 		<script type="text/javascript" src="assets/js/jquery.blockUI.js"></script>
+		<script src="https://apis.google.com/js/client.js"></script>
 		<script type="text/javascript" src="assets/js/livestream.js"></script>
 	<script>	
 		/*Place Your Google Analytics code here*/

@@ -697,7 +697,7 @@ $(document).ready(function(){
 	
 	window.fbAsyncInit = function() {
 	    FB.init({
-	      appId      : '404108326453693',
+	      appId      : '407445416119984',
 	      xfbml      : true,
 	      oauth	     : true,
 	      version    : 'v2.5'
