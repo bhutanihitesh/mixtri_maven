@@ -94,6 +94,11 @@ public class SignUpDB {
 				 
 				 insertedRows = createNewUser(uuid,emailId,password,salt,displayName,createDate,profileURLId,contact,city,state,country,showContactInfo);
 			 }
+			 
+			 /**
+			  * After inserting setting the profileURLId
+			  */
+			 userSignUpBean.setProfileURLId(profileURLId);
 		
 		return insertedRows;
 	}
