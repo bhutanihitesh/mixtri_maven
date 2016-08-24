@@ -88,6 +88,25 @@ ADD CONSTRAINT `fk_users_profileURLId`
   
 ALTER TABLE `mixtri`.`events` 
 ADD INDEX `idx_events_emailId` (`emailId` ASC)  COMMENT '';
+
+/***************/
+ALTER TABLE `mixtri`.`events` 
+DROP FOREIGN KEY `fk_users_profileURLId`;
+ALTER TABLE `mixtri`.`events` 
+ADD CONSTRAINT `fk_users_profileURLId`
+  FOREIGN KEY (`emailId`)
+  REFERENCES `mixtri`.`users` (`emailId`)
+  ON DELETE CASCADE
+  ON UPDATE NO ACTION;
+  
+  
+ ALTER TABLE `mixtri`.`events` 
+ADD CONSTRAINT `fk_emailId`
+  FOREIGN KEY (`emailId`)
+  REFERENCES `mixtri`.`users` (`emailId`)
+  ON DELETE CASCADE
+  ON UPDATE NO ACTION;
+
   
   
  *********Table Name: archivedMixes*******************
@@ -113,6 +132,26 @@ ADD INDEX `idx_events_emailId` (`emailId` ASC)  COMMENT '';
     ON UPDATE NO ACTION);
     
     
+ ALTER TABLE `mixtri`.`archivedmixes` 
+ADD CONSTRAINT `fk_events_emailId`
+  FOREIGN KEY (`emailId`)
+  REFERENCES `mixtri`.`events` (`emailId`)
+  ON DELETE NO ACTION
+  ON UPDATE NO ACTION;
+  
+  
+  ALTER TABLE `mixtri`.`archivedmixes` 
+DROP FOREIGN KEY `fk_events_emailId`;
+ALTER TABLE `mixtri`.`archivedmixes` 
+ADD CONSTRAINT `fk_events_emailId`
+  FOREIGN KEY (`emailId`)
+  REFERENCES `mixtri`.`events` (`emailId`)
+  ON DELETE CASCADE
+  ON UPDATE NO ACTION;
+  
+    
+    
+    
   **************Table Name: Attendee**************************
   
   CREATE TABLE `mixtri`.`attendees` (
@@ -132,6 +171,18 @@ ADD INDEX `idx_events_emailId` (`emailId` ASC)  COMMENT '';
     REFERENCES `mixtri`.`events` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION);  
+    
+    
+
+  
+ ALTER TABLE `mixtri`.`attendees` 
+DROP FOREIGN KEY `fk_event_id_events`;
+ALTER TABLE `mixtri`.`attendees` 
+ADD CONSTRAINT `fk_event_id_events`
+  FOREIGN KEY (`eventId`)
+  REFERENCES `mixtri`.`events` (`id`)
+  ON DELETE CASCADE
+  ON UPDATE NO ACTION;
   
   **************Table Name: Fans***********************************
   CREATE TABLE `mixtri`.`fans` (
