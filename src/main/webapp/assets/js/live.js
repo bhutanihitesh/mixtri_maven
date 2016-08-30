@@ -1,12 +1,10 @@
 $(document).ready(function() {
 
-	var websocket = new WebSocket("ws://"+ location.hostname+ ":" + location.port + "/mixtri/liveUpdate");
+	/*var websocket = new WebSocket("ws://"+ location.hostname+ ":" + location.port + "/mixtri/liveUpdate");
 	//websocket.onopen = function(evt) { onOpen(evt) };
 	websocket.onmessage = function(evt) { onMessage(evt) };
 	websocket.onerror = function(evt) { onError(evt) };
-	websocket.onclose = function(evt) {onClose(evt)};
-
-	
+	websocket.onclose = function(evt) {onClose(evt)};*/
 
 	var liveStreamURL = $.cookie('liveStreamURL');	
     var isDj = false;
@@ -79,6 +77,11 @@ $(document).ready(function() {
 			var country = result.country;
 			var emailId = result.emailId;
 			var contactNumber = result.contactNumber;
+			var liveStreamSource = result.liveStreamSource;
+			
+			$.cookie('streamingOption',streamingOption,{ path: '/'});
+			$.cookie('liveStreamSource',liveStreamSource,{ path: '/'});
+			
 
 			//Show Dj Contact Info
 			$('[data-toggle="popover"]').popover({
@@ -241,7 +244,7 @@ $(document).ready(function() {
 				countdown.start();
 
 				$('#playSiren')[0].play();
-				//playStopTrack("#jPlayerSiren",'https://drive.google.com/uc?export=download&id=0B_jU3ZFb1zpHQktFWHR3OVcxWjA','play');
+				
 
 				var msg = {
 						type: "attendeeCount",
@@ -312,14 +315,12 @@ $(document).ready(function() {
 			},
 
 			success: function(result){
-				
 				transcodeToMp3();
+					
 				$('#countdown').show(1000);
 				countdown.start();
 
 				$('#playSiren')[0].play();
-				//playStopTrack("#jPlayerSiren",'https://drive.google.com/uc?export=download&id=0B_jU3ZFb1zpHQktFWHR3OVcxWjA','play');
-				
 
 			},
 			error: function(result){
@@ -333,14 +334,19 @@ $(document).ready(function() {
 
 	function transcodeToMp3(){
 		
+		var streamingOption = $.cookie('streamingOption');
+		var liveStreamSource = $.cookie('liveStreamSource');
+		
 		$.ajax({
 
 			type: 'GET',
-			url: 'http://ec2-52-77-202-27.ap-southeast-1.compute.amazonaws.com:8080/mediatranscoder/rest/transcode',
-			/*url:'http://localhost:8000/mediatranscoder/rest/transcode',*/
-			dataType: 'json',
+			/*url: 'http://ec2-52-77-202-27.ap-southeast-1.compute.amazonaws.com:8080/mediatranscoder/rest/transcode',*/
+			url:'http://localhost:8080/mediatranscoder/rest/transcode',
+			contentType: "application/x-www-form-urlencoded",
 			data: {
 				streamId: eventId,
+				streamingOption:streamingOption,
+				liveStreamSource:liveStreamSource
 			},
 
 			success: function(result){
@@ -376,31 +382,6 @@ $(document).ready(function() {
 
 	}
 
-	//Play Siren Sound on countdown
-
-
-	function playStopTrack(id,liveStreamURL,action){
-		console.log('Testing url'+liveStreamURL);
-		$(id).jPlayer({
-			ready: function() {
-				$(this).jPlayer("setMedia", {
-					mp3: liveStreamURL
-				}).jPlayer(action);
-				var click = document.ontouchstart === undefined ? 'click' : 'touchstart';
-				var kickoff = function () {
-					$(id).jPlayer(action);
-
-				};
-
-			},
-			swfPath: "assets/jPlayer",
-			loop: false
-		});
-
-	}
-
-
-	
 
 	function startTimer(duration, display) {
 		var timer = duration, minutes, seconds;
@@ -598,9 +579,6 @@ $(document).ready(function() {
 				$.removeCookie('isDj', { path: '/' });
 				$.removeCookie('eventId', { path: '/' });
 
-				//stop the track currently being played
-				//playStopTrack('#jPlayerLiveTrack',liveStreamURL,'pause');
-				
 				$('#streamAudioPlayer')[0].stop();
 
 				$("#bgVideoTheme video")[0].pause();

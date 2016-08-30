@@ -155,7 +155,8 @@ public class ProfileDB {
 			statement.setString(1, emailId);
 			statement.executeUpdate();
 			
-			deleteUserData(emailId);
+			deleteUserEvents(emailId);
+			deleteUserUploads(emailId);
 			
 		}finally{
 
@@ -170,10 +171,33 @@ public class ProfileDB {
 		}
 	}
 	
-	public void deleteUserData(String emailId) throws ClassNotFoundException, SQLException{
+	public void deleteUserEvents(String emailId) throws ClassNotFoundException, SQLException{
 		
 		try{
 			String query = "delete from mixtri.events where emailId=?";
+			connection = getConnection();
+			statement = connection.prepareStatement(query);    
+			statement.setString(1, emailId);
+			statement.executeUpdate();
+			
+		}finally{
+
+			try {
+				if(statement != null)
+					statement.close();
+				if(connection != null)
+					connection.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		
+	}
+	
+  public void deleteUserUploads(String emailId) throws ClassNotFoundException, SQLException{
+		
+		try{
+			String query = "delete from mixtri.archivedmixes where emailId=?";
 			connection = getConnection();
 			statement = connection.prepareStatement(query);    
 			statement.setString(1, emailId);

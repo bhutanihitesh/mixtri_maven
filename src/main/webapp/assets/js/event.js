@@ -162,10 +162,6 @@ $(document).ready(function() {
 					message: ''
 				});
 	});
-	//window.location.href
-	//https://d85wutc1n854v.cloudfront.net/live/products/600x375/WB0PGGM81.png?v=1.0
-	//http://cdn.shopify.com/s/files/1/0277/1157/products/nabi_Headphones_FrontView_1500_v3_e4114922-e90a-420b-b6fe-bf2c7b888f9e_1024x1024.png?v=1423341327
-	
 	/*********************************************************************/
 	 
 });

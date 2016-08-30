@@ -127,7 +127,7 @@ Style Sheets
       <div class="modal-content">
         <div class="modal-header">
           <button type="button" class="close" data-dismiss="modal">&times;</button>
-          <h4 class="modal-title">Woohoo! Your live streaming event has been setup!</h4>
+          <h4 class="modal-title" style="color: #e62948;font-size: x-large;font-family: 'Oswald', sans-serif;">Woohoo! Your live streaming event has been setup!</h4>
         </div>
         <div class="modal-body">
         
@@ -138,10 +138,10 @@ Style Sheets
           		   start of the event and do your settings.
           		</li><br>
           		<li>Click <a href="#">here</a> to view step-by-step guide of your setting</li><br>
-          		<li>Invite your friends and fans from social networking sites and make it big!</li><br>
+          		<li>Make it big. Share your event on facebook and invite your friends and fans.</li><br>
            </ol>
-           <div>Make it big. Invite friends and fans to your event!</div><br>
-           <button id="btn-fbShare" style="margin-bottom: 10px;" type="button" class="btn btn-primary">
+          
+           <button id="btn-fbShare" style="margin-bottom: 10px; margin-left:200px;" type="button" class="btn btn-primary">
 					<i class="fa fa-facebook"></i> Facebook
 			</button>
 			

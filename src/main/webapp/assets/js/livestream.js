@@ -7,7 +7,7 @@ $(document).ready(function() {
 	getServerDateTime();
 	getPastMixes();
 	getDiskSpace();
-
+	
 	//Go Live and Test Stream buttons
 
 	$('#testStream').click(function(e){
@@ -65,9 +65,8 @@ $(document).ready(function() {
 	 **/
 	$("#mixUpload").on('change',function(e){
 		e.preventDefault();
-		//var file = $('input[name="uploadFile"').get(0).files[0];
+		
 		var file = $('input[name="mixUpload"').get(0).files[0];
-		//var file = $('#mixUpload').get(0).files[0];
 		$('#selectedFileName').html('Selected File: '+file.name);
 
 	});
@@ -181,7 +180,7 @@ $(document).ready(function() {
 				var arrServerTime = arrDateTime[1].split(":");
 
 				$('#eventTimePicker').val(arrDateTime[1]);
-				$("#eventDatePicker" ).datepicker({ minDate: -1}); //This disables the past dates in calendar
+				$("#eventDatePicker" ).datepicker({ minDate: 0}); //This disables the past dates in calendar
 				$("#eventDatePicker").datepicker('setDate',arrDateTime[0]);
 
 			},
@@ -261,9 +260,15 @@ $(document).ready(function() {
 				var eventSetupTime = getTimeInMins($('#eventTimePicker').val());
 				var isPastDate = compareWithSystemDate(arrDateTime[0]);
 				var eventDate = $("#eventDatePicker").val();
+				
 				var serverDate = arrDateTime[0];
 				var d1 = Date.parse(eventDate);
 				var d2 = Date.parse(serverDate);
+				
+				
+				var eventTimeHrsMin= $('#eventTimePicker').val();
+				var serverTimeHrsMin=arrDateTime[1];
+				
 
 				//This condition checks If the Event Setup time is atleast 5 mins more than the system on today's date. If it is future date then it won't check this condition. 
 				if(isPastDate){
@@ -283,8 +288,16 @@ $(document).ready(function() {
 						$('#messages').delay(10000).fadeOut();
 						formSubmit = false;
 						return false;
-					} 
+						
+					}
 
+				}else if( eventDate>arrDateTime[0] &&  eventTimeHrsMin>serverTimeHrsMin){
+					
+					$('#messages').html('ERROR: You cannot setup your event more than 24hrs in advance');
+					$('#messages').show();
+					$('#messages').delay(10000).fadeOut();
+					formSubmit = false;
+					return false;
 				}
 
 				//This error is returned from the server and checks if the user has already used the same live stream setup with the same name or not 
@@ -303,7 +316,7 @@ $(document).ready(function() {
 					var alreadySelectedMix = $('.pastMix');
 
 					if(alreadySelectedMix.length == 0){
-						$('#messages').html('Please select either from your previous recorded mixes or upload a new mix!');
+						$('#messages').html('Please select either from your previously recorded mixes or upload a new mix!');
 						$('#messages').show();
 						$('#messages').delay(6000).fadeOut();
 						formSubmit = false;
@@ -318,7 +331,6 @@ $(document).ready(function() {
 
 				//We are manually submitting the form because we want to see if the value returned from server is correct and 5 mins validation satisfies or not.
 				if(formSubmit == 'true'){
-					//submitEventForm();
 										
 					//This uploads the event pic in the google drive.
 					var folderName =  $.cookie("emailId");
@@ -681,7 +693,6 @@ $(document).ready(function() {
 		var strArr = [];
 		strArr = selectedVid.split("-"); //get id id of the selected div.
 		var vidFrame = "#vidFrame-"+strArr[1];
-
 		var emailId = $.cookie('emailId');
 		var displayName = $.cookie('displayName');
 		var streamInfo = $('#streamInfo').val();
@@ -694,7 +705,11 @@ $(document).ready(function() {
 		var streamingOption = $('.panel.panel-primary.pointer-cursor.selected').get(0).id;
 		var bgVideoTheme = $(vidFrame).get(0).currentSrc;
 		var profileURLId = $.cookie('profileURLId');
-		var eventPicPath = 'https://googledrive.com/host/'+jsonResp.id
+		var eventPicPath = 'https://googledrive.com/host/'+jsonResp.id;
+		
+		var alreadySelectedMix = $('.pastMix');
+		var liveStreamSource= alreadySelectedMix.find('audio').find('source')[0].src
+		
 		
 		var url = "/mixtri/rest/event";
 
@@ -715,7 +730,8 @@ $(document).ready(function() {
 				streamingOption:streamingOption,
 				bgVideoTheme:bgVideoTheme,
 				profileURLId:profileURLId,
-				eventPicPath:eventPicPath,				
+				eventPicPath:eventPicPath,
+				liveStreamSource:liveStreamSource
 			},
 
 			dataType: 'json',
@@ -723,6 +739,7 @@ $(document).ready(function() {
 
 				$.cookie('eventId', result.id,{ path: '/'});
 				$.cookie('liveStreamURL', result.liveStreamURL,{ path: '/'});
+				
 				//Set isDJ true if a user is setting up an event
 				$.cookie('isDj',true,{ path: '/'});
 				var profileURLId = $.cookie('profileURLId');

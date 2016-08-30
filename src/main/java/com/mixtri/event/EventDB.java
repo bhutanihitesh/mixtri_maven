@@ -37,8 +37,8 @@ public class EventDB {
 		try{
 
 			String query ="INSERT INTO mixtri.events(id,displayName,streamInfo,eventCreatedUTCTimeStamp,timeZone,eventDescription,genre,hashtags,streamingOption,"
-					+ "eventPicPath,bgVideoPath,isLive,profileURLId,emailId,kudosCount,liveStreamURL)"
-					+ "VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+					+ "eventPicPath,bgVideoPath,isLive,profileURLId,emailId,kudosCount,liveStreamURL,liveStreamSource)"
+					+ "VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 
 			String eventDescription = eventBean.getEventDescription().isEmpty() ? null : eventBean.getEventDescription();
 			String hastags = eventBean.getHastags().isEmpty() ? null : eventBean.getHastags();
@@ -62,6 +62,7 @@ public class EventDB {
 			statement.setString(14, eventBean.getEmailId());
 			statement.setInt(15, eventBean.getKudosCount());
 			statement.setString(16, eventBean.getLiveStreamURL());
+			statement.setString(17, eventBean.getLiveStreamSource());
 			insertedRows = statement.executeUpdate();
 
 		}finally
@@ -133,6 +134,7 @@ public class EventDB {
 				liveStreamInfo.put("country",contactInfo.get("country"));
 				liveStreamInfo.put("emailId",contactInfo.get("emailId"));
 				liveStreamInfo.put("contactNumber",contactInfo.get("contactNumber"));
+				liveStreamInfo.put("liveStreamSource",rs.getString("liveStreamSource"));
 
 			}
 		}finally

@@ -65,10 +65,14 @@ $(document).ready(function() {
 					
 					if(parseInt(timeLeft)>=60){
 					  
-						div='<li class="Live-Djs-TimeLeft">in next <span id="timeLeft">'+parseInt(timeLeft)/60+'</span> hours</li>';
+						var hours = Math.floor( timeLeft / 60);          
+					    var minutes = hours % 60;
+					    
+					    div='<li class="Live-Djs-TimeLeft">starts in next <span id="timeLeft">'+hours+'</span> hours and '+minutes+' mins</li>';
+					    
 					}else{
 						
-						div='<li class="Live-Djs-TimeLeft">in next <span id="timeLeft">'+parseInt(timeLeft)+'</span> mins</li>';
+						div='<li class="Live-Djs-TimeLeft">starts in next <span id="timeLeft">'+parseInt(timeLeft)+'</span> mins</li>';
 					 }
 				}
 			

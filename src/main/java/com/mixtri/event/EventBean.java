@@ -20,10 +20,18 @@ public class EventBean {
 	String isLive;
 	String profileURLId;
 	String liveStreamURL;
+	String liveStreamSource;
+	public String getLiveStreamSource() {
+		return liveStreamSource;
+	}
+	public void setLiveStreamSource(String liveStreamSource) {
+		this.liveStreamSource = liveStreamSource;
+	}
 	int kudosCount;
 	String feedback;
 	Timestamp eventCreatedUTCTimestamp;
 	int noOfRecords;
+	
 	
 	public String getId() {
 		return id;
