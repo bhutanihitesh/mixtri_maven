@@ -351,12 +351,12 @@ $(document).ready(function() {
 
 			success: function(result){
 				
-				$('#streamAudioPlayer').play();
+				$('#streamAudioPlayer')[0].play();
 			},
 			error: function(result){
 				
 				/*This REST Service is returning 200 OK code but error text. Not sure why. So its a hack to play the stream in the error function*/
-				$('#streamAudioPlayer').play();
+				$('#streamAudioPlayer')[0].play();
 				
 				console.log("Cannot Transcode to .mp3: "+liveStreamURL);
 				console.log('Errors: '+result);

@@ -708,8 +708,17 @@ $(document).ready(function() {
 		var eventPicPath = 'https://googledrive.com/host/'+jsonResp.id;
 		
 		var alreadySelectedMix = $('.pastMix');
-		var liveStreamSource= alreadySelectedMix.find('audio').find('source')[0].src
 		
+		
+		/**
+		 * In case user is doing live streaming with already uploaded mix then the source will not be empty
+		 * Incase of icecast streaming the source will be empty.
+		 */
+		var liveStreamSource;
+		if(alreadySelectedMix.find('audio').find('source')[0]!=undefined){
+			
+			liveStreamSource=alreadySelectedMix.find('audio').find('source')[0].src 
+		}
 		
 		var url = "/mixtri/rest/event";
 
