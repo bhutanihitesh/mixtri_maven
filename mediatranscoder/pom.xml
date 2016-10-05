@@ -44,6 +44,14 @@
 			<artifactId>gson</artifactId>
 			<version>2.2.4</version>
 		</dependency>
+		
+		<!-- https://mvnrepository.com/artifact/com.outr.javasysmon/javasysmon_2.10 -->
+	<dependency>
+	    <groupId>com.outr.javasysmon</groupId>
+	    <artifactId>javasysmon_2.10</artifactId>
+	    <version>0.3.4</version>
+	</dependency>
+		
 
 	</dependencies>
 	<build>
