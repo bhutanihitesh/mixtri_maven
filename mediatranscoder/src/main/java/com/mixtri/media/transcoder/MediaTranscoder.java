@@ -1,12 +1,9 @@
 package com.mixtri.media.transcoder;
 
 import java.io.IOException;
-import java.lang.reflect.Array;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.logging.Logger;
 
 import javax.ws.rs.FormParam;
@@ -14,13 +11,10 @@ import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-
-import org.glassfish.jersey.message.internal.StringBuilderUtils;
 
 import com.google.gson.Gson;
 import com.mixtri.media.transcoder.UDKSpawner;
@@ -143,30 +137,6 @@ public class MediaTranscoder implements ContainerRequestFilter  {
 		return Response.ok(isSccuess,MediaType.APPLICATION_JSON).header("Access-Control-Allow-Origin", "http://localhost:8000").build();
 		
 	}
-	
-	 public static void main(String[] args) throws IOException{
-		 
-		 int processId=0;
-		 
-		 if(args.length>0){
-		   processId = Integer.parseInt(args[0]);
-		 }
-		 startProcess(processId);
-
-	    }
-	 
-	 
-	 public static void startProcess(int processId) throws IOException{
-		 ProcessBuilder builder = new ProcessBuilder(
-					"cmd.exe", "/c", "cd \"C:\\Program Files (x86)\\VideoLAN\\VLC\" && vlc --sout #transcode{vcodec=none,acodec=mp3,ab=128,channels=2,samplerate=44100}:std{access=shout,mux=ogg,dst=source:mixtri@52.77.202.27:80/mixtri/mystream.mp3} http://ec2-52-77-202-27.ap-southeast-1.compute.amazonaws.com/mixtri/hitesh.ogg");
-		    builder.redirectErrorStream(true);
-		    UDKSpawner udkSpawner = new UDKSpawner();
-		    Map<String,Object> map =udkSpawner.spawnUDK(builder);
-		    
-	 }
-
-	
-	    
-	    
+	   
 
 }
