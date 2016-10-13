@@ -30,19 +30,22 @@ public class MediaTranscoder implements ContainerRequestFilter  {
 
 	static Logger log = Logger.getLogger(MediaTranscoder.class.getName());
 	
-	List<String> allowedOrigins = Arrays.asList("http://localhost:8000","http://www.mixtri.com");
-	
+	List<String> allowedOrigins = Arrays.asList("http://localhost:8080","http://localhost:8000","http://www.mixtri.com");
+	String hostOrigin;
 	@Override
 	public void filter(ContainerRequestContext requestCtx) throws IOException {
 		
-		String hostOrigin = requestCtx.getHeaderString("origin");
+		hostOrigin = requestCtx.getHeaderString("Origin");
+		
+		log.info("hostOrigin is: "+hostOrigin);
+		log.info("allowed Origins: "+allowedOrigins);
 		
 		/**
 		 * If the host origin is other than then allowed origins then abort the request
 		 */
 		
         if (!allowedOrigins.contains(hostOrigin)) {
-            log.info( "HTTP Method (OPTIONS) - Detected!" );
+            log.info( "Its an unauthorized request" );
 
             // Just send a OK signal back to the browser
             requestCtx.abortWith( Response.status( Response.Status.UNAUTHORIZED).build() );
@@ -109,8 +112,6 @@ public class MediaTranscoder implements ContainerRequestFilter  {
         	Gson gson = new Gson();
         	mapResponse = gson.toJson(hashMap);
         	
-        	System.out.println("Here is the response: "+mapResponse);
-        	
         }
        
 	}catch(IOException exp){
@@ -119,7 +120,7 @@ public class MediaTranscoder implements ContainerRequestFilter  {
 		Response.serverError().build();
 	}
 		
-		return Response.ok(mapResponse,MediaType.APPLICATION_JSON).header("Access-Control-Allow-Origin", "http://localhost:8000").build();
+		return Response.ok(mapResponse,MediaType.APPLICATION_JSON).header("Access-Control-Allow-Origin",hostOrigin).build();
 		//http://www.mixtri.com
 	}
 	
@@ -134,7 +135,7 @@ public class MediaTranscoder implements ContainerRequestFilter  {
 		
 		boolean isSccuess = udk.killUDKByPID(pids);
 		
-		return Response.ok(isSccuess,MediaType.APPLICATION_JSON).header("Access-Control-Allow-Origin", "http://localhost:8000").build();
+		return Response.ok(isSccuess,MediaType.APPLICATION_JSON).header("Access-Control-Allow-Origin",hostOrigin).build();
 		
 	}
 	   
