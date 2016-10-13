@@ -36,6 +36,13 @@ public class MixtriDAO {
 		return userLoginBean;
 	}
 	
+	public void saveProcessIdsDAO(String eventId,String pids) throws ClassNotFoundException, SQLException{
+		
+		EventDB eventDB = new EventDB();
+		eventDB.saveProcessIdsDB(eventId, pids);
+		
+	}
+	
 	public String getChangePasswordHashCodeDAO(String recipientEmail) throws SQLException, ClassNotFoundException{
 		String hashCode=null;
 		ChangePasswordDB changePwd = new ChangePasswordDB();

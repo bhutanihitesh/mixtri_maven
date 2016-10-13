@@ -339,10 +339,10 @@ $(document).ready(function() {
 		
 		$.ajax({
 
-			type: 'GET',
+			type: 'POST',
 			/*url: 'http://ec2-52-77-202-27.ap-southeast-1.compute.amazonaws.com:8080/mediatranscoder/rest/transcode',*/
-			url:'http://localhost:8080/mediatranscoder/rest/transcode',
-			contentType: "application/x-www-form-urlencoded",
+			url:'http://localhost:8000/mediatranscoder/rest/transcode',
+			dataType: 'json',
 			data: {
 				streamId: eventId,
 				streamingOption:streamingOption,
@@ -352,6 +352,9 @@ $(document).ready(function() {
 			success: function(result){
 				
 				$('#streamAudioPlayer')[0].play();
+				var pids = result.pids.toString();
+				
+				saveTranscoderProcessIds(pids);
 			},
 			error: function(result){
 				
@@ -363,6 +366,31 @@ $(document).ready(function() {
 				
 			}
 
+		});
+		
+	}
+	
+	function saveTranscoderProcessIds(pids){
+		
+		console.log('Here are the pids: '+pids);
+		
+		$.ajax({
+			
+			type: 'POST',
+			url: '/mixtri/rest/event/saveProcessIds',
+			contentType: "application/x-www-form-urlencoded",
+			data: {
+				eventId: eventId,
+				pids:pids
+			},
+			
+			
+			success: function(result){
+				
+			},error: function(result){
+				console.log("Error while saving transcoder Ids");
+			}
+			
 		});
 		
 	}

@@ -71,21 +71,23 @@ Your browser does not support the audio element.
         	
         	$.ajax({
 
-    			type: 'GET',
-    		    url: 'http://ec2-52-77-202-27.ap-southeast-1.compute.amazonaws.com:8080/mediatranscoder/rest/transcode',
-    			/* url: 'http://localhost:8080/mediatranscoder/rest/transcode', */
-    			/* dataType: 'json', */
+    			type: 'POST',
+    			
+    		    /* url: 'http://ec2-52-77-202-27.ap-southeast-1.compute.amazonaws.com:8080/mediatranscoder/rest/transcode', */
+    			url: 'http://localhost:8000/mediatranscoder/rest/transcode',
+    			dataType: 'json',
     			data: {
-    				streamId: 'c57934f21a854481baf37a258aedbd0e'
+    				streamId: 'hitesh',
+    				streamingOption:'panel-recorded-mixes',
+    				liveStreamSource:'hitesh'
     			},
 
     			success: function(result){
     				
-    				$('#streamAudioPlayer').play();
-					
-    			},
-    			error: function(result){
+    				console.log(result.pids);
+    				//$('#streamAudioPlayer').play();
     				
+    				console.log(result.pids);
     				var oggSrc = 'http://52.77.202.27/mixtri/c57934f21a854481baf37a258aedbd0e.ogg';
     				var mp3Src = 'http://52.77.202.27/mixtri/c57934f21a854481baf37a258aedbd0e.mp3';
     				
@@ -94,6 +96,11 @@ Your browser does not support the audio element.
     				
     				$('#streamAudioPlayer')[0].load();
     				$('#streamAudioPlayer')[0].play();
+					
+    			},
+    			error: function(result){
+    				
+    				
     				console.log("Cannot Transcode to .mp3: ");
     				console.log('Errors: '+result);
     				
@@ -103,6 +110,40 @@ Your browser does not support the audio element.
         	
         }
         
+        
+        function killProcess(){
+        	
+        	var processIds='13040,12396,6332';
+        	
+        	$.ajax({
+        		
+		 type: 'POST',
+		 	
+    		    /* url: 'http://ec2-52-77-202-27.ap-southeast-1.compute.amazonaws.com:8080/mediatranscoder/rest/kill', */
+    			url: 'http://localhost:8080/mediatranscoder/rest/kill',
+    			dataType: 'json',
+    			data: {
+    				processIds:processIds
+    			},
+    			
+				success: function(result){
+    				
+    				console.log(result.pids);
+    				//$('#streamAudioPlayer').play();
+					
+    			},
+    			
+				error: function(result){
+    				
+    				
+    				console.log("Cannot Kill the process: "+result);
+    				console.log('Errors: '+result);
+    				
+    			}
+        		
+        	});
+        	
+        }
            
         function loadLiveStream(){
         	
@@ -128,7 +169,8 @@ Your browser does not support the audio element.
     
   <button onclick="loadLiveStream()">Load Live Stream</button>
   <button onclick="playLiveStream()">Play Live Stream</button>
-    
+  <button onclick="transcode()">Transcode</button>
+  <button onclick="killProcess()">killProcess</button>  
 <audio id="streamAudioPlayer" preload="auto">
   <source id="srcOgg" src="" type="audio/ogg">
   <source id="srcMp3" src="" type="audio/mpeg">

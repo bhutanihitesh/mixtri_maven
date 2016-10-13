@@ -11,6 +11,7 @@ import java.sql.Timestamp;
 import java.text.DateFormatSymbols;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -30,6 +31,7 @@ import javax.ws.rs.core.Response;
 
 import org.apache.log4j.Logger;
 
+import com.google.api.client.repackaged.org.apache.commons.codec.binary.StringUtils;
 import com.google.gson.Gson;
 import com.mixtri.DAO.MixtriDAO;
 import com.mixtri.utils.MixtriUtils;
@@ -316,6 +318,24 @@ public class Event {
 		
 		
 		return Response.ok(response,MediaType.APPLICATION_JSON).build();
+	}
+	
+	
+	@POST
+	@Path("/event/saveProcessIds")
+	public Response saveProcessIds(@FormParam("eventId") String eventId,@FormParam("pids") String pids){
+	try{
+		
+		MixtriDAO mixtriDAO = new MixtriDAO();
+		mixtriDAO.saveProcessIdsDAO(eventId,pids);
+		return Response.ok().build();
+		
+	}catch(Exception exp){
+		 log.error("Error Occured in saveProcessIds method: "+exp);
+		 return Response.serverError().build();
+	 }	
+		
+		
 	}
 	
 	@POST

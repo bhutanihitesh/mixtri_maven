@@ -372,6 +372,31 @@ public class EventDB {
 
 		return listAllLiveUpcomingEvents;
 	}
+	
+	public void saveProcessIdsDB(String eventId, String pids) throws ClassNotFoundException, SQLException{
+		
+		String query = "UPDATE mixtri.events SET processIds=? WHERE ID=?";
+
+		try{
+
+			connection = getConnection();
+			statement = connection.prepareStatement(query);    
+			statement.setString(1, pids);
+			statement.setString(2, eventId);
+			statement.executeUpdate();
+		}finally{
+
+			try {
+				if(statement != null)
+					statement.close();
+				if(connection != null)
+					connection.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		
+	}
 
 	public void saveEventFeedbackDB(EventBean eventBean) throws ClassNotFoundException, SQLException{
 

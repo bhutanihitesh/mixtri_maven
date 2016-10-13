@@ -89,6 +89,10 @@ ADD CONSTRAINT `fk_users_profileURLId`
 ALTER TABLE `mixtri`.`events` 
 ADD INDEX `idx_events_emailId` (`emailId` ASC)  COMMENT '';
 
+ALTER TABLE `mixtri`.`events` 
+ADD COLUMN `processIds` VARCHAR(128) NULL COMMENT '' AFTER `liveStreamURL`;
+
+
 /***************/
 ALTER TABLE `mixtri`.`events` 
 DROP FOREIGN KEY `fk_users_profileURLId`;
