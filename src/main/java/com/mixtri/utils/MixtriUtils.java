@@ -214,24 +214,25 @@ public class MixtriUtils{
 
 	}
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException {
 		
-		try{
-
-
-			ProcessBuilder builder = new ProcessBuilder(
-					"cmd.exe", "/c", "cd \"C:\\Program Files (x86)\\VideoLAN\\VLC\" && vlc --sout #transcode{vcodec=none,acodec=mp3,ab=128,channels=2,samplerate=44100}:std{access=shout,mux=ogg,dst=source:mixtri@52.77.202.27:80/mixtri/mystream.mp3} http://ec2-52-77-202-27.ap-southeast-1.compute.amazonaws.com/mixtri/hitesh.ogg");
-		    builder.redirectErrorStream(true);
-	        Process p = builder.start();
-	        BufferedReader r = new BufferedReader(new InputStreamReader(p.getInputStream()));
-	        String line;
-	        while (true) {
-	            line = r.readLine();
-	            if (line == null) { break; }
-	            System.out.println(line);
-	        }
-		}catch(IOException exp){
-			System.out.println("Exception Occured while executing windows command line commands");
+		/*String cmd = "taskkill /F /PID 1604";
+		Runtime.getRuntime().exec(cmd);*/
+		
+		String cmd = "tasklist /fi \"pid eq 11480\"";
+		
+		try {
+		    String line;
+		    Process p = Runtime.getRuntime().exec(cmd);
+		    BufferedReader input =
+		            new BufferedReader(new InputStreamReader(p.getInputStream()));
+		    while ((line = input.readLine()) != null) {
+		    	System.out.println("Hello Ji..: "+line); //<-- Parse data here.
+		    }
+		    input.close();
+		} catch (Exception err) {
+		    err.printStackTrace();
 		}
+		
 	}
 }

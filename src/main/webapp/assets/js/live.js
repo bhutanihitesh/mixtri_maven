@@ -340,8 +340,8 @@ $(document).ready(function() {
 		$.ajax({
 
 			type: 'POST',
-			/*url: 'http://ec2-52-77-202-27.ap-southeast-1.compute.amazonaws.com:8080/mediatranscoder/rest/transcode',*/
-			url:'http://localhost:8000/mediatranscoder/rest/transcode',
+			url: 'http://ec2-52-77-202-27.ap-southeast-1.compute.amazonaws.com:8080/mediatranscoder/rest/transcode',
+			//url:'http://localhost:8080/mediatranscoder/rest/transcode',
 			dataType: 'json',
 			data: {
 				streamId: eventId,
@@ -353,7 +353,7 @@ $(document).ready(function() {
 				
 				$('#streamAudioPlayer')[0].play();
 				var pids = result.pids.toString();
-				
+				$.cookie("processIds", pids,{ path: '/'});
 				saveTranscoderProcessIds(pids);
 			},
 			error: function(result){
@@ -589,8 +589,14 @@ $(document).ready(function() {
    }
 	
 	//End live event and set status as 'N' in Database
-	$('#btnYes').on('click',function(){
+	$('#btnYesEndEvent').on('click',function(){
+		var isLive = 'N';
+		updateEventStatus(isLive)
 
+	});
+	
+	function updateEventStatus(isLive){
+		
 		$.ajax({
 
 			type: 'POST',
@@ -598,17 +604,19 @@ $(document).ready(function() {
 			contentType: "application/x-www-form-urlencoded",
 			data: {
 				eventId: eventId,
-				isLive: 'N'
+				isLive: isLive
 			},
 
 			success: function(result){
 
 				//Remove isDj=true from cookie
+				var processIds = $.cookie('processIds');
 				$.removeCookie('isDj', { path: '/' });
 				$.removeCookie('eventId', { path: '/' });
-
+				$.removeCookie('processIds', { path: '/' });
+				
+				endLiveStreaming(processIds)
 				$('#streamAudioPlayer')[0].stop();
-
 				$("#bgVideoTheme video")[0].pause();
 				$('#feedbackModal').modal('show');
 
@@ -620,8 +628,7 @@ $(document).ready(function() {
 
 		});
 
-
-	});
+	}
 
 	//Submit Feedback
 
@@ -771,40 +778,64 @@ $(document).ready(function() {
 	}
 
 	/****************************Chat functionality and other live updates functionality ends***************/
-	//if user navigates from the page remove the isDj Cookie, delete the user from the attendee count
-	$(window).bind("beforeunload", function() { 
-
-		//$.removeCookie('isDj', { path: '/' });
-
-		$.ajax({
-
-			type: 'POST',
-			url: '/mixtri/rest/event/liveDataUpdate',
-			contentType: "application/x-www-form-urlencoded",
+	
+	function endLiveStreaming(processIds){
+		
+    	$.ajax({
+    		
+	     type: 'POST',
+	 	
+		    url: 'http://ec2-52-77-202-27.ap-southeast-1.compute.amazonaws.com:8080/mediatranscoder/rest/kill',
+			//url: 'http://localhost:8080/mediatranscoder/rest/kill',
+			dataType: 'json',
 			data: {
-				eventId: eventId,
-				attendeeId: $.cookie('attendeeId'),
-				type: 'leaveEvent'
-
+				processIds:processIds
 			},
-
+			
 			success: function(result){
-
-				$.removeCookie('attendeeId', { path: '/' });
 				
-				var msg = {
-						type: "attendeeCount",
-						text: result.attendeeCount
-
-				};
-                websocket.send(JSON.stringify(msg));
-
+				console.log("Here are the process ids: "+result.pids);
+				
 			},
+			
 			error: function(result){
-				window.location.href = "error.jsp";
-			},
-
-		});
-	})
+				
+				
+				console.log("Cannot Kill the process: "+result);
+				console.log('Errors: '+result);
+				
+			}
+    		
+    	});
+		
+	}
+	
+	//End live streaming after page is loaded.
+	
+	$(window).bind("beforeunload",function(event) {
+		
+		if(isDj)
+	    return "Your live streaming will end. Are you sure you want to close the page?";
+	});
+	
+	$( window ).unload(function() {
+		
+		if(isDj){
+		  
+			var processIds = $.cookie('processIds');
+			
+			/*$.removeCookie('isDj', { path: '/' });
+			$.removeCookie('eventId', { path: '/' });
+			$.removeCookie('processIds', { path: '/' });*/
+			
+			endLiveStreaming(processIds);
+			updateEventStatus('N');
+			
+			$('#streamAudioPlayer')[0].stop();
+			$("#bgVideoTheme video")[0].pause();
+				
+		}
+		
+	});
 
 });

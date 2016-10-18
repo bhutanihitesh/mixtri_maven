@@ -380,7 +380,7 @@ Style Sheets
 			</div>
 		</div>
 
-		<div id="endEvent" class="modal fade" role="dialog">
+		<div id="modalEndEvent" class="modal fade" role="dialog">
 			<div class="modal-dialog">
 
 				<!-- Modal content-->
@@ -395,7 +395,7 @@ Style Sheets
 					</div>
 					<div class="modal-footer">
 						<div>
-							<button id="btnYes" type="button"
+							<button id="btnYesEndEvent" type="button"
 								class="btn btn-default commonButton buttonSize"
 								style="border-width: thin; border-color: #e62948"
 								data-dismiss="modal">Yes</button>
@@ -533,7 +533,7 @@ Style Sheets
 
 				<div style="display: margin-bottom: 20px;">
 					<button id="btnEndEvent" style="size: 100px;" data-toggle="modal"
-						data-target="#endEvent" class="btn btn-default commonButton">End
+						data-target="#modalEndEvent" class="btn btn-default commonButton">End
 						Event!</button>
 
 				</div>

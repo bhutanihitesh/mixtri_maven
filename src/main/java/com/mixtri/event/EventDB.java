@@ -436,6 +436,18 @@ public class EventDB {
 			statement.setString(1, isLive);
 			statement.setString(2, eventId);
 			statement.executeUpdate();
+			
+			/**
+			 * Delete all the attendees when Dj ends the live streaming.
+			 */
+			if(isLive.equalsIgnoreCase("N")){
+				
+				String query1 = "Delete from mixtri.attendees where eventId=?";
+				statement = connection.prepareStatement(query1);    
+				statement.setString(1, eventId);
+				statement.executeUpdate();
+			}
+			
 		}finally{
 
 			try {
