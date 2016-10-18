@@ -120,22 +120,20 @@ public class MediaTranscoder implements ContainerRequestFilter  {
 		Response.serverError().build();
 	}
 		
-		return Response.ok(mapResponse,MediaType.APPLICATION_JSON).header("Access-Control-Allow-Origin",hostOrigin).build();
-		//http://www.mixtri.com
+		return Response.ok(mapResponse,MediaType.APPLICATION_JSON).header("Access-Control-Allow-Origin",hostOrigin).build();	
 	}
 	
 	@POST
 	@Path("kill")
-	@Produces(MediaType.APPLICATION_JSON)
+	
 	public Response killTask(@FormParam("processIds") String processIds){
 		
 		List<String> pids = Arrays.asList(processIds.split("\\s*,\\s*"));
 	    
 		UDKSpawner udk = new UDKSpawner();
 		
-		boolean isSccuess = udk.killUDKByPID(pids);
-		
-		return Response.ok(isSccuess,MediaType.APPLICATION_JSON).header("Access-Control-Allow-Origin",hostOrigin).build();
+		udk.killUDKByPID(pids);
+		return Response.ok().header("Access-Control-Allow-Origin",hostOrigin).build();
 		
 	}
 	   

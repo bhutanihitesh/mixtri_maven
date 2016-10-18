@@ -1,6 +1,8 @@
 package com.mixtri.media.transcoder;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -63,15 +65,35 @@ public class UDKSpawner {
 	    boolean isSuccess=true;
 	  
 		try{
-	    synchronized(spawnProcessMutex){
-	        JavaSysMon monitor = new JavaSysMon();
-	        
-        	for(String pid: pids){
-        		
-        		monitor.killProcessTree(Integer.parseInt(pid), false);	
-        	}
-	        
-	    }
+			
+		for(String pid: pids){
+			
+			String cmd = "tasklist /fi \"pid eq "+pid;
+			
+			try {
+			    String line;
+			    Process p = Runtime.getRuntime().exec(cmd);
+			    BufferedReader input =
+			            new BufferedReader(new InputStreamReader(p.getInputStream()));
+			    while ((line = input.readLine()) != null) {
+			    	
+			    	//This means the process is not tomcat process and it doesn't kill the server process.
+			    	if(!line.contains("javaw.exe") && line.contains(pid)){
+			    	 
+			    		JavaSysMon monitor = new JavaSysMon();
+			    		monitor.killProcessTree(Integer.parseInt(pid), false);
+			    		
+			    		uccLog.info("Process Killed:" +line);
+			    		
+			    			
+			    	}
+			    }
+			    input.close();
+			} catch (Exception err) {
+			    err.printStackTrace();
+			}
+
+		}
 	  
 	  }catch(Exception exp){
 		 
