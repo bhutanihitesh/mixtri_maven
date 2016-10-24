@@ -17,8 +17,7 @@ import scala.Array;
 
 public class UDKSpawner {
 
-	private int uccPid;
-	private Logger uccLog;
+	static Logger log = Logger.getLogger(UDKSpawner.class.getName());
 
 	/**
 	 * Mutex that forces only one child process to be spawned at a time. 
@@ -55,7 +54,7 @@ public class UDKSpawner {
 
 	        if(newProcesses.isEmpty()){
 	            //uccLog.severe("There is no new UKD PID.");
-	        	System.out.println("There is no new PID.");
+	        	log.info("There is no new PID.");
 	        }
 	        return hm;
 	    }
@@ -83,7 +82,7 @@ public class UDKSpawner {
 			    		JavaSysMon monitor = new JavaSysMon();
 			    		monitor.killProcessTree(Integer.parseInt(pid), false);
 			    		
-			    		uccLog.info("Process Killed:" +line);
+			    		log.info("Process Killed:" +line);
 			    		
 			    			
 			    	}
