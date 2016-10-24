@@ -358,21 +358,51 @@ Style Sheets
 					</div>
 					<div class="modal-footer">
 						<div id="btnsFeedback">
-							<button id="btnCancelFeedback" type="button"
-								class="btn btn-default commonButton"
+							<button id="btnReturnHome"  type="button"
+								class="btn btn-default commonButton btnReturnHome"
 								style="border-width: thin; border-color: #e62948"
 								data-dismiss="modal">Return to homepage</button>
 							<button id="btnSubmitFeedback" type="button"
 								class="btn btn-default commonButton"
-								style="border-width: thin; border-color: #e62948">Leave
+								style="border-width: thin; border-color: #e62948">Submit
 								Feedback</button>
 						</div>
 						<div>
 							<button id="btnReturnHome" type="button"
-								class="btn btn-default commonButton hidden"
+								class="btn btn-default commonButton hidden btnReturnHome"
 								style="border-width: thin; border-color: #e62948"
 								data-dismiss="modal">Return to homepage</button>
 						</div>
+					</div>
+
+				</div>
+
+			</div>
+		</div>
+		
+		<div id="modalEventEnded" class="modal fade" role="dialog">
+			<div class="modal-dialog">
+
+				<!-- Modal content-->
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal">&times;</button>
+						<h3 class="modal-title">Event Ended</h3>
+					</div>
+					<div class="modal-body feedbackModalClass">
+						<div id="divFeedback">
+							<div>This event has ended</div>
+							
+						</div>
+					</div>
+					<div class="modal-footer">
+						<div id="btnsEventEnded">
+							<button id="btnReturnHome" type="button"
+								class="btn btn-default commonButton btnReturnHome"
+								style="border-width: thin; border-color: #e62948"
+								data-dismiss="modal">Return to homepage</button>
+						</div>
+						
 					</div>
 
 				</div>

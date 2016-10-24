@@ -281,7 +281,7 @@ $(document).ready(function() {
 
 				}else if(d1==d2){
 
-					if((eventSetupTime - currentSystemTime)<5 ){
+					if((eventSetupTime - currentSystemTime)<1 ){
 
 						$('#messages').html('ERROR: Please set your event time atleast 5 mins in advance. This gives time for you to prepare!');
 						$('#messages').show();

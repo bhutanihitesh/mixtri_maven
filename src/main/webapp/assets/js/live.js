@@ -1,5 +1,5 @@
 $(document).ready(function() {
-
+	
 	/*var websocket = new WebSocket("ws://"+ location.hostname+ ":" + location.port + "/mixtri/liveUpdate");
 	//websocket.onopen = function(evt) { onOpen(evt) };
 	websocket.onmessage = function(evt) { onMessage(evt) };
@@ -52,7 +52,7 @@ $(document).ready(function() {
 		url: '/mixtri/rest/event-info',
 		dataType: 'json',
 		data: {
-			eventId: $.cookie('eventId'),
+			eventId: eventId,
 			profileURLId: profileURLId,
 			fanEmailId: $.cookie('emailId')
 		},
@@ -78,6 +78,12 @@ $(document).ready(function() {
 			var emailId = result.emailId;
 			var contactNumber = result.contactNumber;
 			var liveStreamSource = result.liveStreamSource;
+			var isLive = result.isLive;
+			
+			if(isLive=='N'){
+				
+				$('#modalEventEnded').modal('show');
+			}
 			
 			$.cookie('streamingOption',streamingOption,{ path: '/'});
 			$.cookie('liveStreamSource',liveStreamSource,{ path: '/'});
@@ -315,6 +321,9 @@ $(document).ready(function() {
 			},
 
 			success: function(result){
+				
+				$.cookie('isLive','Y',{ path: '/'});
+				
 				transcodeToMp3();
 					
 				$('#countdown').show(1000);
@@ -340,8 +349,8 @@ $(document).ready(function() {
 		$.ajax({
 
 			type: 'POST',
-			url: 'http://ec2-52-77-202-27.ap-southeast-1.compute.amazonaws.com:8080/mediatranscoder/rest/transcode',
-			//url:'http://localhost:8080/mediatranscoder/rest/transcode',
+			//url: 'http://ec2-52-77-202-27.ap-southeast-1.compute.amazonaws.com:8080/mediatranscoder/rest/transcode',
+			url:'http://localhost:8080/mediatranscoder/rest/transcode',
 			dataType: 'json',
 			data: {
 				streamId: eventId,
@@ -614,12 +623,15 @@ $(document).ready(function() {
 				$.removeCookie('isDj', { path: '/' });
 				$.removeCookie('eventId', { path: '/' });
 				$.removeCookie('processIds', { path: '/' });
+				$.removeCookie('isLive', { path: '/' });
 				
-				endLiveStreaming(processIds)
 				$('#streamAudioPlayer')[0].stop();
 				$("#bgVideoTheme video")[0].pause();
 				$('#feedbackModal').modal('show');
 
+				
+				endLiveStreaming(processIds)
+				
 			},
 			error: function(result){
 
@@ -688,11 +700,7 @@ $(document).ready(function() {
 		}
 	});
 
-	$('#btnReturnHome').on('click',function(){
-		window.location.href = 'index.jsp';
-	});
-
-	$('#btnCancelFeedback').on('click',function(){
+	$('.btnReturnHome').on('click',function(){
 		window.location.href = 'index.jsp';
 	});
 
@@ -785,8 +793,8 @@ $(document).ready(function() {
     		
 	     type: 'POST',
 	 	
-		    url: 'http://ec2-52-77-202-27.ap-southeast-1.compute.amazonaws.com:8080/mediatranscoder/rest/kill',
-			//url: 'http://localhost:8080/mediatranscoder/rest/kill',
+		    //url: 'http://ec2-52-77-202-27.ap-southeast-1.compute.amazonaws.com:8080/mediatranscoder/rest/kill',
+			url: 'http://localhost:8080/mediatranscoder/rest/kill',
 			dataType: 'json',
 			data: {
 				processIds:processIds
@@ -820,18 +828,21 @@ $(document).ready(function() {
 	
 	$( window ).unload(function() {
 		
-		if(isDj){
+		var isLiveCookie = $.cookie('isLive'); 
+		
+		if(isDj && isLiveCookie=='Y'){
 		  
 			var processIds = $.cookie('processIds');
 			
-			/*$.removeCookie('isDj', { path: '/' });
+			$.removeCookie('isDj', { path: '/' });
 			$.removeCookie('eventId', { path: '/' });
-			$.removeCookie('processIds', { path: '/' });*/
+			$.removeCookie('processIds', { path: '/' });
+			$.removeCookie('isLive', { path: '/' });
 			
 			endLiveStreaming(processIds);
 			updateEventStatus('N');
 			
-			$('#streamAudioPlayer')[0].stop();
+			
 			$("#bgVideoTheme video")[0].pause();
 				
 		}
