@@ -21,6 +21,8 @@ $(document).ready(function() {
 			var phoneNumber = result.phoneNumber;
 			var biography = result.biography;
 			var profilePicPath = result.profilePicPath;
+			
+			//var profilePicPath='https://drive.google.com/uc?export=view&id=0B_jU3ZFb1zpHVEdQT0RQRmQ0NUk';
 
 
 			$('#profile-firstName').val(firstName);
@@ -302,7 +304,7 @@ $(document).ready(function() {
 
 				request.execute(function(jsonResp,rawResp){
 
-					callbackAfterUpload(jsonResp,rawResp,folderId);
+					callbackAfterUpload(jsonResp,rawResp);
 
 				});
 			}
@@ -340,7 +342,7 @@ $(document).ready(function() {
 		});
 	}
 
-	function callbackAfterUpload(jsonResp,rawResp,folderId){
+	function callbackAfterUpload(jsonResp,rawResp){
 
 		$.unblockUI();
 
@@ -352,12 +354,12 @@ $(document).ready(function() {
 			//On Successfully saving the song to google drive save the uploaded song's details on the data with an Ajax Call
 
 			var uploadedFileId = jsonResp.id;
-			var uploadPath = 'https://googledrive.com/host/'+jsonResp.id
+			var uploadPath = 'https://drive.google.com/uc?export=view&id='+jsonResp.id
 			var fileName = jsonResp.originalFilename;
 			var fileSize = jsonResp.fileSize;
 			var googleFileId = jsonResp.id;
 
-			saveProfilePicDetails(uploadPath,folderId);
+			saveProfilePicDetails(uploadPath);
 
 		}else{
 
@@ -366,7 +368,7 @@ $(document).ready(function() {
 	}
 
 
-	function saveProfilePicDetails(uploadPath,folderId){
+	function saveProfilePicDetails(uploadPath){
 
 		var firstName = $('#profile-firstName').val();
 		var lastName = $('#profile-lastName').val();
@@ -376,8 +378,6 @@ $(document).ready(function() {
 		var biography = $('#profile-biography').val();
 		var profilePic = $('#image-upload').get(0).files[0];
 		var emailId = $.cookie('emailId');
-		var parentFolderId = folderId;
-		
 
 
 		var city;
@@ -407,8 +407,7 @@ $(document).ready(function() {
 				country:country,
 				phoneNumber:phoneNumber,
 				biography:biography,
-				currentProfilePicPath:uploadPath,
-				parentFolderId:parentFolderId
+				currentProfilePicPath:uploadPath
 
 			},
 

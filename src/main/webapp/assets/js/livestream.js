@@ -117,7 +117,7 @@ $(document).ready(function() {
 
 	//This function starts all the selected video by 1 sec ahead and not from 0 secs
 	document.getElementById('vidFrame-6').addEventListener('loadedmetadata', function() {
-		this.currentTime = 6;
+		this.currentTime = 1;
 	}, false);
 
 	//Background Theme Videos
@@ -705,7 +705,7 @@ $(document).ready(function() {
 		var streamingOption = $('.panel.panel-primary.pointer-cursor.selected').get(0).id;
 		var bgVideoTheme = $(vidFrame).get(0).currentSrc;
 		var profileURLId = $.cookie('profileURLId');
-		var eventPicPath = 'https://googledrive.com/host/'+jsonResp.id;
+		var eventPicPath = 'https://drive.google.com/uc?export=view&id='+jsonResp.id;
 		
 		var alreadySelectedMix = $('.pastMix');
 		

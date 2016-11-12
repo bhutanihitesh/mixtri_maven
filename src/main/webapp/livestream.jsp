@@ -478,19 +478,19 @@ Style Sheets
 
 									</div>
 									<div id="vidTheme-3" class="videoThemes">
-										<label>BOUNCE GENERATION</label>
+										<label>ZYNO</label>
 
 									</div>
 									<div id="vidTheme-4" class="videoThemes">
-										<label>PURPCYCLE</label>
-
-									</div>
-									<div id="vidTheme-5" class="videoThemes">
 										<label>RATATA</label>
 
 									</div>
+									<div id="vidTheme-5" class="videoThemes">
+										<label>FACES</label>
+
+									</div>
 									<div id="vidTheme-6" class="videoThemes">
-										<label>TOMMOROW LAND</label>
+										<label>CYCLIC</label>
 									</div>
 
 
@@ -509,7 +509,7 @@ Style Sheets
 								<video id="vidFrame-1" controls muted controls="controls"
 									class="vidFrames" preload="metadata">
 									<source
-										src="https://drive.google.com/uc?export=download&id=0B5rjLGYHECZeOTBBTnFBNUJKeWM"
+										src="https://drive.google.com/uc?export=view&id=0B5rjLGYHECZeOTBBTnFBNUJKeWM"
 										type='video/mp4' />
 								</video>
 
@@ -519,7 +519,7 @@ Style Sheets
 								<video id="vidFrame-2" controls muted controls="controls"
 									class="vidFrames" preload="metadata">
 									<source
-										src="https://drive.google.com/uc?export=download&id=0B5rjLGYHECZeNmVkUkJjanJLaEk"
+										src="https://drive.google.com/uc?export=view&id=0B5rjLGYHECZeNmVkUkJjanJLaEk"
 										type='video/mp4' />
 								</video>
 
@@ -529,17 +529,18 @@ Style Sheets
 								<video id="vidFrame-3" controls muted controls="controls"
 									class="vidFrames" preload="metadata">
 									<source
-										src="https://drive.google.com/uc?export=download&id=0B5rjLGYHECZeMmpoU25adzhyeDA"
+										src="https://drive.google.com/uc?export=view&id=0B_jU3ZFb1zpHNGdlOEdxbnd5OHM"
 										type='video/mp4' />
 										
-										<source src="https://drive.google.com/uc?export=download&id=0B5rjLGYHECZeMmpoU25adzhyeDA" type='video/webm'/>								</video>
+										<source src="https://drive.google.com/uc?export=view&id=0B_jU3ZFb1zpHNGdlOEdxbnd5OHM" type='video/webm'/>
+									</video>
 							</div>
 
 							<div id="bgTheme-4" class="bgThemeVideo hidden">
 								<video id="vidFrame-4" controls muted class="vidFrames"
 									preload="metadata">
 									<source
-										src="https://drive.google.com/uc?export=download&id=0B5rjLGYHECZeUloxT2tSa0FjTm8"
+										src="https://drive.google.com/uc?export=view&id=0B_jU3ZFb1zpHS3JLXzZwbWZMQUU"
 										type='video/mp4' />
 								</video>
 
@@ -549,7 +550,7 @@ Style Sheets
 								<video id="vidFrame-5" controls muted class="vidFrames"
 									preload="metadata">
 									<source
-										src="https://drive.google.com/uc?export=download&id=0B5rjLGYHECZebTgxWnh5RHRSWjA"
+										src="https://drive.google.com/uc?export=view&id=0B_jU3ZFb1zpHS0pFTm9qY2ZJZHc"
 										type='video/mp4' />
 								</video>
 							</div>
@@ -558,7 +559,7 @@ Style Sheets
 								<video id="vidFrame-6" controls class="vidFrames" muted
 									preload="metadata">
 									<source
-										src="https://drive.google.com/uc?export=download&id=0B5rjLGYHECZealViOGJTVzhSakU"
+										src="https://drive.google.com/uc?export=view&id=0B_jU3ZFb1zpHR01oNk5KVVBScWc"
 										type='video/mp4' />
 								</video>
 
