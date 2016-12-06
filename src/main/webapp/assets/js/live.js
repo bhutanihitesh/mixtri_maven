@@ -258,7 +258,7 @@ $(document).ready(function() {
 
 				};
 
-				websocket.send(JSON.stringify(msg));
+				//websocket.send(JSON.stringify(msg));
 
 
 
@@ -350,7 +350,7 @@ $(document).ready(function() {
 
 			type: 'POST',
 			//url: 'http://ec2-52-77-202-27.ap-southeast-1.compute.amazonaws.com:8080/mediatranscoder/rest/transcode',
-			url:'http://localhost:8080/mediatranscoder/rest/transcode',
+			url:'http://localhost:8000/mediatranscoder/rest/transcode',
 			dataType: 'json',
 			data: {
 				streamId: eventId,
@@ -362,7 +362,6 @@ $(document).ready(function() {
 				
 				$('#streamAudioPlayer')[0].play();
 				var pids = result.pids.toString();
-				$.cookie("processIds", pids,{ path: '/'});
 				saveTranscoderProcessIds(pids);
 			},
 			error: function(result){
@@ -381,8 +380,6 @@ $(document).ready(function() {
 	
 	function saveTranscoderProcessIds(pids){
 		
-		console.log('Here are the pids: '+pids);
-		
 		$.ajax({
 			
 			type: 'POST',
@@ -395,6 +392,9 @@ $(document).ready(function() {
 			
 			
 			success: function(result){
+				
+				var processIds = result.pids;
+				$.cookie("processIds", processIds,{ path: '/'});	
 				
 			},error: function(result){
 				console.log("Error while saving transcoder Ids");
@@ -600,7 +600,9 @@ $(document).ready(function() {
 	//End live event and set status as 'N' in Database
 	$('#btnYesEndEvent').on('click',function(){
 		var isLive = 'N';
-		updateEventStatus(isLive)
+		var processIds = $.cookie('processIds');
+		endLiveStreaming(processIds)
+		//updateEventStatus(isLive)
 
 	});
 	
@@ -793,8 +795,8 @@ $(document).ready(function() {
     		
 	     type: 'POST',
 	 	
-		    //url: 'http://ec2-52-77-202-27.ap-southeast-1.compute.amazonaws.com:8080/mediatranscoder/rest/kill',
-			url: 'http://localhost:8080/mediatranscoder/rest/kill',
+		   // url: 'http://ec2-52-77-202-27.ap-southeast-1.compute.amazonaws.com:8080/mediatranscoder/rest/kill',
+			url: 'http://localhost:8000/mediatranscoder/rest/kill',
 			dataType: 'json',
 			data: {
 				processIds:processIds
@@ -802,7 +804,7 @@ $(document).ready(function() {
 			
 			success: function(result){
 				
-				console.log("Here are the process ids: "+result.pids);
+				console.log("Here are the process ids: ");
 				
 			},
 			
@@ -810,7 +812,7 @@ $(document).ready(function() {
 				
 				
 				console.log("Cannot Kill the process: "+result);
-				console.log('Errors: '+result);
+				
 				
 			}
     		
@@ -834,13 +836,13 @@ $(document).ready(function() {
 		  
 			var processIds = $.cookie('processIds');
 			
-			$.removeCookie('isDj', { path: '/' });
+			/*$.removeCookie('isDj', { path: '/' });
 			$.removeCookie('eventId', { path: '/' });
 			$.removeCookie('processIds', { path: '/' });
-			$.removeCookie('isLive', { path: '/' });
+			$.removeCookie('isLive', { path: '/' });*/
 			
 			endLiveStreaming(processIds);
-			updateEventStatus('N');
+			//updateEventStatus('N');
 			
 			
 			$("#bgVideoTheme video")[0].pause();

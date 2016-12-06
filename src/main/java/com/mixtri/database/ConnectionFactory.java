@@ -12,7 +12,7 @@ public class ConnectionFactory {
     String url = "jdbc:mysql://localhost";
     String user = "root";
     String password = "mixtri";
-    String driverClass = "com.mysql.jdbc.Driver";  
+    String driverClass = "com.mysql.jdbc.Driver";
     
     /*String user = System.getenv("OPENSHIFT_MYSQL_DB_USERNAME");
     String password = System.getenv("OPENSHIFT_MYSQL_DB_PASSWORD");

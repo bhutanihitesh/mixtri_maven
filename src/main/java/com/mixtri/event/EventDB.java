@@ -8,6 +8,7 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,6 +17,7 @@ import org.apache.log4j.Logger;
 
 import com.mixtri.database.ConnectionFactory;
 import com.mixtri.utils.MixtriUtils;
+import com.mysql.jdbc.StringUtils;
 
 public class EventDB {
 
@@ -258,31 +260,31 @@ public class EventDB {
 		List<Map<String,Object>> listAllLiveUpcomingEvents = new ArrayList<Map<String,Object>>();
 		Boolean isGenreFilter = false;
 		String query;
-		
+
 		switch (filter) {
-		
+
 		//Query only those events which are live and which are going to be live within next 24 hrs for that user in his timezone.
-		 case "All":
-		 query = "SELECT SQL_CALC_FOUND_ROWS *,TIMESTAMPDIFF(MINUTE,?,eventCreatedUTCTimestamp) AS TIMELEFT from mixtri.events where "
-			+ "( (TIMESTAMPDIFF(MINUTE,?,eventCreatedUTCTimestamp) < '1440' AND ISLIVE IS NULL) OR ISLIVE='Y') ORDER BY ISLIVE DESC,TIMELEFT ASC LIMIT "+offset+","+limitPerPage;	 
-		 break;
-		 
-		 case "live":
-			 query = "SELECT SQL_CALC_FOUND_ROWS *,TIMESTAMPDIFF(MINUTE,?,eventCreatedUTCTimestamp) AS TIMELEFT from mixtri.events where "
-						+ "TIMESTAMPDIFF(MINUTE,?,eventCreatedUTCTimestamp) < '1440' AND ISLIVE='Y' LIMIT "+offset+","+limitPerPage;	 
-			 break;
-			 
-		 case "mostPopular":
-			 query = "SELECT SQL_CALC_FOUND_ROWS mEvents.*,TIMESTAMPDIFF(MINUTE,?,eventCreatedUTCTimestamp) AS TIMELEFT from mixtri.events mEvents "
-			 		+ "LEFT JOIN (SELECT djEmailid,count(*) AS NumberOfFans from mixtri.fans group by djEmailId order by count(*) desc) AS tempFans "
-			 		+ "ON tempFans.djEmailid = mEvents.emailId WHERE ( (TIMESTAMPDIFF(MINUTE,?,eventCreatedUTCTimestamp) < '1440' AND ISLIVE IS NULL) OR "
-			 		+ "ISLIVE='Y') order by tempFans.NumberOfFans desc LIMIT "+offset+","+limitPerPage;	 
-			 break;
-		 
-		 default:
-		 query = "SELECT SQL_CALC_FOUND_ROWS *,TIMESTAMPDIFF(MINUTE,?,eventCreatedUTCTimestamp) AS TIMELEFT from mixtri.events where "
-			+ "( ((TIMESTAMPDIFF(MINUTE,?,eventCreatedUTCTimestamp) < '1440' AND ISLIVE IS NULL) OR ISLIVE='Y') AND genre=?) ORDER BY ISLIVE DESC,TIMELEFT ASC LIMIT "+offset+","+limitPerPage;
-		 isGenreFilter = true;
+		case "All":
+			query = "SELECT SQL_CALC_FOUND_ROWS *,TIMESTAMPDIFF(MINUTE,?,eventCreatedUTCTimestamp) AS TIMELEFT from mixtri.events where "
+					+ "( (TIMESTAMPDIFF(MINUTE,?,eventCreatedUTCTimestamp) < '1440' AND ISLIVE IS NULL) OR ISLIVE='Y') ORDER BY ISLIVE DESC,TIMELEFT ASC LIMIT "+offset+","+limitPerPage;	 
+			break;
+
+		case "live":
+			query = "SELECT SQL_CALC_FOUND_ROWS *,TIMESTAMPDIFF(MINUTE,?,eventCreatedUTCTimestamp) AS TIMELEFT from mixtri.events where "
+					+ "TIMESTAMPDIFF(MINUTE,?,eventCreatedUTCTimestamp) < '1440' AND ISLIVE='Y' LIMIT "+offset+","+limitPerPage;	 
+			break;
+
+		case "mostPopular":
+			query = "SELECT SQL_CALC_FOUND_ROWS mEvents.*,TIMESTAMPDIFF(MINUTE,?,eventCreatedUTCTimestamp) AS TIMELEFT from mixtri.events mEvents "
+					+ "LEFT JOIN (SELECT djEmailid,count(*) AS NumberOfFans from mixtri.fans group by djEmailId order by count(*) desc) AS tempFans "
+					+ "ON tempFans.djEmailid = mEvents.emailId WHERE ( (TIMESTAMPDIFF(MINUTE,?,eventCreatedUTCTimestamp) < '1440' AND ISLIVE IS NULL) OR "
+					+ "ISLIVE='Y') order by tempFans.NumberOfFans desc LIMIT "+offset+","+limitPerPage;	 
+			break;
+
+		default:
+			query = "SELECT SQL_CALC_FOUND_ROWS *,TIMESTAMPDIFF(MINUTE,?,eventCreatedUTCTimestamp) AS TIMELEFT from mixtri.events where "
+					+ "( ((TIMESTAMPDIFF(MINUTE,?,eventCreatedUTCTimestamp) < '1440' AND ISLIVE IS NULL) OR ISLIVE='Y') AND genre=?) ORDER BY ISLIVE DESC,TIMELEFT ASC LIMIT "+offset+","+limitPerPage;
+			isGenreFilter = true;
 		}
 
 		ResultSet rs =null;
@@ -291,7 +293,7 @@ public class EventDB {
 
 			//Convert webuser timezone as GMT+XX:XX from the zone id eg. "Asia/Calcutta"
 			Map<String,String> webUserDateAndGMTId = MixtriUtils.getDateAndGMTId(webUserTimeZoneId);
-			
+
 			//Covert the webuser timezone to standard UTC Timezone and then query Database for event which are live or going to be live in his time zone in next 24hrs 
 			String fromTimezone=webUserDateAndGMTId.get("gmtZoneId");
 			String toTimezone="UTC";
@@ -300,14 +302,14 @@ public class EventDB {
 			//Convert it from webuserTimeZone Time to UTC Time because we are doing a query and it needs to be converted to UTC Timezone
 			Timestamp timestamp = MixtriUtils.convertToTimezone(localDateOfWebuser+" "+webUserCurrentTime, fromTimezone, toTimezone); 
 			Connection connection = getConnection();
-			
+
 			PreparedStatement statement = connection.prepareStatement(query);   
 			statement.setTimestamp(1,timestamp);
 			statement.setTimestamp(2,timestamp);
-			
+
 			if(isGenreFilter){
-			
-			  statement.setString(3,filter);
+
+				statement.setString(3,filter);
 			}
 			rs = statement.executeQuery();
 
@@ -351,13 +353,13 @@ public class EventDB {
 
 			}
 			rs.close();
-			
+
 			rs = statement.executeQuery("SELECT FOUND_ROWS()");
-            if(rs.next()){
-            	noOfRecords = rs.getInt(1);
-            	eventBean.setNoOfRecords(noOfRecords);
-            } 
-            
+			if(rs.next()){
+				noOfRecords = rs.getInt(1);
+				eventBean.setNoOfRecords(noOfRecords);
+			} 
+
 		}finally{
 
 			try {
@@ -372,13 +374,13 @@ public class EventDB {
 
 		return listAllLiveUpcomingEvents;
 	}
-	
-	public void saveProcessIdsDB(String eventId, String pids) throws ClassNotFoundException, SQLException{
-		
+
+	public String saveProcessIdsDB(String eventId, String pids) throws ClassNotFoundException, SQLException{
+
 		String query = "UPDATE mixtri.events SET processIds=? WHERE ID=?";
 
 		try{
-
+			pids = checkSavedPids(pids);
 			connection = getConnection();
 			statement = connection.prepareStatement(query);    
 			statement.setString(1, pids);
@@ -396,12 +398,60 @@ public class EventDB {
 			}
 		}
 		
+		return pids;
+	}
+
+	public String checkSavedPids(String pids) throws ClassNotFoundException, SQLException{
+
+		List<String> listPid = Arrays.asList(pids.split("\\s*,\\s*"));
+		String csvPids;
+		try{
+			connection = getConnection();
+			ResultSet rs;
+			
+			List<String> pidsToUpdate = new ArrayList<String>();
+
+			for(String pid: listPid){
+				
+				boolean pidFound = false;
+				String sql = "select count(1) from mixtri.events where isLive='Y' and processIds like ?";
+				
+				statement = connection.prepareStatement(sql);    
+				statement.setString(1,"%"+pid+"%");
+				rs = statement.executeQuery();
+				
+				if(rs.next() && rs.getInt(1)>0){
+					pidFound = true;
+				}
+				
+				if(!pidFound){
+					
+					pidsToUpdate.add(pid);
+				}
+
+			}
+			
+			 csvPids = org.apache.commons.lang.StringUtils.join(pidsToUpdate, ',');
+
+		}finally{
+
+			try {
+				if(statement != null)
+					statement.close();
+				if(connection != null)
+					connection.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		
+		return csvPids;
 	}
 
 	public void saveEventFeedbackDB(EventBean eventBean) throws ClassNotFoundException, SQLException{
 
 		String query = "UPDATE mixtri.events SET FEEDBACK=? WHERE ID=?";
-
+		
 		try{
 			String feedback = eventBean.getFeedback();
 			String eventId = eventBean.getId();
@@ -436,18 +486,18 @@ public class EventDB {
 			statement.setString(1, isLive);
 			statement.setString(2, eventId);
 			statement.executeUpdate();
-			
+
 			/**
 			 * Delete all the attendees when Dj ends the live streaming.
 			 */
 			if(isLive.equalsIgnoreCase("N")){
-				
+
 				String query1 = "Delete from mixtri.attendees where eventId=?";
 				statement = connection.prepareStatement(query1);    
 				statement.setString(1, eventId);
 				statement.executeUpdate();
 			}
-			
+
 		}finally{
 
 			try {

@@ -36,10 +36,13 @@ public class MixtriDAO {
 		return userLoginBean;
 	}
 	
-	public void saveProcessIdsDAO(String eventId,String pids) throws ClassNotFoundException, SQLException{
+	public String saveProcessIdsDAO(String eventId,String pids) throws ClassNotFoundException, SQLException{
 		
+		String processIds;
 		EventDB eventDB = new EventDB();
-		eventDB.saveProcessIdsDB(eventId, pids);
+		processIds = eventDB.saveProcessIdsDB(eventId, pids);
+		
+		return processIds;
 		
 	}
 	

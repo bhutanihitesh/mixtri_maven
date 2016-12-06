@@ -32,6 +32,7 @@ import javax.ws.rs.core.Response;
 import org.apache.log4j.Logger;
 
 import com.google.api.client.repackaged.org.apache.commons.codec.binary.StringUtils;
+import com.google.common.primitives.Ints;
 import com.google.gson.Gson;
 import com.mixtri.DAO.MixtriDAO;
 import com.mixtri.utils.MixtriUtils;
@@ -323,18 +324,44 @@ public class Event {
 	
 	@POST
 	@Path("/event/saveProcessIds")
+	@Produces(MediaType.APPLICATION_JSON)
 	public Response saveProcessIds(@FormParam("eventId") String eventId,@FormParam("pids") String pids){
 	try{
 		
+		String response;
+		Gson gson = new Gson();
+		
 		MixtriDAO mixtriDAO = new MixtriDAO();
-		mixtriDAO.saveProcessIdsDAO(eventId,pids);
-		return Response.ok().build();
+		pids = sortPids(pids);
+		String processIds = mixtriDAO.saveProcessIdsDAO(eventId,pids);
+		Map<String,String> hmPids = new HashMap<String,String>();
+		hmPids.put("pids", processIds);
+		response  = gson.toJson(hmPids);
+		
+		return Response.ok(response,MediaType.APPLICATION_JSON).build();
 		
 	}catch(Exception exp){
 		 log.error("Error Occured in saveProcessIds method: "+exp);
 		 return Response.serverError().build();
 	 }	
 		
+		
+	}
+	
+	public String sortPids(String pids){
+		
+		
+		int[] numbers = Arrays.asList(pids.split(","))
+                .stream()
+                .map(String::trim)
+                .mapToInt(Integer::parseInt).toArray();
+				
+			Arrays.sort(numbers);
+			
+			List<Integer> listPids = Ints.asList(numbers);
+			pids = org.apache.commons.lang.StringUtils.join(listPids, ',');
+			
+			return pids;
 		
 	}
 	
