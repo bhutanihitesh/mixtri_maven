@@ -1,0 +1,26 @@
+2. Navigating away from the page live.jsp
+3. Websocket(Messenger)
+4. Siren not playing in mobile browser
+
+4. Modal Show email link sent. Need to fix that. It always needs refresh.
+4. Live stream Pop-Up doesn't have correct time on share pop-up
+5. Check if the guest is on attendee list does it increase the count.
+
+7. Check if dj logout after creating the event and logs back in to do the live stream(Live Stream Manager)
+8. Get Loggers sort out.
+9. Live Stream URL on Event Setup modal to be sorted out.
+10. Remove Live Stream URL when streaming is recorded mix from the modal
+11. Live Stream Manager
+12. Navigate away from Live Stream Page stop streaming the event
+13. If the event ends then close the vlc player
+14. Site now working at mixtri.com
+15. End of live streaming. Finding process id based on process like%
+
+:sout=#std{access=shout,mux=ogg,dst=source:mixtri@52.77.202.27:80/mixtri/test.mp3} :sout-keep
+
+
+vlc --sout=#std{access=shout,mux=ogg,dst=source:mixtri@52.77.202.27:80/mixtri/test.mp3} "https://drive.google.com/uc?export=download&id=0B_jU3ZFb1zpHbVhqcXlieVBuMVE"
+
+
+C:\ProgramData\Oracle\Java\javapath
+

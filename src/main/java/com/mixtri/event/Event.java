@@ -1,12 +1,8 @@
 package com.mixtri.event;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.security.GeneralSecurityException;
 import java.sql.Timestamp;
 import java.text.DateFormatSymbols;
 import java.text.ParseException;
@@ -31,7 +27,6 @@ import javax.ws.rs.core.Response;
 
 import org.apache.log4j.Logger;
 
-import com.google.api.client.repackaged.org.apache.commons.codec.binary.StringUtils;
 import com.google.common.primitives.Ints;
 import com.google.gson.Gson;
 import com.mixtri.DAO.MixtriDAO;
@@ -351,14 +346,15 @@ public class Event {
 	public String sortPids(String pids){
 		
 		
-		int[] numbers = Arrays.asList(pids.split(","))
-                .stream()
-                .map(String::trim)
-                .mapToInt(Integer::parseInt).toArray();
-				
-			Arrays.sort(numbers);
+		String[] strArray = pids.split(",");
+		int[] intArray = new int[strArray.length];
+		for(int i = 0; i < strArray.length; i++) {
+		    intArray[i] = Integer.parseInt(strArray[i]);
+		}
+		
+			Arrays.sort(intArray);
 			
-			List<Integer> listPids = Ints.asList(numbers);
+			List<Integer> listPids = Ints.asList(intArray);
 			pids = org.apache.commons.lang.StringUtils.join(listPids, ',');
 			
 			return pids;
